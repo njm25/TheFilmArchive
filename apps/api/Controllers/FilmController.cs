@@ -79,31 +79,42 @@ public class FilmController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetFilm(int id)
     {
-        var film = await _db.Films
+        Film? film = await _db.Films
             .Include(f => f.Sources)
             .Where(f => f.Id == id)
-            .Select(f => new
-            {
-                f.Id,
-                f.Title,
-                f.ReleaseYear,
-                f.Description,
-                f.PosterPath,
-                Sources = f.Sources.Select(s => new
-                {
-                    s.Id,
-                    s.Type,
-                    s.SourceUrl,
-                    s.IsPrimary,
-                    s.IsActive
-                })
-            })
             .FirstOrDefaultAsync();
 
         if (film == null)
             return NotFound();
 
-        return Ok(film);
+        GetFilmRes res = new GetFilmRes()
+        {
+            Title = film.Title,
+            Description = film.Description ?? "No description found.",
+            YearReleased = film.ReleaseYear ?? 0,
+            PosterUrl = BuildPosterUrl(film.PosterPath) ?? "No path found.",
+            Sources = film.Sources
+                    .Select(o => new GetFilmResSource
+                    {
+                        SourceId = o.Id,
+                        Type = o.Type
+                    })
+                    .ToList(),
+            PrimarySourceTypeId = film
+                    .Sources
+                    .Where(o => o.IsPrimary)
+                    .Select(o => o.Id)
+                    .ToList()
+                    .FirstOrDefault(-1)
+
+        };
+
+        return Ok(res);
+    }
+
+    private static string? BuildPosterUrl(string? posterPath)
+    {
+        return "";
     }
 
     [HttpPost("addFilm")]
