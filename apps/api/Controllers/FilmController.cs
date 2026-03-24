@@ -112,7 +112,23 @@ public class FilmController : ControllerBase
         return Ok(res);
     }
 
-    private static string? BuildPosterUrl(string? posterPath)
+    // GET: api/films/sources/id
+    [HttpGet("sources/{sourceId}")]
+    public async Task<IActionResult> GetFilmSource(int sourceId)
+    {
+        FilmSource? source = await _db.FilmSources
+            .AsNoTracking()
+            .Where(o => o.Id == sourceId)
+            .FirstOrDefaultAsync();
+
+        if (source == null) 
+            return NotFound();
+
+        return Ok(source.SourceUrl);
+    }
+
+    // to-do
+    private static string BuildPosterUrl(string? posterPath)
     {
         return "";
     }
