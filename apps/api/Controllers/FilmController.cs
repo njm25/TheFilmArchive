@@ -158,7 +158,7 @@ public class FilmController : ControllerBase
 
         await _db.SaveChangesAsync();
 
-        return Ok();
+        return Ok(film.Id);
     }
 
     [HttpPost("addSource")]
@@ -176,7 +176,7 @@ public class FilmController : ControllerBase
 
         await _db.SaveChangesAsync();
 
-        return Ok();
+        return Ok(source.Id);
     }
 
 }
