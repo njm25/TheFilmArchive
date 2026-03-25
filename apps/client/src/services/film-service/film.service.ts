@@ -1,26 +1,13 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-
-export interface GetFilmReq {
-	pageSize: number;
-	pageNumber: number;
-	searchText: string;
-	orderBy: number;
-	orderingType: number;
-}
-
-export interface GetFilmResItem {
-	filmId: number;
-	title: string;
-	yearReleased: number;
-	description: string;
-	posterUrl: string;
-}
-
-export interface GetFilmRes {
-	films: GetFilmResItem[];
-}
+import {
+	AddFilmReq,
+	AddSourceReq,
+	GetFilmRes,
+	GetFilmsReq,
+	GetFilmsRes
+} from '../../types/types';
 
 @Injectable({
 	providedIn: 'root'
@@ -29,15 +16,33 @@ export class FilmService {
 	private http = inject(HttpClient);
 	private baseUrl = 'https://localhost:7156';
 
-	getFilms(req: GetFilmReq): Observable<GetFilmRes> {
-	return this.http.get<GetFilmRes>(`${this.baseUrl}/Film`, {
-		params: {
-			pageSize: req.pageSize,
-			pageNumber: req.pageNumber,
-			searchText: req.searchText,
-			orderBy: req.orderBy,
-			orderingType: req.orderingType
-		}
-	});
-}
+	getFilms(req: GetFilmsReq): Observable<GetFilmsRes> {
+		return this.http.get<GetFilmsRes>(`${this.baseUrl}/Film`, {
+			params: {
+				pageSize: req.pageSize,
+				pageNumber: req.pageNumber,
+				searchText: req.searchText,
+				orderBy: req.orderBy,
+				orderingType: req.orderingType
+			}
+		});
+	}
+
+	getFilm(id: number): Observable<GetFilmRes> {
+		return this.http.get<GetFilmRes>(`${this.baseUrl}/Film/${id}`);
+	}
+
+	getFilmSource(sourceId: number): Observable<string> {
+		return this.http.get(`${this.baseUrl}/Film/sources/${sourceId}`, {
+			responseType: 'text'
+		});
+	}
+
+	addFilm(req: AddFilmReq): Observable<number> {
+		return this.http.post<number>(`${this.baseUrl}/Film/addFilm`, req);
+	}
+
+	addSource(req: AddSourceReq): Observable<number> {
+		return this.http.post<number>(`${this.baseUrl}/Film/addSource`, req);
+	}
 }

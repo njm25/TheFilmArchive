@@ -1,12 +1,15 @@
-
 <style>
 
 </style>
 
 <main class="main">
-  <div class="content">
-    wsg gang :)
-  </div>
+    <div class="content">
+        wsg gang :)
+        @if(firstSourceUrl())
+        {
+            <video [src]="firstSourceUrl()" controls width="200"></video>
+        }
+    </div>
 </main>
 
 <router-outlet />
