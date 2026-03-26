@@ -1,0 +1,6 @@
+.source-card:hover {
+    cursor: pointer;
+}
+.source-card:hover small {
+    text-decoration: underline;
+}

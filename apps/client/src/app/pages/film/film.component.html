@@ -1,0 +1,15 @@
+<h5>{{ film()?.title }} ({{ film()?.yearReleased }})</h5>
+<small class="text-muted">{{ film()?.description }}</small>
+<div class="d-flex">
+    @for(source of film()?.sources; track source.sourceId)
+    {
+        <div 
+            class="border border-black m-1 p-1 text-center source-card text-muted"
+            (click)="goToSource(source.sourceId)"
+        >
+            <small>
+                Source {{source.type}}
+            </small>
+        </div>
+    }
+</div>

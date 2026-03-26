@@ -1,0 +1,10 @@
+<div 
+    class="film-card d-flex flex-column align-items-center border border-black p-1 text-break word-wrap"
+    (click)="goToFilm()"
+>
+    @if (film()?.posterUrl)
+    {
+        <img class="poster" [src]="posterSrc()" alt="Poster for {{film()?.title}}" />
+    }
+    <small class="text-muted">{{film()?.title}} ({{film()?.yearReleased}})</small>
+</div>

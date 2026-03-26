@@ -1,15 +1,9 @@
-<style>
 
-</style>
-
-<main class="main">
-    <div class="content">
-        wsg gang :)
-        @if(firstSourceUrl())
-        {
-            <video [src]="firstSourceUrl()" controls width="200"></video>
-        }
+<tfa-header></tfa-header>
+<main class="main h-100 w-100 d-flex justify-content-center align-items-center">
+    <div class="content border w-100 border-black m-4 d-flex p-2">
+        <div class="w-100">
+            <router-outlet></router-outlet>
+        </div>
     </div>
 </main>
-
-<router-outlet />
