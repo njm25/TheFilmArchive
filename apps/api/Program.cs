@@ -1,5 +1,7 @@
+using Api.Services;
 using Infrastructure.Clients;
 using Infrastructure.Data;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,11 +17,24 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     )
 );
 
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+    .AddEntityFrameworkStores<AppDbContext>();
+
 builder.Services.AddScoped<TmdbService>(sp =>
     new TmdbService(
         builder.Configuration["Tmdb:ApiKey"]!
     )
 );
+
+builder.Services.AddSingleton<DiscordBot>(sp =>
+    new DiscordBot(
+        builder.Configuration["Discord:Token"]!,
+        ulong.Parse(builder.Configuration["Discord:UserId"]!),
+        sp.GetRequiredService<IServiceScopeFactory>()
+    )
+);
+
+builder.Services.AddHostedService<DiscordBotHostedService>();
 
 builder.Services.AddCors(options =>
 {
@@ -44,6 +59,7 @@ app.UseHttpsRedirection();
 
 app.UseCors("AngularClient");
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
