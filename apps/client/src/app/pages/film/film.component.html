@@ -1,7 +1,7 @@
 <h5>{{ film()?.title }} ({{ film()?.yearReleased }})</h5>
 <small class="text-muted">{{ film()?.description }}</small>
 <div class="d-flex">
-    @if(filmId() != 0)
+    @if(filmId() != 0 && isLoggedIn())
     {
         <tfa-link [href]="'/createSource/' + filmId()" class="border border-black p-1 m-1">Create Source</tfa-link>
     }
