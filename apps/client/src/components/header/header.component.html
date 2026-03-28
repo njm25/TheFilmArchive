@@ -1,5 +1,19 @@
-<div class="position-absolute p-2">
-    <h3>The Film Archive</h3>
-    <small class="text-muted">A collection of public domain films.</small>
-
+<div class="position-absolute">
+    <div class="header d-flex justify-content-between align-items-center p-2">
+        <tfa-link>
+            <h3>The Film Archive</h3>
+            <small class="text-muted">A collection of public domain films.</small>
+        </tfa-link>
+        <div class="d-flex">
+            @if(isLoggedIn())
+            {
+                <tfa-link href="/createFilm" styleClass="border border-black p-1 m-1">Create Film</tfa-link>
+                <div (click)="logout()" style="cursor: pointer;" class="border border-black p-1 m-1">Log out</div>
+            }
+            @else {
+                <tfa-link href="/requestAccount" styleClass="border border-black p-1 m-1">Sign Up</tfa-link>
+                <tfa-link href="/login" styleClass="border border-black p-1 m-1">Log In</tfa-link>
+            }
+        </div>
+    </div>
 </div>

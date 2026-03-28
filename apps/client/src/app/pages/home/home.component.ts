@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { FilmService } from '../../../services/film-service/film.service';
+import { FilmService } from '../../../services/film.service';
 import { GetFilmsResItem, GetFilmRes, GetFilmsReq, GetFilmsRes } from '../../../types/types';
 import { FilmCardComponent } from '../../../components/film-card/film-card.component';
 

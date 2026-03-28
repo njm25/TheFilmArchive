@@ -55,3 +55,18 @@ export interface GetFilmRes {
 	sources: GetFilmResSource[];
 	primarySourceTypeId: number;
 }
+
+export interface RequestAccountReq {
+    email: string;
+}
+
+export interface RegisterReq {
+    userName: string,
+    password: string,
+    token: string
+}
+
+export interface LoginReq {
+    userNameOrEmail: string;
+    password: string;
+}

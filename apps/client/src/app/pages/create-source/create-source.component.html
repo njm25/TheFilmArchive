@@ -1,0 +1,13 @@
+<form (submit)="submitRequest()">
+    <label for="sourceType">Source type:</label>
+    <select id="sourceType" [(ngModel)]="req().sourceType" name="sourceType" required>
+        @for (option of sourceTypeOptions; track option.value) {
+            <option [value]="option.value">{{ option.label }}</option>
+        }
+    </select>
+
+    <label for="url">Url:</label>
+    <input id="url" type="text" [(ngModel)]="req().sourceUrl" name="url" required>
+
+    <button type="submit">Create Source</button>
+</form>

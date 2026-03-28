@@ -1,12 +1,13 @@
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FilmService } from '../../../services/film-service/film.service';
+import { FilmService } from '../../../services/film.service';
 import { GetFilmRes } from '../../../types/types';
+import { LinkComponent } from '../../../components/link/link.component';
 
 @Component({
   selector: 'tfa-film',
   standalone: true,
-  imports: [],
+  imports: [LinkComponent],
   templateUrl: './film.component.html',
   styleUrl: './film.component.css'
 })
@@ -16,14 +17,15 @@ export class FilmComponent {
     filmService = inject(FilmService);
 
     film = signal<GetFilmRes | null>(null);
+    filmId = signal<number>(0);
 
     goToSource = (sourceId: number) => this.router.navigate([`/source/${sourceId}`]);
     
     ngOnInit()
     {
-        const filmId = parseInt(this.route.snapshot.paramMap.get("id")!);
+        this.filmId.set(parseInt(this.route.snapshot.paramMap.get("id")!));
 
-        this.filmService.getFilm(filmId!).subscribe((r) => {
+        this.filmService.getFilm(this.filmId()).subscribe((r) => {
             this.film.set(r);
         });
     }

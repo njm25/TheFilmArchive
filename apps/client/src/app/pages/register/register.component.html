@@ -1,0 +1,21 @@
+@if (!registered())
+{
+    <div class="container">
+        <form (submit)="submitRequest()">
+            <label for="username">Username:</label>
+            <input type="text" id="username" [(ngModel)]="this.req().userName" name="username" required>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" [(ngModel)]="this.req().password" name="password" required>
+
+            <button type="submit">Register</button>
+        </form>
+    </div>
+}
+@else
+{
+    <div class="container">
+        <span>Registered!</span>
+    </div>
+
+}

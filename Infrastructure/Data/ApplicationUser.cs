@@ -7,5 +7,4 @@ namespace Infrastructure.Data;
 
 public class ApplicationUser : IdentityUser
 {
-    
 }

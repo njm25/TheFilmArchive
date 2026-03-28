@@ -7,7 +7,7 @@ import {
 	GetFilmRes,
 	GetFilmsReq,
 	GetFilmsRes
-} from '../../types/types';
+} from '../types/types';
 
 @Injectable({
 	providedIn: 'root'

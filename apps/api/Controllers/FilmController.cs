@@ -3,6 +3,7 @@ using Api.Responses;
 using Domain.Entities;
 using Infrastructure.Clients;
 using Infrastructure.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TMDbLib.Objects.Movies;
@@ -133,6 +134,7 @@ public class FilmController : ControllerBase
         return "";
     }
 
+    [Authorize]
     [HttpPost("addFilm")]
     public async Task<IActionResult> AddFilm([FromBody] AddFilmReq req)
     {
@@ -161,6 +163,7 @@ public class FilmController : ControllerBase
         return Ok(film.Id);
     }
 
+    [Authorize]
     [HttpPost("addSource")]
     public async Task<IActionResult> AddSource([FromBody] AddSourceReq req)
     {

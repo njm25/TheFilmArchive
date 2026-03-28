@@ -1,0 +1,11 @@
+@if (!requestSent())
+{
+    <form (submit)="submitRequest()">
+        <label for="email">Email:</label>
+        <input id="email" type="email" [(ngModel)]="req().email" name="email" required>
+        <button type="submit">Request Account</button>
+    </form>
+} 
+@else {
+    <span>Request sent!</span>
+}

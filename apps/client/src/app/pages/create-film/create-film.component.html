@@ -1,0 +1,7 @@
+
+<form (submit)="submitRequest()">
+    <label for="tmdbId">Tmdb ID:</label>
+    <input id="tmdbId" type="text" [(ngModel)]="req().tmdbId" name="tmdbId" required>
+
+    <button type="submit">Create Film</button>
+</form>
