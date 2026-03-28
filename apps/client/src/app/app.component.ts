@@ -2,7 +2,6 @@ import { Component, computed, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from '../components/header/header.component';
 import { AuthService } from '../services/auth.service';
-import { LinkComponent } from '../components/link/link.component';
 
 @Component({
     selector: 'app-root',

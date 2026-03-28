@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { LoginReq, RegisterReq, RequestAccountReq } from '../types/types';
 import { AuthService } from './auth.service';
 import { Router } from '@angular/router';
+import { environment } from '../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,7 @@ export class UserService {
     private http = inject(HttpClient);
     private auth = inject(AuthService);
     private router = inject(Router);
-    private baseUrl = 'https://localhost:7156';
+    private baseUrl = environment.apiUrl;
 
     requestAccount(req: RequestAccountReq) {
         return this.http.post(`${this.baseUrl}/User/requestAccount`, req);

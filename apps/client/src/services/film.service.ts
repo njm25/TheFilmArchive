@@ -8,13 +8,14 @@ import {
 	GetFilmsReq,
 	GetFilmsRes
 } from '../types/types';
+import { environment } from '../environments/environment';
 
 @Injectable({
 	providedIn: 'root'
 })
 export class FilmService {
 	private http = inject(HttpClient);
-	private baseUrl = 'https://localhost:7156';
+	private baseUrl = environment.apiUrl;
 
 	getFilms(req: GetFilmsReq): Observable<GetFilmsRes> {
 		return this.http.get<GetFilmsRes>(`${this.baseUrl}/Film`, {

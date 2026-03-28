@@ -72,13 +72,15 @@ builder.Services.AddSingleton<DiscordBot>(sp =>
 );
 
 builder.Services.AddHostedService<DiscordBotHostedService>();
-
+var allowedOrigins = builder.Configuration
+    .GetSection("Cors:AllowedOrigins")
+    .Get<string[]>() ?? [];
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AngularClient", policy =>
+    options.AddPolicy("CorsPolicy", policy =>
     {
         policy
-            .WithOrigins("http://localhost:4200")
+            .WithOrigins(allowedOrigins)
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
@@ -92,7 +94,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+app.UseCors("CorsPolicy");
+//app.UseHttpsRedirection();
 app.UseCors("AngularClient");
 app.UseAuthentication();
 app.UseAuthorization();
