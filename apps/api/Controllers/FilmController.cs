@@ -92,6 +92,7 @@ public class FilmController : ControllerBase
         {
             Title = film.Title,
             Description = film.Description ?? "No description found.",
+            Tagline = film.Tagline ?? "No tagline found.",
             YearReleased = film.ReleaseYear ?? 0,
             PosterUrl = BuildPosterUrl(film.PosterPath) ?? "No path found.",
             Sources = film.Sources
@@ -149,7 +150,8 @@ public class FilmController : ControllerBase
         {
             TmdbId = req.TmdbId,
             Title = movie.Title ?? "No title found",
-            Description = movie.Tagline,
+            Tagline = movie.Tagline,
+            Description = movie.Overview,
             PosterPath = movie.PosterPath,
             ReleaseYear = movie.ReleaseDate?.Year,
             CreatedAt = utc,

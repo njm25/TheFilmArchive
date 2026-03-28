@@ -16,6 +16,9 @@ public class Film
     [MaxLength(4000)]
     public string? Description { get; set; }
 
+    [MaxLength(4000)]
+    public string? Tagline { get; set; }
+
     [MaxLength(500)]
     public string? PosterPath { get; set; }
 

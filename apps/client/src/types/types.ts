@@ -51,6 +51,7 @@ export interface GetFilmRes {
 	title: string;
 	yearReleased: number;
 	description: string;
+	tagline: string;
 	posterUrl: string;
 	sources: GetFilmResSource[];
 	primarySourceTypeId: number;

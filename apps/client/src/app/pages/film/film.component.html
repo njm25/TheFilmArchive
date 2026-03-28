@@ -1,4 +1,6 @@
 <h5>{{ film()?.title }} ({{ film()?.yearReleased }})</h5>
+<small class="text-muted">{{ film()?.tagline }}</small>
+<br>
 <small class="text-muted">{{ film()?.description }}</small>
 <div class="d-flex">
     @if(filmId() != 0 && isLoggedIn())
