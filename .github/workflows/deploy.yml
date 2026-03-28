@@ -1,0 +1,64 @@
+name: Deploy API to EC2
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore
+        run: dotnet restore ./apps/api/Api.csproj
+
+      - name: Publish for Linux
+        run: dotnet publish ./apps/api/Api.csproj -c Release -r linux-x64 --self-contained false -o ./publish
+
+      - name: Zip publish output
+        run: |
+          cd publish
+          zip -r ../publish.zip .
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Upload artifact
+        run: |
+          scp -i ~/.ssh/id_ed25519 ./publish.zip ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}:/home/ubuntu/publish.zip
+
+      - name: Deploy on server
+        run: |
+          ssh -i ~/.ssh/id_ed25519 ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} << 'EOF'
+            set -e
+
+            sudo systemctl stop filmarchive.service || true
+
+            cp /var/www/filmarchive/app/appsettings.Production.json /home/ubuntu/appsettings.Production.json.bak || true
+            rm -rf /var/www/filmarchive/app
+            mkdir -p /var/www/filmarchive/app
+            unzip -o /home/ubuntu/publish.zip -d /var/www/filmarchive/app
+            cp /home/ubuntu/appsettings.Production.json.bak /var/www/filmarchive/app/appsettings.Production.json || true
+
+            chown -R ubuntu:ubuntu /var/www/filmarchive/app
+            find /var/www/filmarchive/app -type d -exec chmod 755 {} \;
+            find /var/www/filmarchive/app -type f -exec chmod 644 {} \;
+
+            sudo systemctl start filmarchive.service
+            sudo systemctl status filmarchive.service --no-pager
+
+            rm -f /home/ubuntu/publish.zip
+          EOF
