@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { FilmService } from '../../../services/film.service';
@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 
 @Component({
     selector: 'tfa-create-film',
-    imports: [FormsModule, CommonModule],
+    imports: [FormsModule],
     templateUrl: './create-film.component.html',
     styleUrl: './create-film.component.css'
 })

@@ -2,12 +2,12 @@ import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UserService } from '../../../services/user.service';
 import { RegisterReq } from '../../../types/types';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 
 @Component({
     selector: 'tfa-register',
-    imports: [FormsModule, CommonModule],
+    imports: [FormsModule],
     templateUrl: './register.component.html',
     styleUrl: './register.component.css'
 })
