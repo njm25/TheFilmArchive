@@ -1,7 +1,7 @@
 import { Component, computed, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from '../components/header/header.component';
-import { AuthService } from '../services/auth.service';
+import { UserService } from '../services/user.service';
 
 @Component({
     selector: 'app-root',
@@ -11,9 +11,9 @@ import { AuthService } from '../services/auth.service';
 })
 export class AppComponent {
     title = 'client';
-    auth = inject(AuthService);
+    userService = inject(UserService);
 
     ngOnInit() {
-        this.auth.checkLogin();
+        this.userService.refreshMe();
     }
 }

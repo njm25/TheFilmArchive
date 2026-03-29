@@ -1,11 +1,14 @@
 ﻿using Api.Requests;
+using Api.Responses;
 using Api.Services;
 using Domain.Entities;
 using Infrastructure.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Net.Mail;
+using System.Security.Claims;
 using System.Security.Cryptography;
 
 namespace Api.Controllers;
@@ -154,6 +157,26 @@ public class UserController : ControllerBase
             message = "Login successful.",
             token
         });
+    }
+
+    [Authorize]
+    [HttpGet("me")]
+    public IActionResult Me()
+    {
+        var roleString = User.FindFirstValue(ClaimTypes.Role);
+
+        var role = Enum.TryParse<RoleEnum>(roleString, out var parsedRole)
+            ? parsedRole
+            : RoleEnum.User;
+
+        MeRes res = new MeRes()
+        {
+            Id = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "",
+            UserName = User.Identity?.Name ?? "",
+            Role = role
+        };
+
+        return Ok(res);
     }
 
     private static string GenerateToken()

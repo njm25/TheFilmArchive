@@ -71,3 +71,15 @@ export interface LoginReq {
     userNameOrEmail: string;
     password: string;
 }
+
+export interface MeRes {
+    id: number;
+    userName: string;
+    role: RoleEnum;
+}
+
+export enum RoleEnum {
+    User = 0,
+    Admin = 1,
+    SysAdmin = 99
+}
