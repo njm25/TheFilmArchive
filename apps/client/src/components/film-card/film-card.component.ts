@@ -3,11 +3,10 @@ import { GetFilmsResItem } from '../../types/types';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'tfa-film-card',
-  standalone: true,
-  imports: [],
-  templateUrl: './film-card.component.html',
-  styleUrl: './film-card.component.css'
+    selector: 'tfa-film-card',
+    imports: [],
+    templateUrl: './film-card.component.html',
+    styleUrl: './film-card.component.css'
 })
 export class FilmCardComponent {
 

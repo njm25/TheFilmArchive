@@ -3,11 +3,10 @@ import { ActivatedRoute } from '@angular/router';
 import { FilmService } from '../../../services/film.service';
 
 @Component({
-  selector: 'tfa-source',
-  standalone: true,
-  imports: [],
-  templateUrl: './source.component.html',
-  styleUrl: './source.component.css'
+    selector: 'tfa-source',
+    imports: [],
+    templateUrl: './source.component.html',
+    styleUrl: './source.component.css'
 })
 export class SourceComponent {
     route = inject(ActivatedRoute);

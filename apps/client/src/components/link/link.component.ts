@@ -3,7 +3,6 @@ import { Router } from '@angular/router';
 
 @Component({
     selector: 'tfa-link',
-    standalone: true,
     imports: [],
     templateUrl: './link.component.html',
     styleUrl: './link.component.css'

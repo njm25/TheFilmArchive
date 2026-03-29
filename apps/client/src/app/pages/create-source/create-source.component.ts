@@ -3,14 +3,13 @@ import { AddSourceReq, SourceTypeEnum } from '../../../types/types';
 import { FilmService } from '../../../services/film.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+
 
 @Component({
-  selector: 'tfa-create-source',
-  standalone: true,
-  imports: [FormsModule, CommonModule],
-  templateUrl: './create-source.component.html',
-  styleUrl: './create-source.component.css'
+    selector: 'tfa-create-source',
+    imports: [FormsModule],
+    templateUrl: './create-source.component.html',
+    styleUrl: './create-source.component.css'
 })
 export class CreateSourceComponent {
     router = inject(Router);
