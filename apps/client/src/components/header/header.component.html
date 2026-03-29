@@ -5,9 +5,17 @@
             <small class="text-muted">A collection of public domain films.</small>
         </tfa-link>
         <div class="d-flex">
+            
             @if(isLoggedIn())
             {
+                <span class="m-1"> Welcome, {{ userService.me()?.userName }}</span>
+            }
+            @if (isSysAdmin())
+            {
                 <tfa-link href="/createFilm" styleClass="border border-black p-1 m-1">Create Film</tfa-link>
+            }
+            @if(isLoggedIn())
+            {
                 <div (click)="logout()" style="cursor: pointer;" class="border border-black p-1 m-1">Log out</div>
             }
             @else {

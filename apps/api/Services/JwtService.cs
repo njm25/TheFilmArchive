@@ -23,19 +23,15 @@ public class JwtService
 
     public async Task<string> GenerateTokenAsync(ApplicationUser user)
     {
-        var roles = await _userManager.GetRolesAsync(user);
-
         var claims = new List<Claim>
         {
             new Claim(JwtRegisteredClaimNames.Sub, user.Id),
             new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName ?? ""),
             new Claim(JwtRegisteredClaimNames.Email, user.Email ?? ""),
             new Claim(ClaimTypes.NameIdentifier, user.Id),
-            new Claim(ClaimTypes.Name, user.UserName ?? "")
+            new Claim(ClaimTypes.Name, user.UserName ?? ""),
+            new Claim(ClaimTypes.Role, user.Role.ToString())
         };
-
-        foreach (var role in roles)
-            claims.Add(new Claim(ClaimTypes.Role, role));
 
         var key = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!)
@@ -51,6 +47,6 @@ public class JwtService
             signingCredentials: creds
         );
 
-        return new JwtSecurityTokenHandler().WriteToken(token);
+        return await Task.FromResult(new JwtSecurityTokenHandler().WriteToken(token));
     }
 }

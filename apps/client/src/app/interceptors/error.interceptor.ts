@@ -10,10 +10,14 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 		catchError((error) => {
 			// Handle based on status
 			if (error.status !== 200) {
-				const message =
+				let message =
 					error?.error?.message ||
 					error?.statusText ||
 					'An unexpected error occurred';
+                
+                if (error.status === 403) {
+                    message = 'Unauthorized';
+                }
 
 				toastr.error(message, `Error ${error.status}`);
 			}

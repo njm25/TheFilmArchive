@@ -135,7 +135,7 @@ public class FilmController : ControllerBase
         return "";
     }
 
-    [Authorize]
+    [Authorize(Roles = "Admin,SysAdmin")]
     [HttpPost("addFilm")]
     public async Task<IActionResult> AddFilm([FromBody] AddFilmReq req)
     {
@@ -165,7 +165,7 @@ public class FilmController : ControllerBase
         return Ok(film.Id);
     }
 
-    [Authorize]
+    [Authorize(Roles = "Admin,SysAdmin")]
     [HttpPost("addSource")]
     public async Task<IActionResult> AddSource([FromBody] AddSourceReq req)
     {
