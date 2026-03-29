@@ -6,11 +6,10 @@ import { LinkComponent } from '../../../components/link/link.component';
 import { AuthService } from '../../../services/auth.service';
 
 @Component({
-  selector: 'tfa-film',
-  standalone: true,
-  imports: [LinkComponent],
-  templateUrl: './film.component.html',
-  styleUrl: './film.component.css'
+    selector: 'tfa-film',
+    imports: [LinkComponent],
+    templateUrl: './film.component.html',
+    styleUrl: './film.component.css'
 })
 export class FilmComponent {
     route = inject(ActivatedRoute);

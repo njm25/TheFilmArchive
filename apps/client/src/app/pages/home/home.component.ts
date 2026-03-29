@@ -5,11 +5,10 @@ import { FilmCardComponent } from '../../../components/film-card/film-card.compo
 import { environment } from '../../../environments/environment';
 
 @Component({
-  selector: 'tfa-home',
-  standalone: true,
-  imports: [FilmCardComponent],
-  templateUrl: './home.component.html',
-  styleUrl: './home.component.css'
+    selector: 'tfa-home',
+    imports: [FilmCardComponent],
+    templateUrl: './home.component.html',
+    styleUrl: './home.component.css'
 })
 export class HomeComponent {
     readonly SOURCE_BASE_URL = environment.bucketUrl;

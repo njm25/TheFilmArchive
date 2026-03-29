@@ -6,11 +6,10 @@ import { AddFilmReq } from '../../../types/types';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'tfa-create-film',
-  standalone: true,
-  imports: [FormsModule, CommonModule],
-  templateUrl: './create-film.component.html',
-  styleUrl: './create-film.component.css'
+    selector: 'tfa-create-film',
+    imports: [FormsModule, CommonModule],
+    templateUrl: './create-film.component.html',
+    styleUrl: './create-film.component.css'
 })
 export class CreateFilmComponent {
     router = inject(Router);

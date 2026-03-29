@@ -6,11 +6,10 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'tfa-register',
-  standalone: true,
-  imports: [FormsModule, CommonModule],
-  templateUrl: './register.component.html',
-  styleUrl: './register.component.css'
+    selector: 'tfa-register',
+    imports: [FormsModule, CommonModule],
+    templateUrl: './register.component.html',
+    styleUrl: './register.component.css'
 })
 export class RegisterComponent {
     route = inject(ActivatedRoute);
