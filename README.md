@@ -2,11 +2,9 @@
 
 This project consists of:
 
-* **Backend:** .NET (Visual Studio 2026)
-* **Frontend:** Angular (Node.js, VS Code)
-* **Database:** Microsoft SQL Server (local, via Docker)
-* **Optional Integration:** Discord bot
-* **External API:** TMDb
+* **Backend:** .NET
+* **Frontend:** Angular
+* **Database:** Microsoft SQL Server
 
 ---
 
@@ -18,8 +16,6 @@ Ensure the following are installed:
 * .NET 10 SDK
 * Node.js (LTS recommended)
 * Docker (for SQL Server)
-* SQL Server Management Studio (SSMS)
-* VS Code
 
 ---
 
@@ -37,6 +33,11 @@ Add the following to your backend `appsettings.Development.json` (or equivalent)
 "Discord": {
   "Token": "",
   "UserId": 0
+},
+"Jwt": {
+  "Issuer": "TheFilmArchive",
+  "Audience": "TheFilmArchiveUsers",
+  "Key": "dev-only-secret-key-change-me"
 }
 ```
 
@@ -54,7 +55,16 @@ Add the following to your backend `appsettings.Development.json` (or equivalent)
 * **Discord.UserId**
 
   * Your Discord user ID (Developer Mode required)
+* **Jwt.Issuer**
 
+  * No change needed
+* **Jwt.Audience**
+
+  * No change needed
+
+* **Jwt.Key**
+  * Secret used to sign JWT tokens
+  * For development, any sufficiently long string is acceptable
 ---
 
 ## Local Setup Instructions
@@ -109,8 +119,7 @@ dotnet build
 
 Notes:
 
-* Migrations should run automatically in production (if configured)
-* For development, run them manually in the Infrastructure project:
+* For development, you can run migrations manually in the Infrastructure project:
 
 ```powershell
 update-database
@@ -139,7 +148,7 @@ This starts the Angular dev server.
 
 ---
 
-### 4. Discord Bot Setup (Optional)
+### 4. Discord Bot Setup 
 
 1. Go to Discord Developer Portal
 
@@ -181,21 +190,16 @@ Typical startup sequence:
 1. Start SQL Server (Docker)
 2. Run backend (Visual Studio)
 3. Run frontend (`npm start`)
-4. (Optional) Ensure Discord bot is configured
 
 ---
 
 ## Notes
 
-* Frontend environment must point to correct backend URL
-* Ensure backend is running before frontend API calls
 * Do not commit secrets (API keys, tokens, connection strings)
 
 ---
 
 ## Missing Configuration
 
-* TMDb API key is required → request separately
+* TMDb API key is required, request separately
 * Connection string depends on local SQL setup
-
----
