@@ -177,12 +177,3 @@ Typical startup sequence:
 1. Start SQL Server (Docker)
 2. Run backend (Visual Studio)
 3. Run frontend (`npm start`)
-
-## Notes
-
-* Do not commit secrets (API keys, tokens, connection strings)
-
-## Missing Configuration
-
-* TMDb API key is required, request separately
-* Connection string depends on local SQL setup
