@@ -19,21 +19,23 @@ Ensure the following are installed:
 
 Add the following to your backend `appsettings.Development.json` (or equivalent):
 
-```json
-"ConnectionStrings": {
-  "DefaultConnection": ""
-},
-"Tmdb": {
-  "ApiKey": ""
-},
-"Discord": {
-  "Token": "",
-  "UserId": 0
-},
-"Jwt": {
-  "Issuer": "TheFilmArchive",
-  "Audience": "TheFilmArchiveUsers",
-  "Key": "dev-only-secret-key-change-me"
+```json 
+{
+	"ConnectionStrings": {
+	  "DefaultConnection": ""
+	},
+	"Tmdb": {
+	  "ApiKey": ""
+	},
+	"Discord": {
+	  "Token": "",
+	  "UserId": 0
+	},
+	"Jwt": {
+	  "Issuer": "TheFilmArchive",
+	  "Audience": "TheFilmArchiveUsers",
+	  "Key": "dev-only-secret-key-change-me"
+	}
 }
 ```
 
