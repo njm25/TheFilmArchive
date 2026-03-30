@@ -6,8 +6,6 @@ This project consists of:
 * **Frontend:** Angular
 * **Database:** Microsoft SQL Server
 
----
-
 ## Prerequisites
 
 Ensure the following are installed:
@@ -16,8 +14,6 @@ Ensure the following are installed:
 * .NET 10 SDK
 * Node.js (LTS recommended)
 * Docker (for SQL Server)
-
----
 
 ## Required Configuration
 
@@ -65,7 +61,6 @@ Add the following to your backend `appsettings.Development.json` (or equivalent)
 * **Jwt.Key**
   * Secret used to sign JWT tokens
   * For development, any sufficiently long string is acceptable
----
 
 ## Local Setup Instructions
 
@@ -167,8 +162,6 @@ This starts the Angular dev server.
    * Right-click profile → Copy ID
    * Add to config
 
----
-
 ## Development Workflow
 
 Preferred tooling:
@@ -183,13 +176,9 @@ Typical startup sequence:
 2. Run backend (Visual Studio)
 3. Run frontend (`npm start`)
 
----
-
 ## Notes
 
 * Do not commit secrets (API keys, tokens, connection strings)
-
----
 
 ## Missing Configuration
 
