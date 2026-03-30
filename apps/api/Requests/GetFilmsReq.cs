@@ -1,21 +1,11 @@
 ﻿namespace Api.Requests;
 
-public class GetFilmsReq
+public class GetFilmsReq : GenericListReq
 {
-    public required int PageSize { get; set; }
-    public required int PageNumber { get; set; }
-    public string? SearchText { get; set; }
-    public required OrderByEnum OrderBy { get; set; }
-    public required OrderingTypeEnum OrderingType { get; set; }
+    public required OrderFilmByEnum OrderBy { get; set; }
 }
 
-public enum OrderByEnum
-{ 
+public enum OrderFilmByEnum
+{
     YearReleased = 1,
-}
-
-public enum OrderingTypeEnum
-{
-    Ascending = 0,
-    Descending = 1
 }

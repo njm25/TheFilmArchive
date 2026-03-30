@@ -179,6 +179,103 @@ public class UserController : ControllerBase
         return Ok(res);
     }
 
+    [Authorize(Roles = "SysAdmin")]
+    [HttpGet]
+    public async Task<IActionResult> GetUsers([FromQuery] GetUsersReq req)
+    {
+        IQueryable <ApplicationUser> query = _db.Users.AsQueryable();
+
+        // Filtering
+        if (!string.IsNullOrWhiteSpace(req.SearchText))
+        {
+            query = query.Where(f => f.UserName != null && f.UserName.Contains(req.SearchText));
+        }
+
+        // Ordering
+        query = (req.OrderBy, req.OrderingType) switch
+        {
+
+            (OrderUserByEnum.Id, OrderingTypeEnum.Ascending) =>
+                query.OrderBy(f => f.Id),
+
+            (OrderUserByEnum.Id, OrderingTypeEnum.Descending) =>
+                query.OrderByDescending(f => f.Id),
+
+            (OrderUserByEnum.Email, OrderingTypeEnum.Ascending) =>
+                query.OrderBy(f => f.Email),
+
+            (OrderUserByEnum.Email, OrderingTypeEnum.Descending) =>
+                query.OrderByDescending(f => f.Email),
+
+            (OrderUserByEnum.UserName, OrderingTypeEnum.Ascending) =>
+                query.OrderBy(f => f.UserName),
+
+            (OrderUserByEnum.UserName, OrderingTypeEnum.Descending) =>
+                query.OrderByDescending(f => f.UserName),
+
+            _ => query.OrderBy(f => f.Id)
+        };
+
+        // Paging
+        int skip = (req.PageNumber - 1) * req.PageSize;
+
+        List<GetUsersResItem> users = await query
+            .Skip(skip)
+            .Take(req.PageSize)
+            .Select(f => new GetUsersResItem
+            {
+                UserName = f.UserName ?? "Username not found.",
+                Id = f.Id,
+                Email = f.Email ?? "Email not found.",
+                Role = f.Role
+            })
+            .ToListAsync();
+
+        var res = new GetUsersRes
+        {
+            Users = users
+        };
+
+        return Ok(res);
+    }
+
+    [Authorize(Roles = "SysAdmin")]
+    [HttpPost("setRole/{userId}")]
+    public async Task<IActionResult> SetRole(string userId, [FromBody] RoleEnum role)
+    {
+        ApplicationUser? user = await _db.Users.FirstOrDefaultAsync(u => u.Id == userId);
+        
+        if (user == null)
+            return NotFound();
+
+        user.Role = role;
+
+        await _db.SaveChangesAsync();
+
+        return Ok();
+    }
+
+    [Authorize(Roles = "SysAdmin")]
+    [HttpGet("accountRequests")]
+    public async Task<IActionResult> GetAccountRequests()
+    {
+        List<GetAccountRequestsResItem> accountRequests = await _db.AccountRequests
+            .OrderByDescending(o => o.CreatedUtc)
+            .Select(o => new GetAccountRequestsResItem
+            {
+                Email = o.Email,
+                Token = o.Token,
+            })       
+            .ToListAsync();
+
+        GetAccountRequestsRes res = new GetAccountRequestsRes
+        {
+            AccountRequests = accountRequests
+        };
+
+        return Ok(res);
+    }
+
     private static string GenerateToken()
     {
         return Convert.ToHexString(RandomNumberGenerator.GetBytes(32));

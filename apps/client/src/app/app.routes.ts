@@ -7,7 +7,9 @@ import { RegisterComponent } from './pages/register/register.component';
 import { LoginComponent } from './pages/login/login.component';
 import { CreateFilmComponent } from './pages/create-film/create-film.component';
 import { CreateSourceComponent } from './pages/create-source/create-source.component';
-import { authGuard } from './guards/auth.guard';
+import { authGuard, sysAdminGuard } from './guards/auth.guard';
+import { AccountRequestsComponent } from './pages/account-requests/account-requests.component';
+import { UsersComponent } from './pages/users/users.component';
 
 export const routes: Routes = [
     {
@@ -37,12 +39,22 @@ export const routes: Routes = [
     {
         path: "createFilm",
         component: CreateFilmComponent,
-        canActivate: [authGuard]
+        canActivate: [sysAdminGuard]
     },
     {
         path: "createSource/:filmId",
         component: CreateSourceComponent,
-        canActivate: [authGuard]
+        canActivate: [sysAdminGuard]
+    },
+    {
+        path: "accountRequests",
+        component: AccountRequestsComponent,
+        canActivate: [sysAdminGuard]
+    },
+    {
+        path: "users",
+        component: UsersComponent,
+        canActivate: [sysAdminGuard]
     }
 
 ];
