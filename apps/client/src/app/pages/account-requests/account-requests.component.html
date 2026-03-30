@@ -1,0 +1,12 @@
+@for (request of accountRequests(); track request.email) {
+    <div class="border border-black m-1 p-1 text-center source-card text-muted">
+        <small>
+            {{ request.email }} 
+            <div>
+                {{ baseUrl }}/register/{{request.token }}
+            </div>
+        </small>
+    </div>
+} @empty {
+    <p>No account requests found.</p>
+}

@@ -17,6 +17,6 @@ export class HeaderComponent {
     isLoggedIn = computed(() => this.auth.isLoggedIn());
     isSysAdmin = computed(() => this.userService.isSysAdmin());
 
-    logout = () => this.auth.logout();
+    logout = () => this.userService.logout();
 
 }

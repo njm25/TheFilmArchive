@@ -2,7 +2,6 @@ import { Component, inject, signal } from '@angular/core';
 import { FilmService } from '../../../services/film.service';
 import { GetFilmsResItem, GetFilmsReq, GetFilmsRes } from '../../../types/types';
 import { FilmCardComponent } from '../../../components/film-card/film-card.component';
-import { environment } from '../../../environments/environment';
 
 @Component({
     selector: 'tfa-home',
@@ -11,8 +10,6 @@ import { environment } from '../../../environments/environment';
     styleUrl: './home.component.css'
 })
 export class HomeComponent {
-    readonly SOURCE_BASE_URL = environment.bucketUrl;
-
     filmService = inject(FilmService);
 
     films = signal<GetFilmsResItem[]>([]); 

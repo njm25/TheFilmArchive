@@ -43,10 +43,10 @@ public class FilmController : ControllerBase
         query = (req.OrderBy, req.OrderingType) switch
         {
 
-            (OrderByEnum.YearReleased, OrderingTypeEnum.Ascending) =>
+            (OrderFilmByEnum.YearReleased, OrderingTypeEnum.Ascending) =>
                 query.OrderBy(f => f.ReleaseYear),
 
-            (OrderByEnum.YearReleased, OrderingTypeEnum.Descending) =>
+            (OrderFilmByEnum.YearReleased, OrderingTypeEnum.Descending) =>
                 query.OrderByDescending(f => f.ReleaseYear),
 
             _ => query.OrderBy(f => f.Id)

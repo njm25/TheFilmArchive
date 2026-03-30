@@ -12,6 +12,8 @@
             }
             @if (isSysAdmin())
             {
+                <tfa-link href="/users" styleClass="border border-black p-1 m-1">Users</tfa-link>
+                <tfa-link href="/accountRequests" styleClass="border border-black p-1 m-1">Account Requests</tfa-link>
                 <tfa-link href="/createFilm" styleClass="border border-black p-1 m-1">Create Film</tfa-link>
             }
             @if(isLoggedIn())
