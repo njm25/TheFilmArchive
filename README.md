@@ -69,8 +69,6 @@ Add the following to your backend `appsettings.Development.json` (or equivalent)
 
 ## Local Setup Instructions
 
----
-
 ### 1. Database Setup (SQL Server via Docker)
 
 Run a SQL Server container:
@@ -92,8 +90,6 @@ Use this for your connection string:
 ```
 Server=localhost,1433;Database=TheFilmArchive;User Id=sa;Password=YourStrongPassword123!;TrustServerCertificate=True;
 ```
-
----
 
 ### 2. Backend Setup (.NET)
 
@@ -125,8 +121,6 @@ Notes:
 update-database
 ```
 
----
-
 ### 3. Frontend Setup (Angular)
 
 Open:
@@ -145,8 +139,6 @@ npm start
 ```
 
 This starts the Angular dev server.
-
----
 
 ### 4. Discord Bot Setup 
 
