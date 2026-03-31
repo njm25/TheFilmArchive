@@ -11,5 +11,5 @@ public class GetFilmResItem
     public required string Title { get; set; }
     public required int YearReleased { get; set; }
     public required string Description { get; set; }
-    public required string PosterUrl { get; set; }
+    public required string PosterPath { get; set; }
 }

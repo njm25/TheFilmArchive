@@ -2,7 +2,7 @@
     class="film-card d-flex flex-column align-items-center border border-black p-1 text-break word-wrap"
     (click)="goToFilm()"
 >
-    @if (film()?.posterUrl)
+    @if (film()?.posterPath)
     {
         <img class="poster" [src]="posterSrc()" alt="Poster for {{film()?.title}}" />
     }

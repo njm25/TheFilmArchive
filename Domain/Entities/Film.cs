@@ -6,7 +6,7 @@ public class Film
 {
     public int Id { get; set; }
 
-    public string? TmdbId { get; set; }
+    public string TmdbId { get; set; } = string.Empty;
 
     [MaxLength(255)]
     public string Title { get; set; } = string.Empty;
@@ -21,6 +21,11 @@ public class Film
 
     [MaxLength(500)]
     public string? PosterPath { get; set; }
+
+    [MaxLength(500)]
+    public string? BackdropPath { get; set; }
+
+    public int? Runtime { get; set; }
 
     public DateTime CreatedAt { get; set; }
 
