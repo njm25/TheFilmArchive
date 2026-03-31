@@ -39,7 +39,7 @@ export interface GetFilmsResItem {
 	title: string;
 	yearReleased: number;
 	description: string;
-	posterUrl: string;
+	posterPath: string;
 }
 
 export interface GetFilmsRes {
@@ -75,9 +75,11 @@ export interface GetFilmRes {
 	yearReleased: number;
 	description: string;
 	tagline: string;
-	posterUrl: string;
+	posterPath: string;
 	sources: GetFilmResSource[];
 	primarySourceTypeId: number;
+    backdropPath: string;
+    runtime: number;
 }
 
 // requst acct

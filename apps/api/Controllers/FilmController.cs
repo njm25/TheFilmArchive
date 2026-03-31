@@ -64,7 +64,7 @@ public class FilmController : ControllerBase
                 Title = f.Title,
                 YearReleased = f.ReleaseYear ?? 0,
                 Description = f.Description ?? "No description found.",
-                PosterUrl = f.PosterPath ?? ""
+                PosterPath = f.PosterPath ?? ""
             })
             .ToListAsync();
 
@@ -94,7 +94,7 @@ public class FilmController : ControllerBase
             Description = film.Description ?? "No description found.",
             Tagline = film.Tagline ?? "No tagline found.",
             YearReleased = film.ReleaseYear ?? 0,
-            PosterUrl = BuildPosterUrl(film.PosterPath) ?? "No path found.",
+            PosterPath = film.PosterPath ?? "No path found.",
             Sources = film.Sources
                     .Select(o => new GetFilmResSource
                     {
@@ -107,8 +107,9 @@ public class FilmController : ControllerBase
                     .Where(o => o.IsPrimary)
                     .Select(o => o.Id)
                     .ToList()
-                    .FirstOrDefault(-1)
-
+                    .FirstOrDefault(-1),
+            BackdropPath = film.BackdropPath ?? "No path found.",
+            Runtime = film.Runtime ?? 0
         };
 
         return Ok(res);
@@ -154,8 +155,11 @@ public class FilmController : ControllerBase
             Description = movie.Overview,
             PosterPath = movie.PosterPath,
             ReleaseYear = movie.ReleaseDate?.Year,
+            Runtime = movie.Runtime,
+            BackdropPath = movie.BackdropPath,
             CreatedAt = utc,
-            UpdatedAt = utc
+            UpdatedAt = utc,
+
         };
 
         await _db.Films.AddAsync(film);
@@ -182,6 +186,39 @@ public class FilmController : ControllerBase
         await _db.SaveChangesAsync();
 
         return Ok(source.Id);
+    }
+
+    [Authorize(Roles = "Admin,SysAdmin")]
+    [HttpPost("refreshMetadata/{filmId}")]
+    public async Task<IActionResult> RefreshMetadata(string filmId)
+    {
+        Film? film = await _db.Films.FirstOrDefaultAsync(f => f.Id == int.Parse(filmId));
+        
+        if (film == null) 
+            return NotFound();
+
+        Movie? movie = await _tmdb.GetMovieByTmdbId(film.TmdbId);
+
+        if (film.Tagline != movie?.Tagline)
+            film.Tagline = movie?.Tagline;
+
+        if (film.Description != movie?.Overview)
+            film.Description = movie?.Overview;
+
+        if (film.Runtime != movie?.Runtime)
+            film.Runtime = movie?.Runtime;
+
+        if (film.PosterPath != movie?.PosterPath)
+            film.PosterPath = movie?.PosterPath;
+
+        if (film.BackdropPath != movie?.BackdropPath)
+            film.BackdropPath = movie?.BackdropPath;
+
+        film.UpdatedAt = DateTime.UtcNow;
+
+        await _db.SaveChangesAsync();
+
+        return Ok();
     }
 
 }

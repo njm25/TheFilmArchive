@@ -46,4 +46,8 @@ export class FilmService {
 	addSource(req: AddSourceReq): Observable<number> {
 		return this.http.post<number>(`${this.baseUrl}/Film/addSource`, req);
 	}
+
+    refreshMetadata(filmId: number): Observable<void> {
+        return this.http.post<void>(`${this.baseUrl}/Film/refreshMetadata/${filmId.toString()}`, { });
+    }
 }

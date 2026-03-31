@@ -15,7 +15,7 @@ export class FilmCardComponent {
     readonly TMDB_BASE_URL = "https://image.tmdb.org/t/p/w200";
 
     film = input<GetFilmsResItem>();
-    posterSrc = computed(() => `${this.TMDB_BASE_URL}/${this.film()?.posterUrl}`);
+    posterSrc = computed(() => `${this.TMDB_BASE_URL}/${this.film()?.posterPath}`);
 
     goToFilm = () => this.router.navigate([`/film/${this.film()?.filmId}`]);
 
