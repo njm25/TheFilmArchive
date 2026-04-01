@@ -1,9 +1,9 @@
+<main class="main h-100 w-100 d-flex flex-column overflow-hidden px-3 py-3">
+	<tfa-header></tfa-header>
 
-<tfa-header></tfa-header>
-<main class="main h-100 w-100 d-flex justify-content-center align-items-center">
-    <div class="content border w-100 border-black m-4 d-flex p-2">
-        <div class="w-100">
-            <router-outlet></router-outlet>
-        </div>
-    </div>
+	<div class="content container-fluid container-xl border border-black p-2 d-flex flex-column flex-grow-1 min-h-0 overflow-hidden">
+		<div class="router-content w-100 d-flex flex-column flex-grow-1 min-h-0 overflow-auto">
+			<router-outlet></router-outlet>
+		</div>
+	</div>
 </main>

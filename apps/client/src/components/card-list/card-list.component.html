@@ -1,0 +1,17 @@
+<div class="film-grid-container">
+	<div class="row g-2 m-0">
+		@for(film of films(); track film.filmId)
+		{
+			<div class="col-4 col-md-3 col-xl-2">
+				<tfa-film-card class="d-block h-100 w-100" [film]="film"></tfa-film-card>
+			</div>
+		}
+		@empty {
+			<div class="col-12 d-flex justify-content-center py-3">
+				<div class="spinner-border" role="status">
+					<span class="sr-only"></span>
+				</div>
+			</div>
+		}
+	</div>
+</div>

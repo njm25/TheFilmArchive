@@ -1,10 +1,11 @@
 import { Component, computed, inject, input } from '@angular/core';
 import { GetFilmsResItem } from '../../types/types';
 import { Router } from '@angular/router';
+import { LinkComponent } from "../link/link.component";
 
 @Component({
     selector: 'tfa-film-card',
-    imports: [],
+    imports: [LinkComponent],
     templateUrl: './film-card.component.html',
     styleUrl: './film-card.component.css'
 })
@@ -17,6 +18,6 @@ export class FilmCardComponent {
     film = input<GetFilmsResItem>();
     posterSrc = computed(() => `${this.TMDB_BASE_URL}/${this.film()?.posterPath}`);
 
-    goToFilm = () => this.router.navigate([`/film/${this.film()?.filmId}`]);
+    filmSrc = computed(() => `film/${this.film()?.filmId}`);
 
 }

@@ -1,12 +1,19 @@
-.poster{
-    width: 200px;
+.film-card {
+	width: 100%;
+}
+
+.poster {
+	width: 100%;
+	aspect-ratio: 2 / 3;
+	object-fit: cover;
+	display: block;
 }
 
 .film-card:hover {
-    background-color: #f0f0f0;
-    cursor: pointer;
+	background-color: #f0f0f0;
+	cursor: pointer;
 }
 
 .film-card:hover small {
-    text-decoration: underline;
+	text-decoration: underline;
 }

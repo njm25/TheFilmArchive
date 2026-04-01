@@ -1,11 +1,11 @@
 import { Component, inject, signal } from '@angular/core';
 import { FilmService } from '../../../services/film.service';
 import { GetFilmsResItem, GetFilmsReq, GetFilmsRes } from '../../../types/types';
-import { FilmCardComponent } from '../../../components/film-card/film-card.component';
+import { CardListComponent } from '../../../components/card-list/card-list.component';
 
 @Component({
     selector: 'tfa-home',
-    imports: [FilmCardComponent],
+    imports: [CardListComponent],
     templateUrl: './home.component.html',
     styleUrl: './home.component.css'
 })
