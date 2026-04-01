@@ -1,31 +1,30 @@
-<div class="position-absolute">
+<div>
     <div class="header d-flex justify-content-between align-items-center p-2">
-        <tfa-link>
-            <h3>The Film Archive</h3>
-            <small class="text-muted">A collection of public domain films.</small>
-        </tfa-link>
-        <div class="d-flex">
-            
-            @if(isLoggedIn())
+        <div class="d-flex align-items-center">
+            <tfa-link class="mr-4">
+                <h3>The Film Archive</h3>
+                <small class="text-muted">A collection of public domain films.</small>
+            </tfa-link>
+            @if(isAdmin())
             {
-                <span class="m-1"> Welcome, {{ userService.me()?.userName }}</span>
+                <tfa-link href="/createFilm" class="underline-hover" styleClass="border border-black p-1 m-1">Create Film</tfa-link>
             }
             @if (isSysAdmin())
             {
-                <tfa-link href="/users" styleClass="border border-black p-1 m-1">Users</tfa-link>
-                <tfa-link href="/accountRequests" styleClass="border border-black p-1 m-1">Account Requests</tfa-link>
+                <tfa-link href="/accountRequests" class="underline-hover" styleClass="border border-black p-1 m-1">Account Requests</tfa-link>
+                <tfa-link href="/users" class="underline-hover" styleClass="border border-black p-1 m-1">Users</tfa-link>
             }
-            @if(isAdmin())
-            {
-                <tfa-link href="/createFilm" styleClass="border border-black p-1 m-1">Create Film</tfa-link>
-            }
+
+        </div>
+        <div class="d-flex align-items-center">
             @if(isLoggedIn())
             {
-                <div (click)="logout()" style="cursor: pointer;" class="border border-black p-1 m-1">Log out</div>
+                <span class="mr-2"> Welcome, {{ userService.me()?.userName }}</span>
+                <div (click)="logout()" style="cursor: pointer;" class="underline-hover border border-black p-1 m-1">Log out</div>
             }
             @else {
-                <tfa-link href="/requestAccount" styleClass="border border-black p-1 m-1">Sign Up</tfa-link>
-                <tfa-link href="/login" styleClass="border border-black p-1 m-1">Log In</tfa-link>
+                <tfa-link href="/requestAccount" class="underline-hover" styleClass="border border-black p-1 m-1">Sign Up</tfa-link>
+                <tfa-link href="/login" class="underline-hover" styleClass="border border-black p-1 m-1">Log In</tfa-link>
             }
         </div>
     </div>
