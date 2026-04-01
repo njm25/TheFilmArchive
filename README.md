@@ -46,7 +46,7 @@ Add the following to your backend `appsettings.Development.json` (or equivalent)
   * Connection string to your local SQL Server instance
 * **Tmdb.ApiKey**
 
-  * Ask for this value
+  * Ask for this value, or request one from TMDB
 * **Discord.Token**
 
   * Generated from Discord Developer Portal
