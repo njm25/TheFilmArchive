@@ -1,3 +1,3 @@
-<div (click)="onClick($event)" [class]="styleClass()" style="text-decoration: none; color: inherit; cursor: pointer;">
+<div (click)="onClick($event)" (auxclick)="onClick($event)" [class]="styleClass()" style="text-decoration: none; color: inherit; cursor: pointer;">
     <ng-content></ng-content>
 </div>
