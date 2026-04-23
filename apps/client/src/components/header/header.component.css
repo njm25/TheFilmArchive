@@ -1,3 +1,247 @@
-.header {
-    width: 100%;
+/* ================================================
+   SITE HEADER
+   ================================================ */
+.site-header {
+  height: var(--header-height);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  flex-shrink: 0;
+  width: 100%;
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding: 0 1.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  gap: 1rem;
+}
+
+/* ================================================
+   LOGO
+   ================================================ */
+.logo-link {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.logo-text {
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  color: var(--text);
+  letter-spacing: 0.01em;
+}
+
+.logo-sub {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* ================================================
+   DESKTOP NAVIGATION
+   ================================================ */
+.desktop-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.125rem;
+  flex: 1;
+}
+
+.user-area {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+.welcome-text {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* ================================================
+   HOST-LEVEL NAV CLASSES
+   (inner div has color:inherit so these control text color)
+   ================================================ */
+.nav-item {
+  color: var(--text-muted);
+  transition: color var(--transition);
+}
+
+.nav-item:hover {
+  color: var(--text);
+}
+
+.auth-btn {
+  color: var(--text-muted);
+  transition: color var(--transition);
+}
+
+.auth-btn:hover {
+  color: var(--text);
+}
+
+.side-item {
+  color: var(--text-muted);
+  transition: color var(--transition);
+}
+
+.side-item:hover {
+  color: var(--text);
+}
+
+/* ================================================
+   HAMBURGER BUTTON
+   ================================================ */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.hamburger span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--text);
+  border-radius: 1px;
+  transition: transform var(--transition-slow), opacity var(--transition-slow);
+  transform-origin: center;
+}
+
+.hamburger.active span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.hamburger.active span:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+
+.hamburger.active span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* ================================================
+   SIDENAV OVERLAY
+   ================================================ */
+.sidenav-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  z-index: 199;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-slow);
+}
+
+.sidenav-overlay.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* ================================================
+   SIDENAV PANEL
+   ================================================ */
+.sidenav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 280px;
+  height: 100%;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(-100%);
+  transition: transform var(--transition-slow);
+}
+
+.sidenav.open {
+  transform: translateX(0);
+}
+
+.sidenav-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.25rem;
+  height: var(--header-height);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.sidenav-close {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0.375rem;
+  font-size: 1rem;
+  transition: color var(--transition);
+  display: flex;
+  align-items: center;
+}
+
+.sidenav-close:hover {
+  color: var(--text);
+}
+
+.sidenav-body {
+  flex: 1;
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  overflow-y: auto;
+}
+
+.sidenav-footer {
+  padding: 1rem 0.75rem;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sidenav-user {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  padding: 0 0.125rem;
+}
+
+/* ================================================
+   RESPONSIVE
+   ================================================ */
+@media (max-width: 768px) {
+  .desktop-nav,
+  .user-area {
+    display: none;
+  }
+
+  .hamburger {
+    display: flex;
+  }
+
+  .header-inner {
+    padding: 0 1rem;
+  }
 }

@@ -1,17 +1,31 @@
-.min-h-0 {
-	min-height: 0;
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #111111;
+  background: var(--bg);
 }
 
-.main {
-	min-height: 0;
+.app-main {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: #111111;
+  background: var(--bg);
 }
 
-.content {
-	min-height: 0;
+.app-content {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
 }
 
-.router-content {
-	min-height: 0;
-	overflow-y: auto;
-	overflow-x: hidden;
+@media (max-width: 768px) {
+  .app-content {
+    padding: 1.25rem 1rem;
+  }
 }

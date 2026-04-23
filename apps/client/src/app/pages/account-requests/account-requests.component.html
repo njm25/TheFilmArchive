@@ -1,12 +1,24 @@
-@for (request of accountRequests(); track request.email) {
-    <div class="border border-black m-1 p-1 text-center source-card text-muted">
-        <small>
-            {{ request.email }} 
-            <div>
-                {{ baseUrl }}/register/{{request.token }}
-            </div>
-        </small>
+<div class="page-header">
+  <h2>Account Requests</h2>
+  <p>Pending registration requests from users.</p>
+</div>
+
+<div class="data-list">
+  @for (request of accountRequests(); track request.email) {
+    <div class="data-item">
+      <div class="data-item-info">
+        <span class="data-item-label">{{ request.email }}</span>
+        <span class="data-item-sub">{{ baseUrl }}/register/{{ request.token }}</span>
+      </div>
+      <div class="data-item-actions">
+        <button class="btn btn-ghost btn-sm" (click)="copyLink(request.token)">
+          <i class="pi pi-copy"></i>
+          Copy link
+        </button>
+      </div>
     </div>
-} @empty {
-    <p>No account requests found.</p>
-}
+  }
+  @empty {
+    <div class="empty-state">No pending account requests.</div>
+  }
+</div>

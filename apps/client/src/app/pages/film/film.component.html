@@ -1,39 +1,71 @@
-<h5 class="d-flex align-items-center">
-    <span class="mr-2">
-        {{ film()?.title }} ({{ film()?.yearReleased }})
-    </span>
-    @if (isAdmin())
-    {
-        <div (click)="refreshMetadata()" class="pointer">
-            <i class="pi pi-sync"></i>
-        </div>
-    }
-</h5>
+<div class="film-page">
 
-<small class="text-muted">{{ film()?.runtime }} mins | {{ film()?.tagline }}</small>
-<br>
-<small class="text-muted">{{ film()?.description }}</small>
-<div class="d-flex">
-    @if(filmId() != 0 && isAdmin())
-    {
-        <tfa-link [href]="'/createSource/' + filmId()" class="border border-black p-1 m-1 underline-hover">Create Source</tfa-link>
+  <!-- Backdrop banner -->
+  @if (film()?.backdropPath) {
+    <div class="film-backdrop-wrap">
+      <img class="film-backdrop" [src]="backdropSrc()" [alt]="film()?.title" />
+    </div>
+  }
+
+  <div class="film-details">
+
+    <!-- Title row -->
+    <div class="film-title-row">
+      <div class="film-heading">
+        <h1 class="film-name">{{ film()?.title }}</h1>
+        <span class="film-year-tag">{{ film()?.yearReleased }}</span>
+      </div>
+      @if (isAdmin()) {
+        <button class="btn btn-ghost btn-sm icon-btn" (click)="refreshMetadata()" title="Refresh metadata">
+          <i class="pi pi-sync"></i>
+        </button>
+      }
+    </div>
+
+    <!-- Meta: runtime + tagline -->
+    @if (film()?.runtime || film()?.tagline) {
+      <div class="film-meta">
+        @if (film()?.runtime) {
+          <span>{{ film()?.runtime }} min</span>
+        }
+        @if (film()?.runtime && film()?.tagline) {
+          <span class="meta-dot">·</span>
+        }
+        @if (film()?.tagline) {
+          <span class="film-tagline">{{ film()?.tagline }}</span>
+        }
+      </div>
     }
-    @for(source of film()?.sources; track source.sourceId)
-    {
-        <div 
-            class="border border-black m-1 p-1 text-center source-card underline-hover"
-            (click)="goToSource(source.sourceId)"
-        >
-            <small>
-                Source {{source.type}}
-            </small>
-        </div>
+
+    <!-- Description -->
+    @if (film()?.description) {
+      <p class="film-description">{{ film()?.description }}</p>
     }
+
+    <!-- Sources -->
+    <div class="film-sources">
+      <div class="sources-row">
+        <span class="sources-label">Watch</span>
+        @if (filmId() != 0 && isAdmin()) {
+          <tfa-link [href]="'/createSource/' + filmId()" class="film-action-link" styleClass="btn btn-ghost btn-sm">
+            <i class="pi pi-plus"></i>
+            Add Source
+          </tfa-link>
+        }
+      </div>
+
+      <div class="sources-chips">
+        @for (source of film()?.sources; track source.sourceId) {
+          <div class="source-chip" (click)="goToSource(source.sourceId)">
+            <i class="pi pi-play"></i>
+            <span>Source {{ source.type }}</span>
+          </div>
+        }
+        @empty {
+          <span class="no-sources">No sources available yet.</span>
+        }
+      </div>
+    </div>
+
+  </div>
 </div>
-@if (film()?.backdropPath)
-{
-  <img
-    style="height: auto;"
-    [src]="backdropSrc()"
-/>
-}   

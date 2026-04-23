@@ -14,12 +14,14 @@ export class AccountRequestsComponent {
     accountRequests = signal<GetAccountRequestsResItem[]>([]);
     baseUrl = window.location.origin;
 
-    ngOnInit()
-    {
+    ngOnInit() {
         this.userService.getAccountRequests().subscribe((r: GetAccountRequestsRes) => {
-            
             this.accountRequests.set(r.accountRequests);
         });
     }
 
+    copyLink(token: string) {
+        const url = `${this.baseUrl}/register/${token}`;
+        navigator.clipboard.writeText(url);
+    }
 }

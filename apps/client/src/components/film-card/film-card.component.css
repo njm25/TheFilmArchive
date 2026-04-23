@@ -1,19 +1,51 @@
-.film-card {
-	width: 100%;
+/* Host element: fills the grid cell */
+:host {
+  display: block;
+  height: 100%;
 }
 
-.poster {
-	width: 100%;
-	aspect-ratio: 2 / 3;
-	object-fit: cover;
-	display: block;
+/* .film-card is applied to the <tfa-link> host element in this component's view */
+.film-card {
+  display: block;
+  height: 100%;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  cursor: pointer;
+  transition: border-color var(--transition), transform var(--transition);
 }
 
 .film-card:hover {
-	background-color: #f0f0f0;
-	cursor: pointer;
+  border-color: var(--accent);
+  transform: translateY(-2px);
 }
 
-.film-card:hover small {
-	text-decoration: underline;
+/* Projected content retains this component's encapsulation attribute */
+.poster {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  display: block;
+  background: var(--surface-2);
+}
+
+.film-info {
+  padding: 0.625rem 0.75rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  flex: 1;
+}
+
+.film-title {
+  font-size: 0.8125rem;
+  color: var(--text);
+  line-height: 1.35;
+  word-break: break-word;
+}
+
+.film-year {
+  font-size: 0.75rem;
+  color: var(--text-muted);
 }

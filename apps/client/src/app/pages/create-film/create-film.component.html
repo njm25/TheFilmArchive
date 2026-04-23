@@ -1,7 +1,23 @@
+<div class="form-page">
+  <div class="form-card">
+    <h2 class="form-title">Add film</h2>
+    <p class="form-subtitle">Enter a TMDB ID to import film metadata.</p>
 
-<form (submit)="submitRequest()">
-    <label for="tmdbId">Tmdb ID:</label>
-    <input id="tmdbId" type="text" [(ngModel)]="req().tmdbId" name="tmdbId" required>
+    <form (submit)="submitRequest()">
+      <div class="form-group">
+        <label class="form-label" for="tmdbId">TMDB ID</label>
+        <input
+          class="form-input"
+          id="tmdbId"
+          type="text"
+          name="tmdbId"
+          placeholder="e.g. 12345"
+          [(ngModel)]="req().tmdbId"
+          required
+        />
+      </div>
 
-    <button type="submit">Create Film</button>
-</form>
+      <button class="btn btn-primary" type="submit">Import film</button>
+    </form>
+  </div>
+</div>

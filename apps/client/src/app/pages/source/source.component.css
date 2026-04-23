@@ -1,0 +1,15 @@
+.source-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding-bottom: 2rem;
+}
+
+.film-player {
+  width: 100%;
+  max-width: 1100px;
+  border-radius: var(--radius-md);
+  background: #000;
+  display: block;
+}

@@ -1,9 +1,8 @@
-<main class="main h-100 w-100 d-flex flex-column overflow-hidden px-3 py-3">
-	<tfa-header></tfa-header>
-
-	<div class="content container-fluid container-xl border border-black p-2 d-flex flex-column flex-grow-1 min-h-0 overflow-hidden">
-		<div class="router-content w-100 d-flex flex-column flex-grow-1 min-h-0 overflow-auto">
-			<router-outlet></router-outlet>
-		</div>
-	</div>
-</main>
+<div class="app-shell">
+  <tfa-header></tfa-header>
+  <main class="app-main">
+    <div class="app-content">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+</div>

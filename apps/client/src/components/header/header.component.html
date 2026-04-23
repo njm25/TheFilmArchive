@@ -1,31 +1,84 @@
-<div>
-    <div class="header d-flex justify-content-between align-items-center p-2">
-        <div class="d-flex align-items-center">
-            <tfa-link class="mr-4">
-                <h3>The Film Archive</h3>
-                <small class="text-muted">A collection of public domain films.</small>
-            </tfa-link>
-            @if(isAdmin())
-            {
-                <tfa-link href="/createFilm" class="underline-hover" styleClass="border border-black p-1 m-1">Create Film</tfa-link>
-            }
-            @if (isSysAdmin())
-            {
-                <tfa-link href="/accountRequests" class="underline-hover" styleClass="border border-black p-1 m-1">Account Requests</tfa-link>
-                <tfa-link href="/users" class="underline-hover" styleClass="border border-black p-1 m-1">Users</tfa-link>
-            }
+<header class="site-header">
+  <div class="header-inner">
 
-        </div>
-        <div class="d-flex align-items-center">
-            @if(isLoggedIn())
-            {
-                <span class="mr-2"> Welcome, {{ userService.me()?.userName }}</span>
-                <div (click)="logout()" style="cursor: pointer;" class="underline-hover border border-black p-1 m-1">Log out</div>
-            }
-            @else {
-                <tfa-link href="/requestAccount" class="underline-hover" styleClass="border border-black p-1 m-1">Sign Up</tfa-link>
-                <tfa-link href="/login" class="underline-hover" styleClass="border border-black p-1 m-1">Log In</tfa-link>
-            }
-        </div>
+    <!-- Logo -->
+    <tfa-link href="/" class="logo-link">
+      <span class="logo-text">The Film Archive</span>
+    </tfa-link>
+
+    <!-- Desktop navigation -->
+    <nav class="desktop-nav">
+      @if (isAdmin()) {
+        <tfa-link href="/createFilm" class="nav-item" styleClass="header-nav-link">Add Film</tfa-link>
+      }
+      @if (isSysAdmin()) {
+        <tfa-link href="/accountRequests" class="nav-item" styleClass="header-nav-link">Requests</tfa-link>
+        <tfa-link href="/users" class="nav-item" styleClass="header-nav-link">Users</tfa-link>
+      }
+    </nav>
+
+    <!-- Desktop user area -->
+    <div class="user-area">
+      @if (isLoggedIn()) {
+        <span class="welcome-text">{{ userService.me()?.userName }}</span>
+        <button class="btn btn-ghost btn-sm" (click)="logout()">Sign out</button>
+      } @else {
+        <tfa-link href="/requestAccount" class="nav-item" styleClass="header-nav-link">Sign Up</tfa-link>
+        <tfa-link href="/login" class="auth-btn" styleClass="header-auth-btn">Sign In</tfa-link>
+      }
     </div>
-</div>
+
+    <!-- Hamburger button (mobile only) -->
+    <button
+      class="hamburger"
+      [class.active]="sidenavOpen()"
+      (click)="toggleSidenav()"
+      aria-label="Toggle menu"
+    >
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+  </div>
+</header>
+
+<!-- Sidenav backdrop -->
+<div
+  class="sidenav-overlay"
+  [class.open]="sidenavOpen()"
+  (click)="closeSidenav()"
+></div>
+
+<!-- Sidenav panel -->
+<nav class="sidenav" [class.open]="sidenavOpen()" aria-label="Mobile navigation">
+
+  <div class="sidenav-header">
+    <span class="logo-text">The Film Archive</span>
+    <button class="sidenav-close" (click)="closeSidenav()" aria-label="Close menu">
+      <i class="pi pi-times"></i>
+    </button>
+  </div>
+
+  <div class="sidenav-body">
+    <tfa-link href="/" class="side-item" styleClass="sidenav-link">Home</tfa-link>
+    @if (isAdmin()) {
+      <tfa-link href="/createFilm" class="side-item" styleClass="sidenav-link">Add Film</tfa-link>
+    }
+    @if (isSysAdmin()) {
+      <tfa-link href="/accountRequests" class="side-item" styleClass="sidenav-link">Account Requests</tfa-link>
+      <tfa-link href="/users" class="side-item" styleClass="sidenav-link">Users</tfa-link>
+    }
+  </div>
+
+  <div class="sidenav-footer">
+    @if (isLoggedIn()) {
+      <span class="sidenav-user">{{ userService.me()?.userName }}</span>
+      <button class="btn btn-ghost btn-sm" style="width: 100%;" (click)="logout()">Sign out</button>
+    } @else {
+      <tfa-link href="/requestAccount" class="side-item" styleClass="sidenav-link">Sign Up</tfa-link>
+      <tfa-link href="/login" class="side-item" styleClass="sidenav-link">Sign In</tfa-link>
+    }
+  </div>
+
+</nav>
