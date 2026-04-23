@@ -1,21 +1,30 @@
-@for(user of users(); track user.id) {
-	<div class="border border-black m-1 p-1 text-center source-card text-muted">
-		<small>
-			{{ user.userName }} ({{ user.email }})
-		</small>
+<div class="page-header">
+  <h2>Users</h2>
+  <p>Manage user accounts and roles.</p>
+</div>
 
-		<div class="mt-2">
-			<select (change)="onRoleChange(user.id, $event)">
-				@for(role of roles; track role.value) {
-					<option
-						[value]="role.value"
-						[selected]="user.role === role.value">
-						{{ role.label }}
-					</option>
-				}
-			</select>
-		</div>
-	</div>
-} @empty {
-	<p>No users found.</p>
-}
+<div class="data-list">
+  @for (user of users(); track user.id) {
+    <div class="data-item">
+      <div class="data-item-info">
+        <span class="data-item-label">{{ user.userName }}</span>
+        <span class="data-item-sub">{{ user.email }}</span>
+      </div>
+      <div class="data-item-actions">
+        <select
+          class="form-select role-select"
+          (change)="onRoleChange(user.id, $event)"
+        >
+          @for (role of roles; track role.value) {
+            <option [value]="role.value" [selected]="user.role === role.value">
+              {{ role.label }}
+            </option>
+          }
+        </select>
+      </div>
+    </div>
+  }
+  @empty {
+    <div class="empty-state">No users found.</div>
+  }
+</div>

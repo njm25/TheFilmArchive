@@ -1,6 +1,164 @@
-.source-card:hover {
-    cursor: pointer;
+.film-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  padding-bottom: 3rem;
 }
-.source-card:hover small {
-    text-decoration: underline;
+
+/* ---- Backdrop ---- */
+.film-backdrop-wrap {
+  width: 100%;
+  aspect-ratio: 16 / 6;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+
+.film-backdrop {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  opacity: 0.8;
+}
+
+/* ---- Details section ---- */
+.film-details {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* ---- Title row ---- */
+.film-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.film-heading {
+  display: flex;
+  align-items: baseline;
+  gap: 0.875rem;
+  flex-wrap: wrap;
+}
+
+.film-name {
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+
+.film-year-tag {
+  font-size: 1rem;
+  color: var(--text-muted);
+  font-family: var(--font-sans);
+}
+
+.icon-btn {
+  padding: 0.4rem 0.65rem;
+  flex-shrink: 0;
+}
+
+/* HOST-level color for tfa-link action buttons (inner div inherits via color:inherit) */
+.film-action-link {
+  color: var(--text-muted);
+  transition: color var(--transition);
+}
+
+.film-action-link:hover {
+  color: var(--text);
+}
+
+/* ---- Meta ---- */
+.film-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-muted);
+  font-size: 0.9375rem;
+}
+
+.meta-dot {
+  color: var(--text-dim);
+}
+
+.film-tagline {
+  font-style: italic;
+}
+
+/* ---- Description ---- */
+.film-description {
+  color: var(--text-muted);
+  font-size: 0.9375rem;
+  line-height: 1.75;
+  max-width: 68ch;
+}
+
+/* ---- Sources ---- */
+.film-sources {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.sources-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.sources-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.sources-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.source-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: border-color var(--transition), color var(--transition), background var(--transition);
+}
+
+.source-chip:hover {
+  border-color: var(--accent);
+  color: var(--text);
+  background: var(--accent-dim);
+}
+
+.no-sources {
+  font-size: 0.875rem;
+  color: var(--text-dim);
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 576px) {
+  .film-backdrop-wrap {
+    aspect-ratio: 16 / 9;
+    border-radius: var(--radius-sm);
+  }
+
+  .film-heading {
+    gap: 0.5rem;
+  }
 }

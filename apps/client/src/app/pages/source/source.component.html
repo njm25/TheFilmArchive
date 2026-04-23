@@ -1,6 +1,9 @@
-@if(sourcePath() != null)
-{
-    <div class="w-100 h-100 d-flex flex-column align-items-center">
-        <video controls width="100%" height="100%" [src]="sourceUrl()"></video>
-    </div>
+@if (sourcePath() != null) {
+  <div class="source-page">
+    <video
+      class="film-player"
+      controls
+      [src]="sourceUrl()"
+    ></video>
+  </div>
 }

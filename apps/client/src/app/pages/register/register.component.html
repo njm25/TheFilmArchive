@@ -1,21 +1,46 @@
-@if (!registered())
-{
-    <div class="container">
-        <form (submit)="submitRequest()">
-            <label for="username">Username:</label>
-            <input type="text" id="username" [(ngModel)]="this.req().userName" name="username" required>
+@if (!registered()) {
+  <div class="form-page">
+    <div class="form-card">
+      <h2 class="form-title">Create account</h2>
+      <p class="form-subtitle">Choose a username and password for your account.</p>
 
-            <label for="password">Password:</label>
-            <input type="password" id="password" [(ngModel)]="this.req().password" name="password" required>
+      <form (submit)="submitRequest()">
+        <div class="form-group">
+          <label class="form-label" for="username">Username</label>
+          <input
+            class="form-input"
+            id="username"
+            type="text"
+            name="username"
+            placeholder="Choose a username"
+            [(ngModel)]="this.req().userName"
+            required
+          />
+        </div>
 
-            <button type="submit">Register</button>
-        </form>
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <input
+            class="form-input"
+            id="password"
+            type="password"
+            name="password"
+            placeholder="Choose a password"
+            [(ngModel)]="this.req().password"
+            required
+          />
+        </div>
+
+        <button class="btn btn-primary" type="submit">Create account</button>
+      </form>
     </div>
-}
-@else
-{
-    <div class="container">
-        <span>Registered!</span>
+  </div>
+} @else {
+  <div class="form-page">
+    <div class="status-card">
+      <i class="pi pi-check-circle status-icon"></i>
+      <h3>Account created!</h3>
+      <p>You can now sign in with your new credentials.</p>
     </div>
-
+  </div>
 }

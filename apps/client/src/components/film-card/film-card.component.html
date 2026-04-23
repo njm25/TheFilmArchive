@@ -1,10 +1,9 @@
-<tfa-link [href]="filmSrc()"    
-    class="film-card"
-	styleClass="d-flex flex-column align-items-center border border-black p-1 text-break word-wrap h-100"
->
-	@if (film()?.posterPath)
-	{
-		<img class="poster img-fluid" [src]="posterSrc()" alt="Poster for {{film()?.title}}" />
-	}
-	<small class="text-center">{{film()?.title}} ({{film()?.yearReleased}})</small>
+<tfa-link [href]="filmSrc()" class="film-card" styleClass="d-flex flex-column h-100">
+  @if (film()?.posterPath) {
+    <img class="poster" [src]="posterSrc()" alt="{{ film()?.title }}" />
+  }
+  <div class="film-info">
+    <span class="film-title">{{ film()?.title }}</span>
+    <span class="film-year">{{ film()?.yearReleased }}</span>
+  </div>
 </tfa-link>

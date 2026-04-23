@@ -1,3 +1,60 @@
-<div class="d-flex flex-column h-100">
+<div class="home-page">
+
+  <!-- Toolbar: search + sort -->
+  <div class="home-toolbar">
+    <div class="search-wrap">
+      <input
+        class="form-input search-input"
+        type="text"
+        placeholder="Search films..."
+        [(ngModel)]="searchText"
+        [ngModelOptions]="{ standalone: true }"
+        (keyup.enter)="onSearch()"
+      />
+      <button class="btn btn-ghost btn-sm search-btn" (click)="onSearch()">
+        <i class="pi pi-search"></i>
+      </button>
+    </div>
+    <div class="toolbar-right">
+      <button class="btn btn-ghost sort-btn" (click)="toggleOrder()">
+        <i class="pi pi-sort-alt"></i>
+        <span class="sort-label">{{ isAscending() ? 'Oldest first' : 'Newest first' }}</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading state -->
+  @if (loading()) {
+    <div class="home-loading">
+      <div class="spinner-border" role="status"></div>
+    </div>
+  }
+
+  <!-- Film grid -->
+  @if (!loading() && films().length > 0) {
     <tfa-card-list [films]="films()"></tfa-card-list>
+  }
+
+  <!-- Empty state -->
+  @if (!loading() && films().length === 0) {
+    <div class="empty-state">
+      No films found{{ searchText ? ' for "' + searchText + '"' : '' }}.
+    </div>
+  }
+
+  <!-- Pagination -->
+  @if (!loading() && (hasPrev() || hasMore())) {
+    <div class="pagination">
+      <button class="btn btn-ghost btn-sm" (click)="prevPage()" [disabled]="!hasPrev()">
+        <i class="pi pi-chevron-left"></i>
+        Previous
+      </button>
+      <span class="page-num">Page {{ pageNumber() }}</span>
+      <button class="btn btn-ghost btn-sm" (click)="nextPage()" [disabled]="!hasMore()">
+        Next
+        <i class="pi pi-chevron-right"></i>
+      </button>
+    </div>
+  }
+
 </div>

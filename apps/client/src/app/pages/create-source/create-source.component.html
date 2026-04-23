@@ -1,13 +1,38 @@
-<form (submit)="submitRequest()">
-    <label for="sourceType">Source type:</label>
-    <select id="sourceType" [(ngModel)]="req().sourceType" name="sourceType" required>
-        @for (option of sourceTypeOptions; track option.value) {
+<div class="form-page">
+  <div class="form-card">
+    <h2 class="form-title">Add source</h2>
+    <p class="form-subtitle">Link a video source to this film.</p>
+
+    <form (submit)="submitRequest()">
+      <div class="form-group">
+        <label class="form-label" for="sourceType">Source type</label>
+        <select
+          class="form-select"
+          id="sourceType"
+          name="sourceType"
+          [(ngModel)]="req().sourceType"
+          required
+        >
+          @for (option of sourceTypeOptions; track option.value) {
             <option [value]="option.value">{{ option.label }}</option>
-        }
-    </select>
+          }
+        </select>
+      </div>
 
-    <label for="url">Url:</label>
-    <input id="url" type="text" [(ngModel)]="req().sourceUrl" name="url" required>
+      <div class="form-group">
+        <label class="form-label" for="url">URL</label>
+        <input
+          class="form-input"
+          id="url"
+          type="text"
+          name="url"
+          placeholder="Enter the source URL"
+          [(ngModel)]="req().sourceUrl"
+          required
+        />
+      </div>
 
-    <button type="submit">Create Source</button>
-</form>
+      <button class="btn btn-primary" type="submit">Add source</button>
+    </form>
+  </div>
+</div>

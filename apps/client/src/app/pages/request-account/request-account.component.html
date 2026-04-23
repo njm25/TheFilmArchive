@@ -1,11 +1,33 @@
-@if (!requestSent())
-{
-    <form (submit)="submitRequest()">
-        <label for="email">Email:</label>
-        <input id="email" type="email" [(ngModel)]="req().email" name="email" required>
-        <button type="submit">Request Account</button>
-    </form>
-} 
-@else {
-    <span>Request sent!</span>
+@if (!requestSent()) {
+  <div class="form-page">
+    <div class="form-card">
+      <h2 class="form-title">Request access</h2>
+      <p class="form-subtitle">Enter your email and an administrator will send you a registration link.</p>
+
+      <form (submit)="submitRequest()">
+        <div class="form-group">
+          <label class="form-label" for="email">Email address</label>
+          <input
+            class="form-input"
+            id="email"
+            type="email"
+            name="email"
+            placeholder="your@email.com"
+            [(ngModel)]="req().email"
+            required
+          />
+        </div>
+
+        <button class="btn btn-primary" type="submit">Request access</button>
+      </form>
+    </div>
+  </div>
+} @else {
+  <div class="form-page">
+    <div class="status-card">
+      <i class="pi pi-envelope status-icon"></i>
+      <h3>Request sent!</h3>
+      <p>An administrator will review your request and send you a registration link.</p>
+    </div>
+  </div>
 }

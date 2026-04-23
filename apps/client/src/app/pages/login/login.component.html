@@ -1,12 +1,36 @@
+<div class="form-page">
+  <div class="form-card">
+    <h2 class="form-title">Sign in</h2>
+    <p class="form-subtitle">Welcome back to The Film Archive.</p>
 
-    <div class="container">
-        <form (submit)="submitRequest()">
-            <label for="username">Username or Email:</label>
-            <input type="text" id="username" [(ngModel)]="this.req().userNameOrEmail" name="username" required>
+    <form (submit)="submitRequest()">
+      <div class="form-group">
+        <label class="form-label" for="username">Username or Email</label>
+        <input
+          class="form-input"
+          id="username"
+          type="text"
+          name="username"
+          placeholder="Enter your username or email"
+          [(ngModel)]="this.req().userNameOrEmail"
+          required
+        />
+      </div>
 
-            <label for="password">Password:</label>
-            <input type="password" id="password" [(ngModel)]="this.req().password" name="password" required>
+      <div class="form-group">
+        <label class="form-label" for="password">Password</label>
+        <input
+          class="form-input"
+          id="password"
+          type="password"
+          name="password"
+          placeholder="Enter your password"
+          [(ngModel)]="this.req().password"
+          required
+        />
+      </div>
 
-            <button type="submit">Login</button>
-        </form>
-    </div>
+      <button class="btn btn-primary" type="submit">Sign in</button>
+    </form>
+  </div>
+</div>
