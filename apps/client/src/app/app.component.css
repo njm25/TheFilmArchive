@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+  overflow: hidden;
   background: #111111;
   background: var(--bg);
 }
@@ -22,6 +23,7 @@
   padding: 2rem 1.5rem;
   display: flex;
   flex-direction: column;
+  min-height: 100%;
 }
 
 @media (max-width: 768px) {
