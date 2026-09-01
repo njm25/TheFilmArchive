@@ -65,6 +65,9 @@ builder.Services.AddScoped<TmdbService>(sp =>
 
 builder.Services.AddScoped<FilmSyncService>();
 
+builder.Services.AddSingleton<BulkSyncJobService>();
+builder.Services.AddSingleton<BulkFilmSyncService>();
+
 builder.Services.AddSingleton<DiscordBot>(sp =>
     new DiscordBot(
         builder.Configuration["Discord:Token"]!,

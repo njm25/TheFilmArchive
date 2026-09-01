@@ -1,0 +1,60 @@
+<div class="page-header">
+  <h2>Bulk Film Sync</h2>
+  <p>Import seed films from archive.org and refresh TMDB metadata for the whole catalog.</p>
+</div>
+
+<div class="form-card form-card-wide">
+  <button
+    class="btn btn-primary"
+    [disabled]="isRunning() || starting()"
+    (click)="startBulkSync()"
+  >
+    @if (isRunning()) {
+      Sync in progress&hellip;
+    } @else {
+      Start Bulk Sync
+    }
+  </button>
+
+  @if (status(); as s) {
+    @if (s.state !== BulkSyncState.Idle) {
+      <div class="sync-progress">
+        <div class="sync-progress-row">
+          <span>{{ s.phase }}</span>
+          <span>{{ s.processedFilms }} / {{ s.totalFilms }}</span>
+        </div>
+
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" [style.width.%]="progressPercent()"></div>
+        </div>
+
+        @if (s.currentFilmTitle) {
+          <div class="sync-current">{{ s.currentFilmTitle }}</div>
+        }
+
+        <div class="sync-stats">
+          <span>Created: {{ s.createdCount }}</span>
+          <span>Refreshed: {{ s.refreshedCount }}</span>
+          <span>Skipped: {{ s.skippedCount }}</span>
+          <span class="sync-stat-failed">Failed: {{ s.failedCount }}</span>
+        </div>
+      </div>
+    }
+
+    @if (s.errors.length > 0) {
+      <div class="sync-errors">
+        <h3>Errors ({{ s.errors.length }})</h3>
+        <div class="data-list">
+          @for (err of s.errors; track err.title) {
+            <div class="data-item">
+              <div class="data-item-info">
+                <span class="data-item-label">{{ err.title }}</span>
+                <span class="data-item-sub">{{ err.reason }}</span>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  }
+</div>

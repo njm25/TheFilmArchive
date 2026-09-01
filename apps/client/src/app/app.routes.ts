@@ -10,6 +10,7 @@ import { CreateSourceComponent } from './pages/create-source/create-source.compo
 import { adminGuard, authGuard, sysAdminGuard } from './guards/auth.guard';
 import { AccountRequestsComponent } from './pages/account-requests/account-requests.component';
 import { UsersComponent } from './pages/users/users.component';
+import { BulkSyncComponent } from './pages/bulk-sync/bulk-sync.component';
 
 export const routes: Routes = [
     {
@@ -54,6 +55,11 @@ export const routes: Routes = [
     {
         path: "users",
         component: UsersComponent,
+        canActivate: [sysAdminGuard]
+    },
+    {
+        path: "admin/bulkSync",
+        component: BulkSyncComponent,
         canActivate: [sysAdminGuard]
     }
 

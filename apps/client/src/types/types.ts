@@ -149,3 +149,31 @@ export interface GetAccountRequestsResItem
     email: string;
     token: string;
 }
+
+// bulk sync
+export enum BulkSyncState {
+    Idle = 0,
+    Running = 1,
+    Completed = 2,
+    Failed = 3
+}
+
+export interface BulkSyncError {
+    title: string;
+    reason: string;
+}
+
+export interface BulkSyncStatus {
+    state: BulkSyncState;
+    phase: string;
+    totalFilms: number;
+    processedFilms: number;
+    createdCount: number;
+    refreshedCount: number;
+    skippedCount: number;
+    failedCount: number;
+    currentFilmTitle: string | null;
+    startedAt: string | null;
+    completedAt: string | null;
+    errors: BulkSyncError[];
+}

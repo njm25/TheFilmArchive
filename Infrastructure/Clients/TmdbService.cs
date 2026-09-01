@@ -1,4 +1,5 @@
 using TMDbLib.Client;
+using TMDbLib.Objects.Find;
 using TMDbLib.Objects.Movies;
 
 namespace Infrastructure.Clients;
@@ -25,5 +26,14 @@ public class TmdbService
             return null;
 
         return await _client.GetMovieAsync(id, MetadataMethods);
+    }
+
+    public async Task<string?> FindTmdbIdByImdbId(string imdbId)
+    {
+        FindContainer? found = await _client.FindAsync(FindExternalSource.Imdb, imdbId);
+
+        int? tmdbId = found?.MovieResults?.FirstOrDefault()?.Id;
+
+        return tmdbId?.ToString();
     }
 }
