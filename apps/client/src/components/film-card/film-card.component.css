@@ -49,3 +49,8 @@
   font-size: 0.75rem;
   color: var(--text-muted);
 }
+
+.film-genre-line {
+  font-size: 0.6875rem;
+  color: var(--text-dim);
+}

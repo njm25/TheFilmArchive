@@ -40,6 +40,8 @@ export interface GetFilmsResItem {
 	yearReleased: number;
 	description: string;
 	posterPath: string;
+	genres: string[];
+	voteAverage: number | null;
 }
 
 export interface GetFilmsRes {
@@ -70,6 +72,21 @@ export interface GetFilmResSource {
 	type: SourceTypeEnum;
 }
 
+export interface GetFilmResCastMember {
+	name: string;
+	character: string | null;
+	profilePath: string | null;
+}
+
+export enum FilmStatusEnum {
+	Rumored = 1,
+	Planned = 2,
+	InProduction = 3,
+	PostProduction = 4,
+	Released = 5,
+	Canceled = 6
+}
+
 export interface GetFilmRes {
 	title: string;
 	yearReleased: number;
@@ -80,6 +97,15 @@ export interface GetFilmRes {
 	primarySourceTypeId: number;
     backdropPath: string;
     runtime: number;
+    imdbId: string | null;
+    homepage: string | null;
+    status: FilmStatusEnum | null;
+    voteAverage: number | null;
+    voteCount: number | null;
+    collectionName: string | null;
+    genres: string[];
+    directors: string[];
+    cast: GetFilmResCastMember[];
 }
 
 // requst acct

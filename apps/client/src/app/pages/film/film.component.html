@@ -22,17 +22,28 @@
       }
     </div>
 
-    <!-- Meta: runtime + tagline -->
-    @if (film()?.runtime || film()?.tagline) {
+    <!-- Meta: runtime + rating + tagline -->
+    @if (film()?.runtime || film()?.voteAverage || film()?.tagline) {
       <div class="film-meta">
         @if (film()?.runtime) {
           <span>{{ film()?.runtime }} min</span>
         }
-        @if (film()?.runtime && film()?.tagline) {
+        @if (film()?.voteAverage) {
           <span class="meta-dot">·</span>
+          <span>★ {{ film()?.voteAverage?.toFixed(1) }}</span>
         }
         @if (film()?.tagline) {
+          <span class="meta-dot">·</span>
           <span class="film-tagline">{{ film()?.tagline }}</span>
+        }
+      </div>
+    }
+
+    <!-- Genres -->
+    @if (film()?.genres?.length) {
+      <div class="film-genres">
+        @for (genre of film()?.genres; track genre) {
+          <span class="genre-chip">{{ genre }}</span>
         }
       </div>
     }
@@ -40,6 +51,24 @@
     <!-- Description -->
     @if (film()?.description) {
       <p class="film-description">{{ film()?.description }}</p>
+    }
+
+    <!-- Director / cast -->
+    @if (film()?.directors?.length || film()?.cast?.length) {
+      <div class="film-credits">
+        @if (film()?.directors?.length) {
+          <div class="credits-row">
+            <span class="credits-label">Director</span>
+            <span>{{ film()?.directors?.join(', ') }}</span>
+          </div>
+        }
+        @if (film()?.cast?.length) {
+          <div class="credits-row">
+            <span class="credits-label">Starring</span>
+            <span>{{ topCastNames() }}</span>
+          </div>
+        }
+      </div>
     }
 
     <!-- Sources -->

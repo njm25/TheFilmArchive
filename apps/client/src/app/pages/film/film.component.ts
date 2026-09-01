@@ -27,6 +27,7 @@ export class FilmComponent {
 
     readonly TMDB_BASE_URL = "https://image.tmdb.org/t/p/w780";
     backdropSrc = computed(() => this.film()?.backdropPath ? `${this.TMDB_BASE_URL}${this.film()?.backdropPath}` : null);
+    topCastNames = computed(() => this.film()?.cast?.slice(0, 6).map(c => c.name).join(', ') ?? '');
 
     goToSource = (sourceId: number) => this.router.navigate([`/source/${sourceId}`]);
     

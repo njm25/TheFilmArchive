@@ -1,6 +1,8 @@
 using Api.Requests;
 using Api.Responses;
+using Api.Services;
 using Domain.Entities;
+using Domain.Enums;
 using Infrastructure.Clients;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
@@ -16,14 +18,17 @@ public class FilmController : ControllerBase
 {
     private readonly AppDbContext _db;
     private readonly TmdbService _tmdb;
+    private readonly FilmSyncService _filmSync;
 
     public FilmController(
         AppDbContext db,
-        TmdbService tmdb
+        TmdbService tmdb,
+        FilmSyncService filmSync
     )
     {
         _db = db;
         _tmdb = tmdb;
+        _filmSync = filmSync;
 
     }
 
@@ -64,7 +69,9 @@ public class FilmController : ControllerBase
                 Title = f.Title,
                 YearReleased = f.ReleaseYear ?? 0,
                 Description = f.Description ?? "No description found.",
-                PosterPath = f.PosterPath ?? ""
+                PosterPath = f.PosterPath ?? "",
+                Genres = f.Genres.Select(fg => fg.Genre.Name).ToList(),
+                VoteAverage = f.VoteAverage
             })
             .ToListAsync();
 
@@ -82,6 +89,9 @@ public class FilmController : ControllerBase
     {
         Film? film = await _db.Films
             .Include(f => f.Sources)
+            .Include(f => f.Genres).ThenInclude(fg => fg.Genre)
+            .Include(f => f.Credits).ThenInclude(fc => fc.Person)
+            .Include(f => f.Collection)
             .Where(f => f.Id == id)
             .FirstOrDefaultAsync();
 
@@ -109,7 +119,29 @@ public class FilmController : ControllerBase
                     .ToList()
                     .FirstOrDefault(-1),
             BackdropPath = film.BackdropPath ?? "No path found.",
-            Runtime = film.Runtime ?? 0
+            Runtime = film.Runtime ?? 0,
+            ImdbId = film.ImdbId,
+            Homepage = film.Homepage,
+            Status = film.Status,
+            VoteAverage = film.VoteAverage,
+            VoteCount = film.VoteCount,
+            CollectionName = film.Collection?.Name,
+            Genres = film.Genres.Select(fg => fg.Genre.Name).ToList(),
+            Directors = film.Credits
+                .Where(c => c.CreditType == CreditTypeEnum.Crew && c.Job == "Director")
+                .Select(c => c.Person.Name)
+                .ToList(),
+            Cast = film.Credits
+                .Where(c => c.CreditType == CreditTypeEnum.Cast)
+                .OrderBy(c => c.CreditOrder ?? int.MaxValue)
+                .Take(10)
+                .Select(c => new GetFilmResCastMember
+                {
+                    Name = c.Person.Name,
+                    Character = c.Character,
+                    ProfilePath = c.Person.ProfilePath
+                })
+                .ToList()
         };
 
         return Ok(res);
@@ -150,19 +182,13 @@ public class FilmController : ControllerBase
         Film film = new Film()
         {
             TmdbId = req.TmdbId,
-            Title = movie.Title ?? "No title found",
-            Tagline = movie.Tagline,
-            Description = movie.Overview,
-            PosterPath = movie.PosterPath,
-            ReleaseYear = movie.ReleaseDate?.Year,
-            Runtime = movie.Runtime,
-            BackdropPath = movie.BackdropPath,
             CreatedAt = utc,
             UpdatedAt = utc,
-
         };
 
         await _db.Films.AddAsync(film);
+
+        await _filmSync.ApplyMetadataAsync(film, movie);
 
         await _db.SaveChangesAsync();
 
@@ -193,28 +219,16 @@ public class FilmController : ControllerBase
     public async Task<IActionResult> RefreshMetadata(string filmId)
     {
         Film? film = await _db.Films.FirstOrDefaultAsync(f => f.Id == int.Parse(filmId));
-        
-        if (film == null) 
+
+        if (film == null)
             return NotFound();
 
         Movie? movie = await _tmdb.GetMovieByTmdbId(film.TmdbId);
 
-        if (film.Tagline != movie?.Tagline)
-            film.Tagline = movie?.Tagline;
+        if (movie == null)
+            return NotFound();
 
-        if (film.Description != movie?.Overview)
-            film.Description = movie?.Overview;
-
-        if (film.Runtime != movie?.Runtime)
-            film.Runtime = movie?.Runtime;
-
-        if (film.PosterPath != movie?.PosterPath)
-            film.PosterPath = movie?.PosterPath;
-
-        if (film.BackdropPath != movie?.BackdropPath)
-            film.BackdropPath = movie?.BackdropPath;
-
-        film.UpdatedAt = DateTime.UtcNow;
+        await _filmSync.ApplyMetadataAsync(film, movie);
 
         await _db.SaveChangesAsync();
 
