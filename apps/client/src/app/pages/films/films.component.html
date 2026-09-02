@@ -19,12 +19,15 @@
 
       <div class="films-toolbar-controls">
         <tfa-popover align="right">
-          <button popoverTrigger type="button" class="btn btn-ghost btn-sm">
-            <i class="pi pi-sliders-h"></i>
-            Filters
-            @if (activeFilterCount() > 0) {
-              <span class="filter-badge">{{ activeFilterCount() }}</span>
-            }
+          <button popoverTrigger type="button" class="tfa-overlay-trigger tfa-overlay-trigger--sm">
+            <span class="tfa-overlay-value filters-trigger-label">
+              <i class="pi pi-sliders-h"></i>
+              Filters
+              @if (activeFilterCount() > 0) {
+                <span class="filter-badge">{{ activeFilterCount() }}</span>
+              }
+            </span>
+            <i class="pi pi-chevron-down tfa-overlay-caret"></i>
           </button>
           <div popoverContent class="filters-panel">
             <div class="filter-group">

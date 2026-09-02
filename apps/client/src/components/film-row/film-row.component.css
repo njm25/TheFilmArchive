@@ -13,6 +13,10 @@
 
 .film-row-title {
   font-size: 1.25rem;
+  /* Set explicitly rather than relying on the inherited h1-h6 rule in
+     styles.css — any later-loaded stylesheet touching heading color
+     (e.g. Bootstrap) can win that inheritance by load order alone. */
+  color: var(--text);
 }
 
 .film-row-nav {

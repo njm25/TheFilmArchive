@@ -1,7 +1,5 @@
 <div class="home-page">
 
-  <p class="film-count">{{ totalCount() }} films in the archive</p>
-
   @if (isLoggedIn()) {
     <tfa-film-row title="Continue Watching" [films]="continueWatching()"></tfa-film-row>
     <tfa-film-row title="Suggested for You" [films]="suggested()"></tfa-film-row>
