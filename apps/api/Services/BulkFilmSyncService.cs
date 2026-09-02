@@ -34,6 +34,7 @@ public class BulkFilmSyncService
         AppDbContext db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         TmdbService tmdb = scope.ServiceProvider.GetRequiredService<TmdbService>();
         FilmSyncService filmSync = scope.ServiceProvider.GetRequiredService<FilmSyncService>();
+        ArchiveOrgService archiveOrg = scope.ServiceProvider.GetRequiredService<ArchiveOrgService>();
 
         List<SeedFilmEntry> seeds = LoadSeedManifest();
         _jobService.SetTotal(seeds.Count);
@@ -86,11 +87,20 @@ public class BulkFilmSyncService
                 bool isPrimary = true;
                 foreach (string url in seed.ArchiveUrls)
                 {
+                    int? quality = null;
+                    string? identifier = ArchiveOrgService.ExtractIdentifier(url);
+
+                    if (identifier != null)
+                    {
+                        quality = await archiveOrg.GetBestQualityHeightAsync(identifier);
+                    }
+
                     db.FilmSources.Add(new FilmSource
                     {
                         Film = film,
                         SourceUrl = url,
                         Type = SourceTypeEnum.ArchiveOrg,
+                        QualityHeight = quality,
                         IsPrimary = isPrimary,
                         IsActive = true,
                         CreatedAt = utc

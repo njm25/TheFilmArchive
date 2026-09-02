@@ -2,7 +2,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { FilmService } from '../../../services/film.service';
-import { GetFilmRes, GetFilmSourceRes, SourceTypeEnum } from '../../../types/types';
+import { GetFilmRes, GetFilmResSource, GetFilmSourceRes, SourceTypeEnum } from '../../../types/types';
 import { LinkComponent } from '../../../components/link/link.component';
 import { OptionListComponent, OptionListItem } from '../../../components/option-list/option-list.component';
 import { AuthService } from '../../../services/auth.service';
@@ -38,11 +38,16 @@ export class FilmComponent {
     topCastNames = computed(() => this.film()?.cast?.slice(0, 6).map(c => c.name).join(', ') ?? '');
 
     sourceOptions = computed<OptionListItem<number>[]>(() =>
-        (this.film()?.sources ?? []).map((s, i) => ({
-            label: `Source ${i + 1}`,
-            value: s.sourceId,
-            sublabel: s.type === SourceTypeEnum.ArchiveOrg ? 'Archive.org' : 'S3'
-        }))
+        (this.film()?.sources ?? []).map((s, i) => {
+            const typeLabel = s.type === SourceTypeEnum.ArchiveOrg ? 'Archive.org' : 'S3';
+            const qualityLabel = s.qualityHeight ? ` · ${s.qualityHeight}p` : '';
+
+            return {
+                label: `Source ${i + 1}`,
+                value: s.sourceId,
+                sublabel: `${typeLabel}${qualityLabel}`
+            };
+        })
     );
 
     selectedSourceId = signal<number | null>(null);
@@ -76,9 +81,7 @@ export class FilmComponent {
         this.filmService.getFilm(this.filmId()).subscribe((r) => {
             this.film.set(r);
 
-            const defaultSourceId = r.primarySourceTypeId >= 0
-                ? r.primarySourceTypeId
-                : r.sources[0]?.sourceId;
+            const defaultSourceId = this.pickDefaultSourceId(r.sources, r.primarySourceTypeId);
 
             if (defaultSourceId !== undefined) {
                 this.selectSource(defaultSourceId);
@@ -87,6 +90,24 @@ export class FilmComponent {
                 this.activeSource.set(null);
             }
         });
+    }
+
+    // Prefers the highest known-quality source; falls back to the film's
+    // primary source flag, then just the first source, when quality is
+    // unknown for everything (e.g. S3 sources added without a manual tag).
+    private pickDefaultSourceId(sources: GetFilmResSource[], primarySourceId?: number): number | undefined {
+        const bestByQuality = [...sources]
+            .filter(s => s.qualityHeight != null)
+            .sort((a, b) => (b.qualityHeight ?? 0) - (a.qualityHeight ?? 0))[0];
+
+        if (bestByQuality) return bestByQuality.sourceId;
+
+        if (primarySourceId != null && primarySourceId >= 0) {
+            const primary = sources.find(s => s.sourceId === primarySourceId);
+            if (primary) return primary.sourceId;
+        }
+
+        return sources[0]?.sourceId;
     }
 
     selectSource(sourceId: number) {
@@ -123,8 +144,10 @@ export class FilmComponent {
             const remaining = (this.film()?.sources ?? []).filter(s => s.sourceId !== sourceId);
             this.film.update(f => f ? { ...f, sources: remaining } : f);
 
-            if (remaining.length > 0) {
-                this.selectSource(remaining[0].sourceId);
+            const nextSourceId = this.pickDefaultSourceId(remaining);
+
+            if (nextSourceId !== undefined) {
+                this.selectSource(nextSourceId);
             } else {
                 this.selectedSourceId.set(null);
                 this.activeSource.set(null);

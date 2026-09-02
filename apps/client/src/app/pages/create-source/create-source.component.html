@@ -27,6 +27,18 @@
         />
       </div>
 
+      <div class="form-group">
+        <label class="form-label" for="quality">Quality (optional)</label>
+        <input
+          class="form-input"
+          id="quality"
+          type="number"
+          name="quality"
+          placeholder="Height in px, e.g. 1080 - auto-detected for Archive.org if left blank"
+          [(ngModel)]="req().qualityHeight"
+        />
+      </div>
+
       <button class="btn btn-primary" type="submit">Add source</button>
     </form>
   </div>

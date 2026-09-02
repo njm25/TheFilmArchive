@@ -65,6 +65,7 @@ export interface AddSourceReq {
 	filmId: number;
 	sourceType: SourceTypeEnum;
 	sourceUrl: string;
+	qualityHeight?: number | null;
 }
 
 
@@ -72,6 +73,7 @@ export interface AddSourceReq {
 export interface GetFilmResSource {
 	sourceId: number;
 	type: SourceTypeEnum;
+	qualityHeight: number | null;
 }
 
 export interface GetFilmSourceRes {

@@ -19,16 +19,19 @@ public class FilmController : ControllerBase
     private readonly AppDbContext _db;
     private readonly TmdbService _tmdb;
     private readonly FilmSyncService _filmSync;
+    private readonly ArchiveOrgService _archiveOrg;
 
     public FilmController(
         AppDbContext db,
         TmdbService tmdb,
-        FilmSyncService filmSync
+        FilmSyncService filmSync,
+        ArchiveOrgService archiveOrg
     )
     {
         _db = db;
         _tmdb = tmdb;
         _filmSync = filmSync;
+        _archiveOrg = archiveOrg;
 
     }
 
@@ -121,7 +124,8 @@ public class FilmController : ControllerBase
                     .Select(o => new GetFilmResSource
                     {
                         SourceId = o.Id,
-                        Type = o.Type
+                        Type = o.Type,
+                        QualityHeight = o.QualityHeight
                     })
                     .ToList(),
             PrimarySourceTypeId = film
@@ -215,11 +219,24 @@ public class FilmController : ControllerBase
     [HttpPost("addSource")]
     public async Task<IActionResult> AddSource([FromBody] AddSourceReq req)
     {
+        int? quality = req.QualityHeight;
+
+        if (quality == null && req.SourceType == SourceTypeEnum.ArchiveOrg)
+        {
+            string? identifier = ArchiveOrgService.ExtractIdentifier(req.SourceUrl);
+
+            if (identifier != null)
+            {
+                quality = await _archiveOrg.GetBestQualityHeightAsync(identifier);
+            }
+        }
+
         FilmSource source = new FilmSource()
         {
             FilmId = req.FilmId,
             SourceUrl = req.SourceUrl,
             Type = req.SourceType,
+            QualityHeight = quality,
             CreatedAt = DateTime.UtcNow,
         };
 

@@ -21,6 +21,7 @@ export class CreateSourceComponent {
         filmId: 0,
         sourceType: SourceTypeEnum.S3,
         sourceUrl: "",
+        qualityHeight: null,
     });
 
     sourceTypeOptions: DropdownOption<SourceTypeEnum>[] = [

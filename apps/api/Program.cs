@@ -65,6 +65,8 @@ builder.Services.AddScoped<TmdbService>(sp =>
 
 builder.Services.AddScoped<FilmSyncService>();
 
+builder.Services.AddHttpClient<ArchiveOrgService>();
+
 builder.Services.AddSingleton<BulkSyncJobService>();
 builder.Services.AddSingleton<BulkFilmSyncService>();
 

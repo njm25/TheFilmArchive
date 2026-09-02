@@ -36,4 +36,6 @@ public class GetFilmResSource
     public int SourceId { get; set; }
 
     public SourceTypeEnum Type { get; set; }
+
+    public int? QualityHeight { get; set; }
 }
