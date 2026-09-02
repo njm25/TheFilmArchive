@@ -49,4 +49,12 @@ export class FilmService {
     refreshMetadata(filmId: number): Observable<void> {
         return this.http.post<void>(`${this.baseUrl}/Film/refreshMetadata/${filmId.toString()}`, { });
     }
+
+    deleteFilm(filmId: number): Observable<void> {
+        return this.http.delete<void>(`${this.baseUrl}/Film/${filmId}`);
+    }
+
+    deleteSource(sourceId: number): Observable<void> {
+        return this.http.delete<void>(`${this.baseUrl}/Film/sources/${sourceId}`);
+    }
 }

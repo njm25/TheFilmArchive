@@ -34,10 +34,11 @@ export class CreateSourceComponent {
 
     submitRequest()
     {
-        this.req().filmId = parseInt(this.route.snapshot.paramMap.get("filmId")!);
+        const filmId = parseInt(this.route.snapshot.paramMap.get("filmId")!);
+        this.req().filmId = filmId;
 
-        this.filmService.addSource(this.req()).subscribe((r: any) => {
-            this.router.navigate([`/source/${r}`]);
+        this.filmService.addSource(this.req()).subscribe(() => {
+            this.router.navigate([`/film/${filmId}`]);
         });
     }
 }

@@ -1,7 +1,6 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from './pages/home/home.component';
 import { FilmComponent } from './pages/film/film.component';
-import { SourceComponent } from './pages/source/source.component';
 import { RequestAccountComponent } from './pages/request-account/request-account.component';
 import { RegisterComponent } from './pages/register/register.component';
 import { LoginComponent } from './pages/login/login.component';
@@ -20,10 +19,6 @@ export const routes: Routes = [
     {
         path: "film/:id",
         component: FilmComponent
-    },
-    {
-        path: "source/:id",
-        component: SourceComponent
     },
     {
         path: "requestAccount",

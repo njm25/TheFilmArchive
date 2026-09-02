@@ -1,110 +1,147 @@
+@if (film(); as film) {
 <div class="film-page">
 
-  <!-- Backdrop banner -->
-  @if (film()?.backdropPath) {
-    <div class="film-backdrop-wrap">
-      <img class="film-backdrop" [src]="backdropSrc()" [alt]="film()?.title" />
+  <!-- Hero backdrop -->
+  @if (backdropSrc(); as backdrop) {
+    <div class="film-hero">
+      <img class="film-hero-img" [src]="backdrop" [alt]="film.title" />
+      <div class="film-hero-fade"></div>
     </div>
   }
 
-  <div class="film-body">
+  <div class="film-content" [class.has-hero]="backdropSrc() !== null">
 
-    <!-- Poster -->
-    @if (posterSrc(); as poster) {
-      <div class="film-poster-wrap">
-        <img class="film-poster" [src]="poster" [alt]="film()?.title" />
-      </div>
-    }
-
-  <div class="film-details">
-
-    <!-- Title row -->
-    <div class="film-title-row">
-      <div class="film-heading">
-        <h1 class="film-name">{{ film()?.title }}</h1>
-        <span class="film-year-tag">{{ film()?.yearReleased }}</span>
-      </div>
-      @if (isAdmin()) {
-        <button class="btn btn-ghost btn-sm icon-btn" (click)="refreshMetadata()" title="Refresh metadata">
-          <i class="pi pi-sync"></i>
-        </button>
+    <!-- Header: poster + title/meta -->
+    <div class="film-header">
+      @if (posterSrc(); as poster) {
+        <img class="film-poster" [src]="poster" [alt]="film.title" />
       }
-    </div>
 
-    <!-- Meta: runtime + rating + tagline -->
-    @if (film()?.runtime || film()?.voteAverage || film()?.tagline) {
-      <div class="film-meta">
-        @if (film()?.runtime) {
-          <span>{{ film()?.runtime }} min</span>
-        }
-        @if (film()?.voteAverage) {
-          <span class="meta-dot">·</span>
-          <span>★ {{ film()?.voteAverage?.toFixed(1) }}</span>
-        }
-        @if (film()?.tagline) {
-          <span class="meta-dot">·</span>
-          <span class="film-tagline">{{ film()?.tagline }}</span>
-        }
-      </div>
-    }
+      <div class="film-header-info">
+        <div class="film-title-row">
+          <div class="film-heading">
+            <h1 class="film-name">{{ film.title }}</h1>
+            <span class="film-year-tag">{{ film.yearReleased }}</span>
+          </div>
 
-    <!-- Genres -->
-    @if (film()?.genres?.length) {
-      <div class="film-genres">
-        @for (genre of film()?.genres; track genre) {
-          <span class="genre-chip">{{ genre }}</span>
-        }
-      </div>
-    }
+          @if (isAdmin()) {
+            <div class="film-admin-actions">
+              <button class="btn btn-ghost btn-sm icon-btn" (click)="refreshMetadata()" title="Refresh metadata">
+                <i class="pi pi-sync"></i>
+              </button>
+              @if (isSysAdmin()) {
+                <button class="btn btn-ghost btn-sm icon-btn icon-btn-danger" (click)="deleteFilm()" title="Delete film">
+                  <i class="pi pi-trash"></i>
+                </button>
+              }
+            </div>
+          }
+        </div>
 
-    <!-- Description -->
-    @if (film()?.description) {
-      <p class="film-description">{{ film()?.description }}</p>
-    }
-
-    <!-- Director / cast -->
-    @if (film()?.directors?.length || film()?.cast?.length) {
-      <div class="film-credits">
-        @if (film()?.directors?.length) {
-          <div class="credits-row">
-            <span class="credits-label">Director</span>
-            <span>{{ film()?.directors?.join(', ') }}</span>
+        @if (film.runtime || film.voteAverage || film.tagline) {
+          <div class="film-meta">
+            @if (film.runtime) {
+              <span>{{ film.runtime }} min</span>
+            }
+            @if (film.voteAverage) {
+              <span class="meta-dot">·</span>
+              <span>★ {{ film.voteAverage.toFixed(1) }}</span>
+            }
+            @if (film.tagline) {
+              <span class="meta-dot">·</span>
+              <span class="film-tagline">{{ film.tagline }}</span>
+            }
           </div>
         }
-        @if (film()?.cast?.length) {
-          <div class="credits-row">
-            <span class="credits-label">Starring</span>
-            <span>{{ topCastNames() }}</span>
-          </div>
-        }
-      </div>
-    }
 
-    <!-- Sources -->
-    <div class="film-sources">
-      <div class="sources-row">
-        <span class="sources-label">Watch</span>
-        @if (filmId() != 0 && isAdmin()) {
-          <tfa-link [href]="'/createSource/' + filmId()" class="film-action-link" styleClass="btn btn-ghost btn-sm">
-            <i class="pi pi-plus"></i>
-            Add Source
-          </tfa-link>
-        }
-      </div>
-
-      <div class="sources-chips">
-        @for (source of film()?.sources; track source.sourceId) {
-          <div class="source-chip" (click)="goToSource(source.sourceId)">
-            <i class="pi pi-play"></i>
-            <span>Source {{ source.type }}</span>
+        @if (film.genres.length) {
+          <div class="film-genres">
+            @for (genre of film.genres; track genre) {
+              <span class="genre-chip">{{ genre }}</span>
+            }
           </div>
-        }
-        @empty {
-          <span class="no-sources">No sources available yet.</span>
         }
       </div>
     </div>
 
-  </div>
+    <!-- Body: main content + sidebar -->
+    <div class="film-body">
+      <div class="film-main">
+
+        @if (film.sources.length) {
+          <div class="film-player-wrap">
+            @if (embedUrl(); as url) {
+              <iframe
+                class="film-player film-player-embed"
+                [src]="url"
+                allowfullscreen
+                webkitallowfullscreen
+              ></iframe>
+            } @else if (videoUrl(); as url) {
+              <video class="film-player" controls [src]="url"></video>
+            } @else {
+              <div class="film-player film-player-placeholder">Loading source&hellip;</div>
+            }
+          </div>
+        }
+
+        @if (film.description) {
+          <p class="film-description">{{ film.description }}</p>
+        }
+
+        @if (film.directors.length || film.cast.length) {
+          <div class="film-credits">
+            @if (film.directors.length) {
+              <div class="credits-row">
+                <span class="credits-label">Director</span>
+                <span>{{ film.directors.join(', ') }}</span>
+              </div>
+            }
+            @if (film.cast.length) {
+              <div class="credits-row">
+                <span class="credits-label">Starring</span>
+                <span>{{ topCastNames() }}</span>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <aside class="film-sidebar">
+        <div class="sidebar-section">
+          <div class="sidebar-section-header">
+            <span class="sidebar-label">Watch</span>
+            @if (isAdmin()) {
+              <tfa-link [href]="'/createSource/' + filmId()" class="film-action-link" styleClass="btn btn-ghost btn-sm">
+                <i class="pi pi-plus"></i>
+              </tfa-link>
+            }
+          </div>
+
+          <tfa-option-list
+            [options]="sourceOptions()"
+            [value]="selectedSourceId()"
+            (valueChange)="selectSource($event)"
+            emptyLabel="No sources available yet."
+          ></tfa-option-list>
+
+          @if (isSysAdmin() && selectedSourceId() != null) {
+            <button class="btn btn-ghost btn-sm danger-link" (click)="deleteSelectedSource()">
+              <i class="pi pi-trash"></i>
+              Delete selected source
+            </button>
+          }
+        </div>
+
+        @if (film.collectionName) {
+          <div class="sidebar-section">
+            <span class="sidebar-label">Collection</span>
+            <p class="sidebar-text">{{ film.collectionName }}</p>
+          </div>
+        }
+      </aside>
+    </div>
+
   </div>
 </div>
+}

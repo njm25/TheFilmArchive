@@ -251,4 +251,36 @@ public class FilmController : ControllerBase
         return Ok();
     }
 
+    [Authorize(Roles = "SysAdmin")]
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteFilm(int id)
+    {
+        Film? film = await _db.Films.FirstOrDefaultAsync(f => f.Id == id);
+
+        if (film == null)
+            return NotFound();
+
+        _db.Films.Remove(film);
+
+        await _db.SaveChangesAsync();
+
+        return NoContent();
+    }
+
+    [Authorize(Roles = "SysAdmin")]
+    [HttpDelete("sources/{sourceId}")]
+    public async Task<IActionResult> DeleteSource(int sourceId)
+    {
+        FilmSource? source = await _db.FilmSources.FirstOrDefaultAsync(s => s.Id == sourceId);
+
+        if (source == null)
+            return NotFound();
+
+        _db.FilmSources.Remove(source);
+
+        await _db.SaveChangesAsync();
+
+        return NoContent();
+    }
+
 }
