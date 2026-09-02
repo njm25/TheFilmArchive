@@ -1,15 +1,18 @@
 ---
 name: find-public-domain-films
-description: Research additional U.S. public-domain films with verified IMDb IDs and playable archive.org sources for TheFilmArchive, deduplicated against the existing seed manifest. Use when asked to find more public-domain films, grow the seed list, or expand the archive's catalog.
+description: Research additional U.S. public-domain films with verified IMDb IDs and multiple playable archive.org sources per film for TheFilmArchive, deduplicated against the existing seed manifest. Use when asked to find more public-domain films, grow the seed list, or expand the archive's catalog.
 ---
 
 # Find public-domain films for TheFilmArchive
 
 Reproduces the research process used to build the original 211-film seed
 manifest at `apps/api/Storage/seed-films.json`. Produces new candidate films
-with verified IMDb IDs, PD status, and at least one working archive.org
-source URL — with films already in the manifest (or already in the live DB)
-filtered out automatically.
+with verified IMDb IDs, PD status, and **at least two** working archive.org
+source URLs each — with films already in the manifest (or already in the
+live DB) filtered out automatically. Multiple sources per film matter: it
+gives the film detail page's source list something real to show and gives
+redundancy if one item gets taken down or turns out to be a partial/low-
+quality copy.
 
 ## 0. Load the exclusion set first
 
@@ -37,24 +40,40 @@ Merge any such rows into the same exclusion lists. Hand the three
 step 1 — each agent's own instructions must tell it to check candidates
 against these files and drop any match before including them in its output.
 
-## 1. Fan out research agents by category
+## 1. Derive a fresh category split, then fan out research agents
 
-Spawn agents in parallel (10 worked well previously), one per category, so
-each can go deep without duplicating another's search space. Categories
-used before, adjust to taste:
+Don't reuse the same category list run after run — the point of a category
+split is to partition the search space so parallel agents don't collide,
+and a repeated list just re-plows ground already covered by earlier runs
+and steers every run toward the same handful of well-known titles.
+Regenerate the split each time from the manifest's current composition:
 
-1. Silent era (pre-1930)
-2. 1930s-40s horror / sci-fi
-3. Film noir / crime
-4. 1950s-60s sci-fi & monster B-movies
-5. Comedy / screwball
-6. Westerns
-7. Animated shorts and features
-8. Drama / literary adaptations
-9. Foreign / international classics
-10. General sweep / catch-all (anything missed by the above)
+1. Tally what's already in `apps/api/Storage/seed-films.json` by rough era
+   (decade), genre, and country/language of origin — the `title`/`year`
+   fields plus a quick pass of well-known titles is enough, no need for
+   exhaustive metadata.
+2. Favor slices that look thin or absent over ones that are already dense
+   — e.g. if silent-era and 1950s sci-fi are both heavily represented but
+   there's little pre-1950 foreign cinema, serials, documentaries/newsreels,
+   or industrial/educational shorts, weight the new split toward those.
+3. Cut categories along more than one axis so the split stays encompassing
+   rather than a rehash of the usual genre buckets — mix in angles like:
+   era/decade, genre, country or language of origin, format (theatrical
+   feature vs. short vs. serial vs. newsreel/documentary/industrial),
+   studio or production context (e.g. race films, government/military
+   productions, independent/regional productions), and notable
+   directors/actors/franchises whose PD-eligible work hasn't been mined
+   yet.
+4. Size the split to the gaps found, not to a fixed number — use more than
+   10 categories when the manifest is already broad and the remaining gaps
+   are narrow and scattered, fewer when a handful of wide-open areas would
+   cover more ground. Each category should still be narrow enough for one
+   agent to search deeply rather than skim.
+5. Always keep one general sweep / catch-all category to net anything the
+   deliberately-targeted categories miss.
 
-Give every agent the same brief (fill in `{category}` and attach the
+Spawn one agent per category in parallel. Give every agent the same brief
+(fill in `{category}` and attach the
 exclusion files from step 0):
 
 > Research U.S. public-domain films in the category "{category}" for a
@@ -75,11 +94,16 @@ exclusion files from step 0):
 >   independently.
 > - **Verify the IMDb ID directly** against IMDb or Wikipedia's infobox —
 >   never guess or pattern-match an ID.
-> - **Find a working archive.org source.** Confirm the item actually hosts
->   a full watchable copy (not just a trailer or partial reel) by checking
->   its `/metadata/{identifier}` file list for a full-length video file.
->   Prefer the highest-quality copy if multiple items exist for the same
->   film.
+> - **Find at least two working archive.org sources per film**, not just
+>   one. For each candidate item, confirm it actually hosts a full
+>   watchable copy (not just a trailer or partial reel) by checking its
+>   `/metadata/{identifier}` file list for a full-length video file. Search
+>   for alternate uploads of the same film (different identifiers,
+>   restorations, transfers) rather than stopping at the first hit — this is
+>   a hard target, not a nice-to-have. Only fall back to a single source if
+>   you've genuinely searched and a second copy doesn't exist on
+>   archive.org; call that out explicitly in the `Confidence` field (e.g.
+>   "single-source, no second copy found") so it can be revisited later.
 > - **TMDB ID is optional** — include it if easily found, otherwise leave
 >   null; the sync step resolves it from the IMDb ID at import time.
 > - **Check against the exclusion list before including anything** — skip
@@ -128,8 +152,10 @@ with open('/tmp/claude-.../scratchpad/candidates.csv') as f:
 ```
 
 Manually spot-check a sample (5-10 films) of what survives — re-verify PD
-status and the archive.org URL by hand for anything borderline before
-trusting an agent's confidence rating.
+status and the archive.org URLs by hand for anything borderline before
+trusting an agent's confidence rating. Flag (don't silently drop) any film
+that only has one source — decide per-film whether to keep it as-is or send
+it back for a second source before including it in the manifest.
 
 ## 3. Append to the seed manifest
 
@@ -156,8 +182,9 @@ with open('apps/api/Storage/seed-films.json', 'w') as f:
 
 ## 4. Wrap up
 
-- Report how many new films were found per category and how many were
-  dropped as duplicates or failed PD verification.
+- Report how many new films were found per category, how many were dropped
+  as duplicates or failed PD verification, and how many landed with only a
+  single source (these are the weakest entries — worth a follow-up pass).
 - Commit `apps/api/Storage/seed-films.json` with a message describing the
   batch (e.g. category names and count added).
 - The bulk-sync admin page picks up new manifest entries automatically on
