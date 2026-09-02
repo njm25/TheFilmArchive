@@ -68,15 +68,6 @@ builder.Services.AddScoped<FilmSyncService>();
 builder.Services.AddSingleton<BulkSyncJobService>();
 builder.Services.AddSingleton<BulkFilmSyncService>();
 
-builder.Services.AddSingleton<DiscordBot>(sp =>
-    new DiscordBot(
-        builder.Configuration["Discord:Token"]!,
-        ulong.Parse(builder.Configuration["Discord:UserId"]!),
-        sp.GetRequiredService<IServiceScopeFactory>()
-    )
-);
-
-builder.Services.AddHostedService<DiscordBotHostedService>();
 var allowedOrigins = builder.Configuration
     .GetSection("Cors:AllowedOrigins")
     .Get<string[]>() ?? [];
