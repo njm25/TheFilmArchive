@@ -102,12 +102,17 @@ public class FilmSyncService
         if (movie.Genres == null)
             return;
 
+        List<int> ids = movie.Genres.Select(g => g.Id).Distinct().ToList();
+        Dictionary<int, Genre> existing = await _db.Genres
+            .Where(x => ids.Contains(x.TmdbId))
+            .ToDictionaryAsync(x => x.TmdbId);
+
         foreach (var g in movie.Genres)
         {
-            var genre = await _db.Genres.FirstOrDefaultAsync(x => x.TmdbId == g.Id);
-            if (genre == null)
+            if (!existing.TryGetValue(g.Id, out var genre))
             {
                 genre = new Genre { TmdbId = g.Id, Name = g.Name ?? string.Empty };
+                existing[g.Id] = genre;
             }
 
             _db.FilmGenres.Add(new FilmGenre { Film = film, Genre = genre });
@@ -120,12 +125,17 @@ public class FilmSyncService
         if (keywords == null)
             return;
 
+        List<int> ids = keywords.Select(k => k.Id).Distinct().ToList();
+        Dictionary<int, Keyword> existing = await _db.Keywords
+            .Where(x => ids.Contains(x.TmdbId))
+            .ToDictionaryAsync(x => x.TmdbId);
+
         foreach (var k in keywords)
         {
-            var keyword = await _db.Keywords.FirstOrDefaultAsync(x => x.TmdbId == k.Id);
-            if (keyword == null)
+            if (!existing.TryGetValue(k.Id, out var keyword))
             {
                 keyword = new Keyword { TmdbId = k.Id, Name = k.Name ?? string.Empty };
+                existing[k.Id] = keyword;
             }
 
             _db.FilmKeywords.Add(new FilmKeyword { Film = film, Keyword = keyword });
@@ -137,11 +147,15 @@ public class FilmSyncService
         if (movie.ProductionCompanies == null)
             return;
 
+        List<int> ids = movie.ProductionCompanies.Select(pc => pc.Id).Distinct().ToList();
+        Dictionary<int, ProductionCompany> existing = await _db.ProductionCompanies
+            .Where(x => ids.Contains(x.TmdbId))
+            .ToDictionaryAsync(x => x.TmdbId);
+
         int order = 0;
         foreach (var pc in movie.ProductionCompanies)
         {
-            var company = await _db.ProductionCompanies.FirstOrDefaultAsync(x => x.TmdbId == pc.Id);
-            if (company == null)
+            if (!existing.TryGetValue(pc.Id, out var company))
             {
                 company = new ProductionCompany
                 {
@@ -150,6 +164,7 @@ public class FilmSyncService
                     LogoPath = pc.LogoPath,
                     OriginCountry = pc.OriginCountry
                 };
+                existing[pc.Id] = company;
             }
 
             _db.FilmProductionCompanies.Add(new FilmProductionCompany
@@ -166,13 +181,19 @@ public class FilmSyncService
         if (movie.Credits == null)
             return;
 
-        var personCache = new Dictionary<int, Person>();
+        IEnumerable<int> castIds = movie.Credits.Cast?.Select(c => c.Id) ?? Enumerable.Empty<int>();
+        IEnumerable<int> crewIds = movie.Credits.Crew?.Select(c => c.Id) ?? Enumerable.Empty<int>();
+        List<int> ids = castIds.Concat(crewIds).Distinct().ToList();
+
+        Dictionary<int, Person> personCache = await _db.People
+            .Where(p => ids.Contains(p.TmdbId))
+            .ToDictionaryAsync(p => p.TmdbId);
 
         if (movie.Credits.Cast != null)
         {
             foreach (var c in movie.Credits.Cast)
             {
-                var person = await ResolvePersonAsync(personCache, c.Id, c.Name, (int)c.Gender, c.KnownForDepartment, c.ProfilePath, c.Popularity);
+                var person = ResolvePerson(personCache, c.Id, c.Name, (int)c.Gender, c.KnownForDepartment, c.ProfilePath, c.Popularity);
 
                 _db.FilmCredits.Add(new FilmCredit
                 {
@@ -190,7 +211,7 @@ public class FilmSyncService
         {
             foreach (var c in movie.Credits.Crew)
             {
-                var person = await ResolvePersonAsync(personCache, c.Id, c.Name, (int)c.Gender, c.KnownForDepartment, c.ProfilePath, c.Popularity);
+                var person = ResolvePerson(personCache, c.Id, c.Name, (int)c.Gender, c.KnownForDepartment, c.ProfilePath, c.Popularity);
 
                 _db.FilmCredits.Add(new FilmCredit
                 {
@@ -205,7 +226,7 @@ public class FilmSyncService
         }
     }
 
-    private async Task<Person> ResolvePersonAsync(
+    private static Person ResolvePerson(
         Dictionary<int, Person> personCache,
         int tmdbId,
         string? name,
@@ -214,27 +235,9 @@ public class FilmSyncService
         string? profilePath,
         double? popularity)
     {
-        if (personCache.TryGetValue(tmdbId, out var cached))
-            return cached;
-
         var utc = DateTime.UtcNow;
-        var person = await _db.People.FirstOrDefaultAsync(p => p.TmdbId == tmdbId);
 
-        if (person == null)
-        {
-            person = new Person
-            {
-                TmdbId = tmdbId,
-                Name = name ?? string.Empty,
-                Gender = (PersonGenderEnum)genderCode,
-                KnownForDepartment = knownForDepartment,
-                ProfilePath = profilePath,
-                Popularity = popularity,
-                CreatedAt = utc,
-                UpdatedAt = utc
-            };
-        }
-        else
+        if (personCache.TryGetValue(tmdbId, out var person))
         {
             person.Name = name ?? person.Name;
             person.Gender = (PersonGenderEnum)genderCode;
@@ -242,7 +245,20 @@ public class FilmSyncService
             person.ProfilePath = profilePath ?? person.ProfilePath;
             person.Popularity = popularity ?? person.Popularity;
             person.UpdatedAt = utc;
+            return person;
         }
+
+        person = new Person
+        {
+            TmdbId = tmdbId,
+            Name = name ?? string.Empty,
+            Gender = (PersonGenderEnum)genderCode,
+            KnownForDepartment = knownForDepartment,
+            ProfilePath = profilePath,
+            Popularity = popularity,
+            CreatedAt = utc,
+            UpdatedAt = utc
+        };
 
         personCache[tmdbId] = person;
         return person;

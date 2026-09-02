@@ -42,9 +42,19 @@ public class BulkFilmSyncService
 
         HashSet<string> createdTmdbIds = new();
 
+        // TmdbIds for every seed entry we successfully resolved, whether newly
+        // created or already present. Used below to size the refresh phase
+        // without re-counting films the import phase already accounted for.
+        HashSet<string> matchedSeedTmdbIds = new();
+
         foreach (SeedFilmEntry seed in seeds)
         {
             _jobService.SetCurrent($"Importing: {seed.Title}");
+
+            // A film that already exists gets its real unit of work done in the
+            // refresh phase below, not here - so it shouldn't also mark itself
+            // processed in this phase (that would double-count it against Total).
+            bool deferToRefreshPhase = false;
 
             try
             {
@@ -58,10 +68,13 @@ public class BulkFilmSyncService
                     continue;
                 }
 
+                matchedSeedTmdbIds.Add(tmdbId);
+
                 bool exists = await db.Films.AnyAsync(f => f.TmdbId == tmdbId);
                 if (exists)
                 {
                     _jobService.IncrementSkipped();
+                    deferToRefreshPhase = true;
                     continue;
                 }
 
@@ -110,6 +123,7 @@ public class BulkFilmSyncService
                 }
 
                 await db.SaveChangesAsync();
+                db.ChangeTracker.Clear();
 
                 createdTmdbIds.Add(tmdbId);
                 _jobService.IncrementCreated();
@@ -118,15 +132,22 @@ public class BulkFilmSyncService
             {
                 _jobService.RecordFailure(seed.Title, ex.Message);
             }
-
-            _jobService.IncrementProcessed();
+            finally
+            {
+                if (!deferToRefreshPhase)
+                    _jobService.IncrementProcessed();
+            }
         }
 
         List<Film> existingFilms = await db.Films
             .Where(f => !createdTmdbIds.Contains(f.TmdbId))
             .ToListAsync();
 
-        _jobService.IncreaseTotalBy(existingFilms.Count);
+        // Only films with no seed-manifest counterpart are "new" to the total -
+        // the rest were already counted once via seeds.Count above and are just
+        // now getting their refresh pass, not a second film slot.
+        int extraFilmsCount = existingFilms.Count(f => !matchedSeedTmdbIds.Contains(f.TmdbId));
+        _jobService.IncreaseTotalBy(extraFilmsCount);
         _jobService.SetPhase("Refreshing existing films");
 
         foreach (Film film in existingFilms)
@@ -143,8 +164,17 @@ public class BulkFilmSyncService
                     continue;
                 }
 
+                // A prior iteration's ChangeTracker.Clear() (see below) leaves this
+                // film detached even though it's a real, already-saved row - without
+                // re-attaching it first, EF's Add() of its new child rows below would
+                // walk the graph and try to re-insert the film itself as a new row.
+                // Must happen before ApplyMetadataAsync mutates its scalar fields, so
+                // EF's change-detection baseline reflects the pre-refresh DB values.
+                db.Attach(film);
+
                 await filmSync.ApplyMetadataAsync(film, movie);
                 await db.SaveChangesAsync();
+                db.ChangeTracker.Clear();
 
                 _jobService.IncrementRefreshed();
             }
@@ -152,8 +182,10 @@ public class BulkFilmSyncService
             {
                 _jobService.RecordFailure(film.Title, ex.Message);
             }
-
-            _jobService.IncrementProcessed();
+            finally
+            {
+                _jobService.IncrementProcessed();
+            }
         }
 
         _jobService.Complete();
