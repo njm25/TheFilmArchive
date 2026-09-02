@@ -1,0 +1,56 @@
+<div class="films-page">
+
+  <!-- Toolbar: search + count + sort -->
+  <div class="films-toolbar">
+    <div class="search-wrap">
+      <input
+        class="form-input search-input"
+        type="text"
+        placeholder="Search films..."
+        [(ngModel)]="searchText"
+        [ngModelOptions]="{ standalone: true }"
+        (keyup.enter)="onSearch()"
+      />
+      <button class="btn btn-ghost btn-sm search-btn" (click)="onSearch()">
+        <i class="pi pi-search"></i>
+      </button>
+    </div>
+    <div class="toolbar-right">
+      <span class="film-count">{{ totalCount() }} films</span>
+      <tfa-dropdown
+        class="sort-select"
+        [options]="sortDropdownOptions"
+        [value]="sortIndex()"
+        (valueChange)="onSortChange($event)"
+        ariaLabel="Sort films by"
+      ></tfa-dropdown>
+    </div>
+  </div>
+
+  <!-- Initial loading state -->
+  @if (loading() && films().length === 0) {
+    <div class="films-loading">
+      <div class="spinner-border" role="status"></div>
+    </div>
+  }
+
+  <!-- Film grid -->
+  @if (films().length > 0) {
+    <tfa-card-list [films]="films()" (loadMore)="loadMore()"></tfa-card-list>
+  }
+
+  <!-- Empty state -->
+  @if (!loading() && films().length === 0) {
+    <div class="empty-state">
+      No films found{{ searchText ? ' for "' + searchText + '"' : '' }}.
+    </div>
+  }
+
+  <!-- Loading next page -->
+  @if (loading() && films().length > 0) {
+    <div class="films-loading-more">
+      <div class="spinner-border spinner-border-sm" role="status"></div>
+    </div>
+  }
+
+</div>

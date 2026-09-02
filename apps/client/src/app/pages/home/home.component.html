@@ -1,63 +1,14 @@
 <div class="home-page">
 
-  <!-- Toolbar: search + sort -->
-  <div class="home-toolbar">
-    <div class="search-wrap">
-      <input
-        class="form-input search-input"
-        type="text"
-        placeholder="Search films..."
-        [(ngModel)]="searchText"
-        [ngModelOptions]="{ standalone: true }"
-        (keyup.enter)="onSearch()"
-      />
-      <button class="btn btn-ghost btn-sm search-btn" (click)="onSearch()">
-        <i class="pi pi-search"></i>
-      </button>
-    </div>
-    <div class="toolbar-right">
-      <tfa-dropdown
-        class="sort-select"
-        [options]="sortDropdownOptions"
-        [value]="sortIndex()"
-        (valueChange)="onSortChange($event)"
-        ariaLabel="Sort films by"
-      ></tfa-dropdown>
-    </div>
-  </div>
+  <p class="film-count">{{ totalCount() }} films in the archive</p>
 
-  <!-- Loading state -->
-  @if (loading()) {
-    <div class="home-loading">
-      <div class="spinner-border" role="status"></div>
-    </div>
+  @if (isLoggedIn()) {
+    <tfa-film-row title="Continue Watching" [films]="continueWatching()"></tfa-film-row>
+    <tfa-film-row title="Suggested for You" [films]="suggested()"></tfa-film-row>
   }
 
-  <!-- Film grid -->
-  @if (!loading() && films().length > 0) {
-    <tfa-card-list [films]="films()"></tfa-card-list>
-  }
+  <tfa-film-row title="Popular" [films]="popular()"></tfa-film-row>
 
-  <!-- Empty state -->
-  @if (!loading() && films().length === 0) {
-    <div class="empty-state">
-      No films found{{ searchText ? ' for "' + searchText + '"' : '' }}.
-    </div>
-  }
-
-  <!-- Pagination -->
-  @if (!loading() && (hasPrev() || hasMore())) {
-    <div class="pagination">
-      <button class="btn btn-ghost btn-sm" (click)="prevPage()" [disabled]="!hasPrev()">
-        <i class="pi pi-chevron-left"></i>
-        Previous
-      </button>
-      <span class="page-num">Page {{ pageNumber() }}</span>
-      <button class="btn btn-ghost btn-sm" (click)="nextPage()" [disabled]="!hasMore()">
-        Next
-        <i class="pi pi-chevron-right"></i>
-      </button>
-    </div>
-  }
+  <tfa-film-row title="Recently Added" [films]="recentlyAdded()"></tfa-film-row>
 
 </div>

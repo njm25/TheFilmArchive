@@ -57,4 +57,26 @@ export class FilmService {
     deleteSource(sourceId: number): Observable<void> {
         return this.http.delete<void>(`${this.baseUrl}/Film/sources/${sourceId}`);
     }
+
+    logFilmView(filmId: number): Observable<void> {
+        return this.http.post<void>(`${this.baseUrl}/Film/${filmId}/logView`, {});
+    }
+
+    getPopularFilms(take: number = 12): Observable<GetFilmsRes> {
+        return this.http.get<GetFilmsRes>(`${this.baseUrl}/Film/popular`, {
+            params: { take }
+        });
+    }
+
+    getContinueWatching(take: number = 12): Observable<GetFilmsRes> {
+        return this.http.get<GetFilmsRes>(`${this.baseUrl}/Film/continueWatching`, {
+            params: { take }
+        });
+    }
+
+    getSuggestedFilms(take: number = 12): Observable<GetFilmsRes> {
+        return this.http.get<GetFilmsRes>(`${this.baseUrl}/Film/suggested`, {
+            params: { take }
+        });
+    }
 }

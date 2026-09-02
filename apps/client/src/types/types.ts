@@ -34,7 +34,8 @@ export interface GetFilmsReq extends GenericListReq {
 export enum OrderByFilmEnum {
 	YearReleased = 1,
 	Rating = 2,
-	Title = 3
+	Title = 3,
+	CreatedAt = 4
 }
 export interface GetFilmsResItem {
 	filmId: number;
@@ -48,6 +49,7 @@ export interface GetFilmsResItem {
 
 export interface GetFilmsRes {
 	films: GetFilmsResItem[];
+	totalCount: number;
 }
 
 // add film

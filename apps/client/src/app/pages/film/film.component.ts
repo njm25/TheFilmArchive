@@ -53,6 +53,8 @@ export class FilmComponent {
     selectedSourceId = signal<number | null>(null);
     activeSource = signal<GetFilmSourceRes | null>(null);
 
+    private viewLogged = false;
+
     // S3 sources store a relative object key, so the CDN base has to be prepended.
     videoUrl = computed(() => {
         const s = this.activeSource();
@@ -115,7 +117,16 @@ export class FilmComponent {
 
         this.filmService.getFilmSource(sourceId).subscribe((r) => {
             this.activeSource.set(r);
+            this.logView();
         });
+    }
+
+    private logView() {
+        if (this.viewLogged)
+            return;
+
+        this.viewLogged = true;
+        this.filmService.logFilmView(this.filmId()).subscribe();
     }
 
     refreshMetadata() {

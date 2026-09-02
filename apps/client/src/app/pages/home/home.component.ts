@@ -1,94 +1,53 @@
-import { Component, computed, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, inject, signal } from '@angular/core';
 import { FilmService } from '../../../services/film.service';
+import { AuthService } from '../../../services/auth.service';
 import { GetFilmsResItem, GetFilmsReq, GetFilmsRes, OrderByFilmEnum, OrderingTypeEnum } from '../../../types/types';
-import { CardListComponent } from '../../../components/card-list/card-list.component';
-import { DropdownComponent, DropdownOption } from '../../../components/dropdown/dropdown.component';
-
-interface SortOption {
-    label: string;
-    orderBy: OrderByFilmEnum;
-    orderingType: OrderingTypeEnum;
-}
+import { FilmRowComponent } from '../../../components/film-row/film-row.component';
 
 @Component({
     selector: 'tfa-home',
-    imports: [CardListComponent, FormsModule, DropdownComponent],
+    imports: [FilmRowComponent],
     templateUrl: './home.component.html',
     styleUrl: './home.component.css'
 })
 export class HomeComponent {
     filmService = inject(FilmService);
+    authService = inject(AuthService);
 
-    // index 0 is the default sort applied on first load
-    readonly sortOptions: SortOption[] = [
-        { label: 'Highest Rated', orderBy: OrderByFilmEnum.Rating, orderingType: OrderingTypeEnum.Descending },
-        { label: 'Lowest Rated', orderBy: OrderByFilmEnum.Rating, orderingType: OrderingTypeEnum.Ascending },
-        { label: 'Newest First', orderBy: OrderByFilmEnum.YearReleased, orderingType: OrderingTypeEnum.Descending },
-        { label: 'Oldest First', orderBy: OrderByFilmEnum.YearReleased, orderingType: OrderingTypeEnum.Ascending },
-        { label: 'Title (A-Z)', orderBy: OrderByFilmEnum.Title, orderingType: OrderingTypeEnum.Ascending },
-        { label: 'Title (Z-A)', orderBy: OrderByFilmEnum.Title, orderingType: OrderingTypeEnum.Descending }
-    ];
+    totalCount = signal(0);
+    recentlyAdded = signal<GetFilmsResItem[]>([]);
+    popular = signal<GetFilmsResItem[]>([]);
+    continueWatching = signal<GetFilmsResItem[]>([]);
+    suggested = signal<GetFilmsResItem[]>([]);
 
-    readonly sortDropdownOptions: DropdownOption<number>[] = this.sortOptions.map((o, i) => ({
-        label: o.label,
-        value: i
-    }));
-
-    films = signal<GetFilmsResItem[]>([]);
-    searchText = '';
-    sortIndex = signal(0);
-    pageNumber = signal(1);
-    loading = signal(true);
-    readonly pageSize = 24;
-
-    hasMore = computed(() => this.films().length === this.pageSize);
-    hasPrev = computed(() => this.pageNumber() > 1);
+    isLoggedIn = () => this.authService.isLoggedIn();
 
     ngOnInit() {
-        this.fetchFilms();
-    }
-
-    fetchFilms() {
-        this.loading.set(true);
-        const sort = this.sortOptions[this.sortIndex()];
-
         const req: GetFilmsReq = {
-            pageNumber: this.pageNumber(),
-            pageSize: this.pageSize,
-            searchText: this.searchText,
-            orderBy: sort.orderBy,
-            orderingType: sort.orderingType
+            pageNumber: 1,
+            pageSize: 18,
+            searchText: "",
+            orderBy: OrderByFilmEnum.CreatedAt,
+            orderingType: OrderingTypeEnum.Descending
         };
 
         this.filmService.getFilms(req).subscribe((r: GetFilmsRes) => {
-            this.films.set(r.films);
-            this.loading.set(false);
+            this.recentlyAdded.set(r.films);
+            this.totalCount.set(r.totalCount);
         });
-    }
 
-    onSearch() {
-        this.pageNumber.set(1);
-        this.fetchFilms();
-    }
+        this.filmService.getPopularFilms().subscribe((r: GetFilmsRes) => {
+            this.popular.set(r.films);
+        });
 
-    onSortChange(index: number) {
-        this.sortIndex.set(index);
-        this.pageNumber.set(1);
-        this.fetchFilms();
-    }
+        if (this.authService.isLoggedIn()) {
+            this.filmService.getContinueWatching().subscribe((r: GetFilmsRes) => {
+                this.continueWatching.set(r.films);
+            });
 
-    prevPage() {
-        if (this.hasPrev()) {
-            this.pageNumber.update(v => v - 1);
-            this.fetchFilms();
-        }
-    }
-
-    nextPage() {
-        if (this.hasMore()) {
-            this.pageNumber.update(v => v + 1);
-            this.fetchFilms();
+            this.filmService.getSuggestedFilms().subscribe((r: GetFilmsRes) => {
+                this.suggested.set(r.films);
+            });
         }
     }
 }

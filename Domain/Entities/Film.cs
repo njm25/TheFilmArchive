@@ -77,4 +77,6 @@ public class Film
     public ICollection<FilmVideo> Videos { get; set; } = new List<FilmVideo>();
 
     public ICollection<FilmReleaseDate> ReleaseDates { get; set; } = new List<FilmReleaseDate>();
+
+    public ICollection<FilmView> Views { get; set; } = new List<FilmView>();
 }
