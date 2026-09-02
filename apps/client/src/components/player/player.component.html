@@ -1,0 +1,19 @@
+@if (embedUrl(); as url) {
+  <iframe
+    class="tfa-player-el"
+    [src]="url"
+    allowfullscreen
+    webkitallowfullscreen
+  ></iframe>
+} @else {
+  <video
+    #videoEl
+    class="tfa-player-el"
+    controls
+    [src]="src()"
+    (loadedmetadata)="onLoadedMetadata()"
+    (play)="onPlay()"
+    (timeupdate)="onTimeUpdate()"
+    (pause)="onPause()"
+  ></video>
+}

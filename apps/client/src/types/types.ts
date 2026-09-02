@@ -30,6 +30,8 @@ export interface GetUsersResItem {
 // get films
 export interface GetFilmsReq extends GenericListReq {
 	orderBy: OrderByFilmEnum;
+	genreIds?: number[];
+	minRating?: number | null;
 }
 export enum OrderByFilmEnum {
 	YearReleased = 1,
@@ -50,6 +52,15 @@ export interface GetFilmsResItem {
 export interface GetFilmsRes {
 	films: GetFilmsResItem[];
 	totalCount: number;
+}
+
+// genres
+export interface GetGenresRes {
+	genres: GetGenreResItem[];
+}
+export interface GetGenreResItem {
+	genreId: number;
+	name: string;
 }
 
 // add film
@@ -81,6 +92,20 @@ export interface GetFilmResSource {
 export interface GetFilmSourceRes {
 	type: SourceTypeEnum;
 	url: string;
+	isDirectVideo: boolean;
+}
+
+// watch progress
+export interface WatchProgressReq {
+	filmId: number;
+	sourceId: number;
+	progressSeconds: number;
+	durationSeconds: number;
+}
+
+export interface GetWatchProgressRes {
+	progressSeconds: number;
+	durationSeconds: number;
 }
 
 export interface GetFilmResCastMember {

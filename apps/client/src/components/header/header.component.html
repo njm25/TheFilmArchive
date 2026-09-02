@@ -12,7 +12,7 @@
       <tfa-link href="/films" class="nav-item" styleClass="header-nav-link">Films</tfa-link>
       @if (isAdmin()) {
         <tfa-dropdown
-          class="nav-dropdown"
+          variant="ghost"
           [options]="adminMenuOptions"
           placeholder="Admin"
           ariaLabel="Admin menu"
@@ -21,7 +21,7 @@
       }
       @if (isSysAdmin()) {
         <tfa-dropdown
-          class="nav-dropdown"
+          variant="ghost"
           [options]="sysAdminMenuOptions"
           placeholder="Sys Admin"
           ariaLabel="Sys Admin menu"

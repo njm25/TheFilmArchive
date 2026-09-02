@@ -47,6 +47,16 @@ public class FilmController : ControllerBase
             query = query.Where(f => f.Title.Contains(req.SearchText));
         }
 
+        if (req.GenreIds != null && req.GenreIds.Count > 0)
+        {
+            query = query.Where(f => f.Genres.Any(fg => req.GenreIds.Contains(fg.GenreId)));
+        }
+
+        if (req.MinRating.HasValue)
+        {
+            query = query.Where(f => f.VoteAverage >= req.MinRating.Value);
+        }
+
         // Ordering
         query = (req.OrderBy, req.OrderingType) switch
         {
@@ -105,6 +115,22 @@ public class FilmController : ControllerBase
         };
 
         return Ok(res);
+    }
+
+    // GET: api/films/genres
+    [HttpGet("genres")]
+    public async Task<IActionResult> GetGenres()
+    {
+        List<GetGenreResItem> genres = await _db.Genres
+            .OrderBy(g => g.Name)
+            .Select(g => new GetGenreResItem
+            {
+                GenreId = g.Id,
+                Name = g.Name
+            })
+            .ToListAsync();
+
+        return Ok(new GetGenresRes { Genres = genres });
     }
 
     // GET: api/films/1
@@ -184,10 +210,38 @@ public class FilmController : ControllerBase
         if (source == null)
             return NotFound();
 
+        if (source.Type != SourceTypeEnum.ArchiveOrg)
+        {
+            return Ok(new GetFilmSourceRes
+            {
+                Type = source.Type,
+                Url = source.SourceUrl,
+                IsDirectVideo = true
+            });
+        }
+
+        string? identifier = ArchiveOrgService.ExtractIdentifier(source.SourceUrl);
+        string? playableUrl = identifier != null
+            ? await _archiveOrg.GetBestPlayableFileUrlAsync(identifier)
+            : null;
+
+        if (playableUrl != null)
+        {
+            return Ok(new GetFilmSourceRes
+            {
+                Type = source.Type,
+                Url = playableUrl,
+                IsDirectVideo = true
+            });
+        }
+
+        // Fall back to archive.org's own embeddable player when no
+        // browser-playable file could be resolved for this item.
         return Ok(new GetFilmSourceRes
         {
             Type = source.Type,
-            Url = source.SourceUrl
+            Url = identifier != null ? $"https://archive.org/embed/{identifier}" : source.SourceUrl,
+            IsDirectVideo = false
         });
     }
 
@@ -448,6 +502,55 @@ public class FilmController : ControllerBase
                 VoteAverage = f.VoteAverage
             })
             .ToList();
+    }
+
+    // POST: api/films/watchProgress
+    [Authorize]
+    [HttpPost("watchProgress")]
+    public async Task<IActionResult> UpsertWatchProgress([FromBody] WatchProgressReq req)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+
+        WatchProgress? progress = await _db.WatchProgresses
+            .FirstOrDefaultAsync(w => w.UserId == userId && w.FilmId == req.FilmId);
+
+        if (progress == null)
+        {
+            progress = new WatchProgress
+            {
+                UserId = userId,
+                FilmId = req.FilmId
+            };
+
+            _db.WatchProgresses.Add(progress);
+        }
+
+        progress.SourceId = req.SourceId;
+        progress.ProgressSeconds = req.ProgressSeconds;
+        progress.DurationSeconds = req.DurationSeconds;
+        progress.UpdatedAt = DateTime.UtcNow;
+
+        await _db.SaveChangesAsync();
+
+        return Ok();
+    }
+
+    // GET: api/films/1/watchProgress
+    [Authorize]
+    [HttpGet("{filmId}/watchProgress")]
+    public async Task<IActionResult> GetWatchProgress(int filmId)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+
+        WatchProgress? progress = await _db.WatchProgresses
+            .AsNoTracking()
+            .FirstOrDefaultAsync(w => w.UserId == userId && w.FilmId == filmId);
+
+        return Ok(new GetWatchProgressRes
+        {
+            ProgressSeconds = progress?.ProgressSeconds ?? 0,
+            DurationSeconds = progress?.DurationSeconds ?? 0
+        });
     }
 
 }

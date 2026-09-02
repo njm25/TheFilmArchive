@@ -1,0 +1,29 @@
+:host {
+  position: relative;
+  display: inline-block;
+}
+
+.tfa-popover-trigger {
+  cursor: pointer;
+}
+
+.tfa-popover-panel {
+  position: absolute;
+  top: calc(100% + 0.375rem);
+  left: 0;
+  z-index: 20;
+  min-width: 16rem;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.tfa-popover-panel--right {
+  left: auto;
+  right: 0;
+}

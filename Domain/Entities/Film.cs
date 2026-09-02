@@ -79,4 +79,6 @@ public class Film
     public ICollection<FilmReleaseDate> ReleaseDates { get; set; } = new List<FilmReleaseDate>();
 
     public ICollection<FilmView> Views { get; set; } = new List<FilmView>();
+
+    public ICollection<WatchProgress> WatchProgresses { get; set; } = new List<WatchProgress>();
 }
