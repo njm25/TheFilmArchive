@@ -4,6 +4,7 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260902215657_add_suggestions_createdAt")]
+    partial class add_suggestions_createdAt
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -593,43 +596,6 @@ namespace Infrastructure.Migrations
                     b.ToTable("ProductionCompanies");
                 });
 
-            modelBuilder.Entity("Domain.Entities.WatchProgress", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("DurationSeconds")
-                        .HasColumnType("int");
-
-                    b.Property<int>("FilmId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProgressSeconds")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SourceId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FilmId");
-
-                    b.HasIndex("UserId", "FilmId")
-                        .IsUnique();
-
-                    b.ToTable("WatchProgresses");
-                });
-
             modelBuilder.Entity("Infrastructure.Data.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
@@ -972,17 +938,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("Film");
                 });
 
-            modelBuilder.Entity("Domain.Entities.WatchProgress", b =>
-                {
-                    b.HasOne("Domain.Entities.Film", "Film")
-                        .WithMany("WatchProgresses")
-                        .HasForeignKey("FilmId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Film");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -1058,8 +1013,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("Videos");
 
                     b.Navigation("Views");
-
-                    b.Navigation("WatchProgresses");
                 });
 
             modelBuilder.Entity("Domain.Entities.Genre", b =>
