@@ -32,7 +32,6 @@ public class FilmController : ControllerBase
         _tmdb = tmdb;
         _filmSync = filmSync;
         _archiveOrg = archiveOrg;
-
     }
 
     // GET: api/films
