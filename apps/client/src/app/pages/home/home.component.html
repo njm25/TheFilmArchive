@@ -16,10 +16,16 @@
       </button>
     </div>
     <div class="toolbar-right">
-      <button class="btn btn-ghost sort-btn" (click)="toggleOrder()">
-        <i class="pi pi-sort-alt"></i>
-        <span class="sort-label">{{ isAscending() ? 'Oldest first' : 'Newest first' }}</span>
-      </button>
+      <select
+        class="form-input sort-select"
+        [value]="sortIndex()"
+        (change)="onSortChange($event)"
+        aria-label="Sort films by"
+      >
+        @for (option of sortOptions; track option.label; let i = $index) {
+          <option [value]="i">{{ option.label }}</option>
+        }
+      </select>
     </div>
   </div>
 

@@ -49,12 +49,24 @@ public class FilmController : ControllerBase
         {
 
             (OrderFilmByEnum.YearReleased, OrderingTypeEnum.Ascending) =>
-                query.OrderBy(f => f.ReleaseYear),
+                query.OrderBy(f => f.ReleaseYear).ThenBy(f => f.Id),
 
             (OrderFilmByEnum.YearReleased, OrderingTypeEnum.Descending) =>
-                query.OrderByDescending(f => f.ReleaseYear),
+                query.OrderByDescending(f => f.ReleaseYear).ThenBy(f => f.Id),
 
-            _ => query.OrderBy(f => f.Id)
+            (OrderFilmByEnum.Title, OrderingTypeEnum.Ascending) =>
+                query.OrderBy(f => f.Title).ThenBy(f => f.Id),
+
+            (OrderFilmByEnum.Title, OrderingTypeEnum.Descending) =>
+                query.OrderByDescending(f => f.Title).ThenBy(f => f.Id),
+
+            (OrderFilmByEnum.Rating, OrderingTypeEnum.Ascending) =>
+                query.OrderBy(f => f.VoteAverage).ThenBy(f => f.Id),
+
+            (OrderFilmByEnum.Rating, OrderingTypeEnum.Descending) =>
+                query.OrderByDescending(f => f.VoteAverage).ThenBy(f => f.Id),
+
+            _ => query.OrderByDescending(f => f.VoteAverage).ThenBy(f => f.Id)
         };
 
         // Paging

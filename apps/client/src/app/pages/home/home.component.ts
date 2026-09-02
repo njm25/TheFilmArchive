@@ -1,8 +1,14 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { FilmService } from '../../../services/film.service';
-import { GetFilmsResItem, GetFilmsReq, GetFilmsRes, OrderingTypeEnum } from '../../../types/types';
+import { GetFilmsResItem, GetFilmsReq, GetFilmsRes, OrderByFilmEnum, OrderingTypeEnum } from '../../../types/types';
 import { CardListComponent } from '../../../components/card-list/card-list.component';
+
+interface SortOption {
+    label: string;
+    orderBy: OrderByFilmEnum;
+    orderingType: OrderingTypeEnum;
+}
 
 @Component({
     selector: 'tfa-home',
@@ -13,14 +19,23 @@ import { CardListComponent } from '../../../components/card-list/card-list.compo
 export class HomeComponent {
     filmService = inject(FilmService);
 
+    // index 0 is the default sort applied on first load
+    readonly sortOptions: SortOption[] = [
+        { label: 'Highest Rated', orderBy: OrderByFilmEnum.Rating, orderingType: OrderingTypeEnum.Descending },
+        { label: 'Lowest Rated', orderBy: OrderByFilmEnum.Rating, orderingType: OrderingTypeEnum.Ascending },
+        { label: 'Newest First', orderBy: OrderByFilmEnum.YearReleased, orderingType: OrderingTypeEnum.Descending },
+        { label: 'Oldest First', orderBy: OrderByFilmEnum.YearReleased, orderingType: OrderingTypeEnum.Ascending },
+        { label: 'Title (A-Z)', orderBy: OrderByFilmEnum.Title, orderingType: OrderingTypeEnum.Ascending },
+        { label: 'Title (Z-A)', orderBy: OrderByFilmEnum.Title, orderingType: OrderingTypeEnum.Descending }
+    ];
+
     films = signal<GetFilmsResItem[]>([]);
     searchText = '';
-    orderingType = signal<OrderingTypeEnum>(OrderingTypeEnum.Descending);
+    sortIndex = signal(0);
     pageNumber = signal(1);
     loading = signal(true);
     readonly pageSize = 24;
 
-    isAscending = computed(() => this.orderingType() === OrderingTypeEnum.Ascending);
     hasMore = computed(() => this.films().length === this.pageSize);
     hasPrev = computed(() => this.pageNumber() > 1);
 
@@ -30,12 +45,14 @@ export class HomeComponent {
 
     fetchFilms() {
         this.loading.set(true);
+        const sort = this.sortOptions[this.sortIndex()];
+
         const req: GetFilmsReq = {
             pageNumber: this.pageNumber(),
             pageSize: this.pageSize,
             searchText: this.searchText,
-            orderBy: 1,
-            orderingType: this.orderingType()
+            orderBy: sort.orderBy,
+            orderingType: sort.orderingType
         };
 
         this.filmService.getFilms(req).subscribe((r: GetFilmsRes) => {
@@ -49,12 +66,9 @@ export class HomeComponent {
         this.fetchFilms();
     }
 
-    toggleOrder() {
-        this.orderingType.update(v =>
-            v === OrderingTypeEnum.Ascending
-                ? OrderingTypeEnum.Descending
-                : OrderingTypeEnum.Ascending
-        );
+    onSortChange(event: Event) {
+        const index = Number((event.target as HTMLSelectElement).value);
+        this.sortIndex.set(index);
         this.pageNumber.set(1);
         this.fetchFilms();
     }

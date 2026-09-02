@@ -32,7 +32,9 @@ export interface GetFilmsReq extends GenericListReq {
 	orderBy: OrderByFilmEnum;
 }
 export enum OrderByFilmEnum {
-	YearReleased = 1
+	YearReleased = 1,
+	Rating = 2,
+	Title = 3
 }
 export interface GetFilmsResItem {
 	filmId: number;
