@@ -35,10 +35,33 @@ only reflects what was *seeded*, not what an admin has added one-off via
 SELECT ImdbId, TmdbId, Title, ReleaseYear FROM Films;
 ```
 
-Merge any such rows into the same exclusion lists. Hand the three
-`/tmp/existing_*.txt` files (or the merged list) to every research agent in
-step 1 — each agent's own instructions must tell it to check candidates
-against these files and drop any match before including them in its output.
+Merge any such rows into the same exclusion lists, then also merge in the
+permanent blocklist below (these were manually pulled from the manifest by
+the maintainer, so they won't show up as "already in the manifest" on
+their own — they must be excluded explicitly regardless of PD status or
+source quality):
+
+```bash
+cat >> /tmp/existing_imdb_ids.txt <<'EOF'
+tt0260173
+tt0159281
+tt0151672
+tt0260369
+EOF
+sort -u -o /tmp/existing_imdb_ids.txt /tmp/existing_imdb_ids.txt
+```
+
+| Title | Year | IMDb ID |
+|---|---|---|
+| Mechanized Death | 1961 | tt0260173 |
+| Billy Mouse's Akwakade | 1940 | tt0159281 |
+| The Museum (Toby the Pup) | 1930 | tt0151672 |
+| Signal 30 | 1959 | tt0260369 |
+
+Hand the three `/tmp/existing_*.txt` files (or the merged list) to every
+research agent in step 1 — each agent's own instructions must tell it to
+check candidates against these files and drop any match before including
+them in its output.
 
 ## 1. Derive a fresh category split, then fan out research agents
 
@@ -134,6 +157,10 @@ with open('apps/api/Storage/seed-films.json') as f:
 existing_imdb = {e['imdbId'] for e in existing if e.get('imdbId')}
 existing_tmdb = {str(e['tmdbId']) for e in existing if e.get('tmdbId')}
 existing_title_year = {(e['title'].lower(), e['year']) for e in existing}
+
+# Permanently blocked - pulled from the manifest by the maintainer, won't be
+# caught by the checks above since they're no longer in seed-films.json.
+existing_imdb |= {"tt0260173", "tt0159281", "tt0151672", "tt0260369"}
 
 seen_imdb = set()
 rows = []
