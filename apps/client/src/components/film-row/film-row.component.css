@@ -1,0 +1,28 @@
+.film-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.film-row-title {
+  font-size: 1.25rem;
+}
+
+.film-row-scroll {
+  display: flex;
+  gap: 0.75rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 0.5rem;
+}
+
+.film-row-item {
+  flex: 0 0 auto;
+  width: 150px;
+}
+
+@media (max-width: 480px) {
+  .film-row-item {
+    width: 120px;
+  }
+}

@@ -1,0 +1,68 @@
+.films-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding-bottom: 2rem;
+}
+
+/* ---- Toolbar ---- */
+.films-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.search-wrap {
+  display: flex;
+  gap: 0.5rem;
+  flex: 1;
+  min-width: 200px;
+}
+
+.search-input {
+  flex: 1;
+}
+
+.search-btn {
+  flex-shrink: 0;
+  padding: 0.625rem 0.875rem;
+}
+
+.sort-select {
+  flex-shrink: 0;
+  width: auto;
+  min-width: 8.75rem;
+}
+
+.toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+.film-count {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* ---- Loading ---- */
+.films-loading,
+.films-loading-more {
+  display: flex;
+  justify-content: center;
+  padding: 2rem 0;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 480px) {
+  .sort-select {
+    min-width: 0;
+  }
+
+  .search-wrap {
+    min-width: 0;
+  }
+}

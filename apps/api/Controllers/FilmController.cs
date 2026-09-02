@@ -8,6 +8,7 @@ using Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using TMDbLib.Objects.Movies;
 
 namespace api.Controllers;
@@ -68,8 +69,16 @@ public class FilmController : ControllerBase
             (OrderFilmByEnum.Rating, OrderingTypeEnum.Descending) =>
                 query.OrderByDescending(f => f.VoteAverage).ThenBy(f => f.Id),
 
+            (OrderFilmByEnum.CreatedAt, OrderingTypeEnum.Ascending) =>
+                query.OrderBy(f => f.CreatedAt).ThenBy(f => f.Id),
+
+            (OrderFilmByEnum.CreatedAt, OrderingTypeEnum.Descending) =>
+                query.OrderByDescending(f => f.CreatedAt).ThenBy(f => f.Id),
+
             _ => query.OrderByDescending(f => f.VoteAverage).ThenBy(f => f.Id)
         };
+
+        int totalCount = await query.CountAsync();
 
         // Paging
         int skip = (req.PageNumber - 1) * req.PageSize;
@@ -91,7 +100,8 @@ public class FilmController : ControllerBase
 
         var res = new GetFilmsRes
         {
-            Films = films
+            Films = films,
+            TotalCount = totalCount
         };
 
         return Ok(res);
@@ -297,6 +307,147 @@ public class FilmController : ControllerBase
         await _db.SaveChangesAsync();
 
         return NoContent();
+    }
+
+    // POST: api/films/1/logView
+    [HttpPost("{id}/logView")]
+    public async Task<IActionResult> LogView(int id)
+    {
+        bool filmExists = await _db.Films.AnyAsync(f => f.Id == id);
+
+        if (!filmExists)
+            return NotFound();
+
+        FilmView view = new FilmView
+        {
+            FilmId = id,
+            UserId = User.FindFirstValue(ClaimTypes.NameIdentifier),
+            CreatedAt = DateTime.UtcNow
+        };
+
+        _db.FilmViews.Add(view);
+
+        await _db.SaveChangesAsync();
+
+        return Ok();
+    }
+
+    // GET: api/films/popular
+    [HttpGet("popular")]
+    public async Task<IActionResult> GetPopular([FromQuery] int take = 12)
+    {
+        DateTime windowStart = DateTime.UtcNow.AddDays(-30);
+
+        List<int> topFilmIds = await _db.FilmViews
+            .Where(v => v.CreatedAt >= windowStart)
+            .GroupBy(v => v.FilmId)
+            .OrderByDescending(g => g.Count())
+            .Select(g => g.Key)
+            .Take(take)
+            .ToListAsync();
+
+        List<GetFilmResItem> films = await ResolveFilmsInOrderAsync(topFilmIds);
+
+        return Ok(new GetFilmsRes { Films = films, TotalCount = films.Count });
+    }
+
+    // GET: api/films/continueWatching
+    [Authorize]
+    [HttpGet("continueWatching")]
+    public async Task<IActionResult> GetContinueWatching([FromQuery] int take = 12)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+
+        List<int> filmIds = await _db.FilmViews
+            .Where(v => v.UserId == userId)
+            .GroupBy(v => v.FilmId)
+            .OrderByDescending(g => g.Max(v => v.CreatedAt))
+            .Select(g => g.Key)
+            .Take(take)
+            .ToListAsync();
+
+        List<GetFilmResItem> films = await ResolveFilmsInOrderAsync(filmIds);
+
+        return Ok(new GetFilmsRes { Films = films, TotalCount = films.Count });
+    }
+
+    // GET: api/films/suggested
+    [Authorize]
+    [HttpGet("suggested")]
+    public async Task<IActionResult> GetSuggested([FromQuery] int take = 12)
+    {
+        string userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+
+        List<int> viewedFilmIds = await _db.FilmViews
+            .Where(v => v.UserId == userId)
+            .Select(v => v.FilmId)
+            .Distinct()
+            .ToListAsync();
+
+        if (viewedFilmIds.Count == 0)
+            return await GetPopular(take);
+
+        List<int> watchedGenreIds = await _db.FilmGenres
+            .Where(fg => viewedFilmIds.Contains(fg.FilmId))
+            .Select(fg => fg.GenreId)
+            .Distinct()
+            .ToListAsync();
+
+        if (watchedGenreIds.Count == 0)
+            return await GetPopular(take);
+
+        DateTime windowStart = DateTime.UtcNow.AddDays(-30);
+
+        Dictionary<int, int> viewCounts = await _db.FilmViews
+            .Where(v => v.CreatedAt >= windowStart)
+            .GroupBy(v => v.FilmId)
+            .Select(g => new { FilmId = g.Key, Count = g.Count() })
+            .ToDictionaryAsync(x => x.FilmId, x => x.Count);
+
+        var candidates = await _db.FilmGenres
+            .Where(fg => watchedGenreIds.Contains(fg.GenreId) && !viewedFilmIds.Contains(fg.FilmId))
+            .GroupBy(fg => fg.FilmId)
+            .Select(g => new { FilmId = g.Key, Overlap = g.Count() })
+            .ToListAsync();
+
+        List<int> rankedFilmIds = candidates
+            .OrderByDescending(x => x.Overlap)
+            .ThenByDescending(x => viewCounts.TryGetValue(x.FilmId, out var count) ? count : 0)
+            .Take(take)
+            .Select(x => x.FilmId)
+            .ToList();
+
+        if (rankedFilmIds.Count == 0)
+            return await GetPopular(take);
+
+        List<GetFilmResItem> films = await ResolveFilmsInOrderAsync(rankedFilmIds);
+
+        return Ok(new GetFilmsRes { Films = films, TotalCount = films.Count });
+    }
+
+    // Fetches the given films and re-orders the results to match filmIds,
+    // since order doesn't reliably survive a SQL join after a Take().
+    private async Task<List<GetFilmResItem>> ResolveFilmsInOrderAsync(List<int> filmIds)
+    {
+        Dictionary<int, Film> filmsById = await _db.Films
+            .Where(f => filmIds.Contains(f.Id))
+            .Include(f => f.Genres).ThenInclude(fg => fg.Genre)
+            .ToDictionaryAsync(f => f.Id);
+
+        return filmIds
+            .Where(filmsById.ContainsKey)
+            .Select(id => filmsById[id])
+            .Select(f => new GetFilmResItem
+            {
+                FilmId = f.Id,
+                Title = f.Title,
+                YearReleased = f.ReleaseYear ?? 0,
+                Description = f.Description ?? "No description found.",
+                PosterPath = f.PosterPath ?? "",
+                Genres = f.Genres.Select(fg => fg.Genre.Name).ToList(),
+                VoteAverage = f.VoteAverage
+            })
+            .ToList();
     }
 
 }

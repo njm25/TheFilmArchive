@@ -1,0 +1,12 @@
+@if (films().length > 0) {
+  <div class="film-row">
+    <h2 class="film-row-title">{{ title() }}</h2>
+    <div class="film-row-scroll">
+      @for (film of films(); track film.filmId) {
+        <div class="film-row-item">
+          <tfa-film-card [film]="film"></tfa-film-card>
+        </div>
+      }
+    </div>
+  </div>
+}
