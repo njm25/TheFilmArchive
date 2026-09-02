@@ -116,7 +116,7 @@ public class FilmController : ControllerBase
             Description = film.Description ?? "No description found.",
             Tagline = film.Tagline ?? "No tagline found.",
             YearReleased = film.ReleaseYear ?? 0,
-            PosterPath = film.PosterPath ?? "No path found.",
+            PosterPath = film.PosterPath,
             Sources = film.Sources
                     .Select(o => new GetFilmResSource
                     {
@@ -130,7 +130,7 @@ public class FilmController : ControllerBase
                     .Select(o => o.Id)
                     .ToList()
                     .FirstOrDefault(-1),
-            BackdropPath = film.BackdropPath ?? "No path found.",
+            BackdropPath = film.BackdropPath,
             Runtime = film.Runtime ?? 0,
             ImdbId = film.ImdbId,
             Homepage = film.Homepage,

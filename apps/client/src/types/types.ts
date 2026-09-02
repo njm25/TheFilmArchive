@@ -99,10 +99,10 @@ export interface GetFilmRes {
 	yearReleased: number;
 	description: string;
 	tagline: string;
-	posterPath: string;
+	posterPath: string | null;
 	sources: GetFilmResSource[];
 	primarySourceTypeId: number;
-    backdropPath: string;
+    backdropPath: string | null;
     runtime: number;
     imdbId: string | null;
     homepage: string | null;
