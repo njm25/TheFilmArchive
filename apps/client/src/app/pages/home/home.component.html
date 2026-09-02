@@ -16,16 +16,13 @@
       </button>
     </div>
     <div class="toolbar-right">
-      <select
-        class="form-input sort-select"
+      <tfa-dropdown
+        class="sort-select"
+        [options]="sortDropdownOptions"
         [value]="sortIndex()"
-        (change)="onSortChange($event)"
-        aria-label="Sort films by"
-      >
-        @for (option of sortOptions; track option.label; let i = $index) {
-          <option [value]="i">{{ option.label }}</option>
-        }
-      </select>
+        (valueChange)="onSortChange($event)"
+        ariaLabel="Sort films by"
+      ></tfa-dropdown>
     </div>
   </div>
 

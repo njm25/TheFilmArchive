@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { FilmService } from '../../../services/film.service';
 import { GetFilmsResItem, GetFilmsReq, GetFilmsRes, OrderByFilmEnum, OrderingTypeEnum } from '../../../types/types';
 import { CardListComponent } from '../../../components/card-list/card-list.component';
+import { DropdownComponent, DropdownOption } from '../../../components/dropdown/dropdown.component';
 
 interface SortOption {
     label: string;
@@ -12,7 +13,7 @@ interface SortOption {
 
 @Component({
     selector: 'tfa-home',
-    imports: [CardListComponent, FormsModule],
+    imports: [CardListComponent, FormsModule, DropdownComponent],
     templateUrl: './home.component.html',
     styleUrl: './home.component.css'
 })
@@ -28,6 +29,11 @@ export class HomeComponent {
         { label: 'Title (A-Z)', orderBy: OrderByFilmEnum.Title, orderingType: OrderingTypeEnum.Ascending },
         { label: 'Title (Z-A)', orderBy: OrderByFilmEnum.Title, orderingType: OrderingTypeEnum.Descending }
     ];
+
+    readonly sortDropdownOptions: DropdownOption<number>[] = this.sortOptions.map((o, i) => ({
+        label: o.label,
+        value: i
+    }));
 
     films = signal<GetFilmsResItem[]>([]);
     searchText = '';
@@ -66,8 +72,7 @@ export class HomeComponent {
         this.fetchFilms();
     }
 
-    onSortChange(event: Event) {
-        const index = Number((event.target as HTMLSelectElement).value);
+    onSortChange(index: number) {
         this.sortIndex.set(index);
         this.pageNumber.set(1);
         this.fetchFilms();

@@ -1,10 +1,11 @@
 import { Component, inject, signal } from '@angular/core';
 import { GetUsersReq, GetUsersRes, GetUsersResItem, RoleEnum } from '../../../types/types';
 import { UserService } from '../../../services/user.service';
+import { DropdownComponent, DropdownOption } from '../../../components/dropdown/dropdown.component';
 
 @Component({
 	selector: 'tfa-users',
-	imports: [],
+	imports: [DropdownComponent],
 	templateUrl: './users.component.html',
 	styleUrl: './users.component.css',
 })
@@ -13,7 +14,7 @@ export class UsersComponent {
 
 	users = signal<GetUsersResItem[]>([]);
 
-	readonly roles = [
+	readonly roles: DropdownOption<RoleEnum>[] = [
 		{ label: 'User', value: RoleEnum.User },
 		{ label: 'Admin', value: RoleEnum.Admin },
 		{ label: 'System Admin', value: RoleEnum.SysAdmin },
@@ -37,15 +38,13 @@ export class UsersComponent {
 		this.userService.setRole(userId, role).subscribe(() => {});
 	}
 
-	onRoleChange(userId: string, event: Event) {
-		const value = Number((event.target as HTMLSelectElement).value) as RoleEnum;
-
-		this.setRole(userId, value);
+	onRoleChange(userId: string, role: RoleEnum) {
+		this.setRole(userId, role);
 
 		this.users.update(users =>
 			users.map(user =>
 				user.id === userId
-					? { ...user, role: value }
+					? { ...user, role: role }
 					: user
 			)
 		);
