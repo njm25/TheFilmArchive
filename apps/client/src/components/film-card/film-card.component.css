@@ -42,15 +42,13 @@
   font-size: 0.8125rem;
   color: var(--text);
   line-height: 1.35;
-  word-break: break-word;
+  white-space: nowrap;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, #000 85%, transparent 100%);
+  mask-image: linear-gradient(to right, #000 85%, transparent 100%);
 }
 
 .film-year {
   font-size: 0.75rem;
   color: var(--text-muted);
-}
-
-.film-genre-line {
-  font-size: 0.6875rem;
-  color: var(--text-dim);
 }
