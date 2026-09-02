@@ -3,6 +3,8 @@
 public class GetFilmsReq : GenericListReq
 {
     public required OrderFilmByEnum OrderBy { get; set; }
+    public List<int>? GenreIds { get; set; }
+    public double? MinRating { get; set; }
 }
 
 public enum OrderFilmByEnum

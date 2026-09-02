@@ -1,26 +1,25 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, OnDestroy, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { FilmService } from '../../../services/film.service';
 import { GetFilmRes, GetFilmResSource, GetFilmSourceRes, SourceTypeEnum } from '../../../types/types';
 import { LinkComponent } from '../../../components/link/link.component';
 import { OptionListComponent, OptionListItem } from '../../../components/option-list/option-list.component';
+import { PlayerComponent, PlayerProgress } from '../../../components/player/player.component';
 import { AuthService } from '../../../services/auth.service';
 import { UserService } from '../../../services/user.service';
 
 @Component({
     selector: 'tfa-film',
-    imports: [LinkComponent, OptionListComponent],
+    imports: [LinkComponent, OptionListComponent, PlayerComponent],
     templateUrl: './film.component.html',
     styleUrl: './film.component.css'
 })
-export class FilmComponent {
+export class FilmComponent implements OnDestroy {
     route = inject(ActivatedRoute);
     router = inject(Router);
     filmService = inject(FilmService);
     authService = inject(AuthService);
     userService = inject(UserService);
-    sanitizer = inject(DomSanitizer);
 
     film = signal<GetFilmRes | null>(null);
     filmId = signal<number>(0);
@@ -32,6 +31,7 @@ export class FilmComponent {
     readonly BACKDROP_BASE_URL = "https://image.tmdb.org/t/p/w1280";
     readonly POSTER_BASE_URL = "https://image.tmdb.org/t/p/w780";
     readonly SOURCE_BASE_URL = "https://d1wwpf11v1dnfp.cloudfront.net";
+    readonly PROGRESS_INTERVAL_MS = 15000;
 
     backdropSrc = computed(() => this.film()?.backdropPath ? `${this.BACKDROP_BASE_URL}${this.film()?.backdropPath}` : null);
     posterSrc = computed(() => this.film()?.posterPath ? `${this.POSTER_BASE_URL}${this.film()?.posterPath}` : null);
@@ -52,27 +52,20 @@ export class FilmComponent {
 
     selectedSourceId = signal<number | null>(null);
     activeSource = signal<GetFilmSourceRes | null>(null);
-
-    private viewLogged = false;
+    resumeAtSeconds = signal(0);
 
     // S3 sources store a relative object key, so the CDN base has to be prepended.
-    videoUrl = computed(() => {
+    // The API resolves archive.org sources to a direct file URL already, so those
+    // are used as-is.
+    playerSrc = computed(() => {
         const s = this.activeSource();
-        if (!s || s.type !== SourceTypeEnum.S3) return null;
-        return `${this.SOURCE_BASE_URL}/${s.url}`;
+        if (!s) return null;
+        return s.type === SourceTypeEnum.S3 ? `${this.SOURCE_BASE_URL}/${s.url}` : s.url;
     });
 
-    // archive.org's /details/<id> page is an HTML viewer, not a raw video file,
-    // so it has to be played via archive.org's own embeddable player instead.
-    embedUrl = computed<SafeResourceUrl | null>(() => {
-        const s = this.activeSource();
-        if (!s || s.type !== SourceTypeEnum.ArchiveOrg) return null;
-
-        const identifier = this.extractArchiveIdentifier(s.url);
-        if (!identifier) return null;
-
-        return this.sanitizer.bypassSecurityTrustResourceUrl(`https://archive.org/embed/${identifier}`);
-    });
+    private viewLogged = false;
+    private lastProgressSentAt = 0;
+    private lastKnownProgress: PlayerProgress | null = null;
 
     ngOnInit() {
         this.filmId.set(parseInt(this.route.snapshot.paramMap.get("id")!));
@@ -92,6 +85,12 @@ export class FilmComponent {
                 this.activeSource.set(null);
             }
         });
+
+        if (this.authService.isLoggedIn()) {
+            this.filmService.getWatchProgress(this.filmId()).subscribe((r) => {
+                this.resumeAtSeconds.set(r.progressSeconds);
+            });
+        }
     }
 
     // Prefers the highest known-quality source; falls back to the film's
@@ -119,6 +118,52 @@ export class FilmComponent {
             this.activeSource.set(r);
             this.logView();
         });
+    }
+
+    onPlayerPlay() {
+        this.logView();
+    }
+
+    onPlayerTimeUpdate(progress: PlayerProgress) {
+        this.lastKnownProgress = progress;
+
+        const now = Date.now();
+
+        if (now - this.lastProgressSentAt < this.PROGRESS_INTERVAL_MS)
+            return;
+
+        this.lastProgressSentAt = now;
+        this.saveProgress(progress);
+    }
+
+    onPlayerPaused(progress: PlayerProgress) {
+        this.lastKnownProgress = progress;
+        this.saveProgress(progress);
+    }
+
+    // Route navigation away from the film page destroys this component
+    // (unlike a full page unload), so this is the reliable place to flush
+    // whatever progress hasn't been sent by the throttled interval yet.
+    ngOnDestroy() {
+        if (this.lastKnownProgress) {
+            this.saveProgress(this.lastKnownProgress);
+        }
+    }
+
+    private saveProgress(progress: PlayerProgress) {
+        if (!this.authService.isLoggedIn())
+            return;
+
+        const sourceId = this.selectedSourceId();
+        if (sourceId == null)
+            return;
+
+        this.filmService.saveWatchProgress({
+            filmId: this.filmId(),
+            sourceId,
+            progressSeconds: Math.floor(progress.currentTime),
+            durationSeconds: Math.floor(progress.duration)
+        }).subscribe();
     }
 
     private logView() {
@@ -164,10 +209,5 @@ export class FilmComponent {
                 this.activeSource.set(null);
             }
         });
-    }
-
-    private extractArchiveIdentifier(url: string): string | null {
-        const match = url.match(/archive\.org\/(?:details|embed)\/([^/?#]+)/);
-        return match ? match[1] : null;
     }
 }

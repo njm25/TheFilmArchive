@@ -1,30 +1,70 @@
 <div class="films-page">
 
-  <!-- Toolbar: search + count + sort -->
   <div class="films-toolbar">
-    <div class="search-wrap">
+
+    <div class="films-search">
+      <i class="pi pi-search films-search-icon"></i>
       <input
-        class="form-input search-input"
+        class="films-search-input"
         type="text"
         placeholder="Search films..."
         [(ngModel)]="searchText"
         [ngModelOptions]="{ standalone: true }"
-        (keyup.enter)="onSearch()"
+        (ngModelChange)="onSearchChange()"
       />
-      <button class="btn btn-ghost btn-sm search-btn" (click)="onSearch()">
-        <i class="pi pi-search"></i>
-      </button>
     </div>
-    <div class="toolbar-right">
+
+    <div class="films-toolbar-row">
       <span class="film-count">{{ totalCount() }} films</span>
-      <tfa-dropdown
-        class="sort-select"
-        [options]="sortDropdownOptions"
-        [value]="sortIndex()"
-        (valueChange)="onSortChange($event)"
-        ariaLabel="Sort films by"
-      ></tfa-dropdown>
+
+      <div class="films-toolbar-controls">
+        <tfa-popover align="right">
+          <button popoverTrigger type="button" class="btn btn-ghost btn-sm">
+            <i class="pi pi-sliders-h"></i>
+            Filters
+            @if (activeFilterCount() > 0) {
+              <span class="filter-badge">{{ activeFilterCount() }}</span>
+            }
+          </button>
+          <div popoverContent class="filters-panel">
+            <div class="filter-group">
+              <span class="form-label">Minimum rating</span>
+              <tfa-dropdown
+                size="sm"
+                [options]="ratingOptions"
+                [value]="minRating()"
+                placeholder="Any rating"
+                ariaLabel="Minimum rating"
+                (valueChange)="onMinRatingChange($event)"
+              ></tfa-dropdown>
+            </div>
+            <div class="filter-group">
+              <span class="form-label">Genres</span>
+              <tfa-multiselect
+                size="sm"
+                [options]="genreOptions()"
+                [values]="selectedGenreIds()"
+                placeholder="Any genre"
+                ariaLabel="Filter by genre"
+                (valuesChange)="onGenresChange($event)"
+              ></tfa-multiselect>
+            </div>
+            @if (activeFilterCount() > 0) {
+              <button type="button" class="btn btn-ghost btn-sm" (click)="clearFilters()">Clear filters</button>
+            }
+          </div>
+        </tfa-popover>
+
+        <tfa-dropdown
+          size="sm"
+          [options]="sortDropdownOptions"
+          [value]="sortIndex()"
+          ariaLabel="Sort films by"
+          (valueChange)="onSortChange($event)"
+        ></tfa-dropdown>
+      </div>
     </div>
+
   </div>
 
   <!-- Initial loading state -->

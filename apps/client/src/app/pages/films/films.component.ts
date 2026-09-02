@@ -1,9 +1,11 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { FilmService } from '../../../services/film.service';
-import { GetFilmsResItem, GetFilmsReq, GetFilmsRes, OrderByFilmEnum, OrderingTypeEnum } from '../../../types/types';
+import { GetFilmsResItem, GetFilmsReq, GetFilmsRes, GetGenreResItem, OrderByFilmEnum, OrderingTypeEnum } from '../../../types/types';
 import { CardListComponent } from '../../../components/card-list/card-list.component';
 import { DropdownComponent, DropdownOption } from '../../../components/dropdown/dropdown.component';
+import { MultiSelectComponent, MultiSelectOption } from '../../../components/multiselect/multiselect.component';
+import { PopoverComponent } from '../../../components/popover/popover.component';
 
 interface SortOption {
     label: string;
@@ -11,9 +13,18 @@ interface SortOption {
     orderingType: OrderingTypeEnum;
 }
 
+const RATING_OPTIONS: DropdownOption<number | null>[] = [
+    { label: 'Any rating', value: null },
+    { label: '9+', value: 9 },
+    { label: '8+', value: 8 },
+    { label: '7+', value: 7 },
+    { label: '6+', value: 6 },
+    { label: '5+', value: 5 }
+];
+
 @Component({
     selector: 'tfa-films',
-    imports: [CardListComponent, FormsModule, DropdownComponent],
+    imports: [CardListComponent, FormsModule, DropdownComponent, MultiSelectComponent, PopoverComponent],
     templateUrl: './films.component.html',
     styleUrl: './films.component.css'
 })
@@ -35,26 +46,57 @@ export class FilmsComponent {
         value: i
     }));
 
+    readonly ratingOptions = RATING_OPTIONS;
+
     films = signal<GetFilmsResItem[]>([]);
     totalCount = signal(0);
     searchText = '';
     sortIndex = signal(0);
+    minRating = signal<number | null>(null);
+    selectedGenreIds = signal<number[]>([]);
+    genreOptions = signal<MultiSelectOption<number>[]>([]);
     pageNumber = signal(1);
     loading = signal(true);
     readonly pageSize = 24;
 
     hasMore = computed(() => this.films().length < this.totalCount());
+    activeFilterCount = computed(() =>
+        (this.minRating() != null ? 1 : 0) + (this.selectedGenreIds().length > 0 ? 1 : 0)
+    );
+
+    private searchDebounce?: ReturnType<typeof setTimeout>;
 
     ngOnInit() {
         this.fetchFilms(true);
+
+        this.filmService.getGenres().subscribe(r => {
+            this.genreOptions.set(r.genres.map((g: GetGenreResItem) => ({ label: g.name, value: g.genreId })));
+        });
     }
 
-    onSearch() {
-        this.fetchFilms(true);
+    onSearchChange() {
+        clearTimeout(this.searchDebounce);
+        this.searchDebounce = setTimeout(() => this.fetchFilms(true), 300);
     }
 
     onSortChange(index: number) {
         this.sortIndex.set(index);
+        this.fetchFilms(true);
+    }
+
+    onMinRatingChange(rating: number | null) {
+        this.minRating.set(rating);
+        this.fetchFilms(true);
+    }
+
+    onGenresChange(genreIds: number[]) {
+        this.selectedGenreIds.set(genreIds);
+        this.fetchFilms(true);
+    }
+
+    clearFilters() {
+        this.minRating.set(null);
+        this.selectedGenreIds.set([]);
         this.fetchFilms(true);
     }
 
@@ -75,7 +117,9 @@ export class FilmsComponent {
             pageSize: this.pageSize,
             searchText: this.searchText,
             orderBy: sort.orderBy,
-            orderingType: sort.orderingType
+            orderingType: sort.orderingType,
+            genreIds: this.selectedGenreIds(),
+            minRating: this.minRating()
         };
 
         this.filmService.getFilms(req).subscribe((r: GetFilmsRes) => {

@@ -7,7 +7,10 @@ import {
 	GetFilmRes,
 	GetFilmsReq,
 	GetFilmsRes,
-	GetFilmSourceRes
+	GetFilmSourceRes,
+	GetGenresRes,
+	GetWatchProgressRes,
+	WatchProgressReq
 } from '../types/types';
 import { environment } from '../environments/environment';
 
@@ -19,15 +22,27 @@ export class FilmService {
 	private baseUrl = environment.apiUrl;
 
 	getFilms(req: GetFilmsReq): Observable<GetFilmsRes> {
-		return this.http.get<GetFilmsRes>(`${this.baseUrl}/Film`, {
-			params: {
-				pageSize: req.pageSize,
-				pageNumber: req.pageNumber,
-				searchText: req.searchText,
-				orderBy: req.orderBy,
-				orderingType: req.orderingType
-			}
-		});
+		const params: Record<string, string | number | number[]> = {
+			pageSize: req.pageSize,
+			pageNumber: req.pageNumber,
+			searchText: req.searchText,
+			orderBy: req.orderBy,
+			orderingType: req.orderingType
+		};
+
+		if (req.genreIds && req.genreIds.length > 0) {
+			params['genreIds'] = req.genreIds;
+		}
+
+		if (req.minRating != null) {
+			params['minRating'] = req.minRating;
+		}
+
+		return this.http.get<GetFilmsRes>(`${this.baseUrl}/Film`, { params });
+	}
+
+	getGenres(): Observable<GetGenresRes> {
+		return this.http.get<GetGenresRes>(`${this.baseUrl}/Film/genres`);
 	}
 
 	getFilm(id: number): Observable<GetFilmRes> {
@@ -78,5 +93,13 @@ export class FilmService {
         return this.http.get<GetFilmsRes>(`${this.baseUrl}/Film/suggested`, {
             params: { take }
         });
+    }
+
+    saveWatchProgress(req: WatchProgressReq): Observable<void> {
+        return this.http.post<void>(`${this.baseUrl}/Film/watchProgress`, req);
+    }
+
+    getWatchProgress(filmId: number): Observable<GetWatchProgressRes> {
+        return this.http.get<GetWatchProgressRes>(`${this.baseUrl}/Film/${filmId}/watchProgress`);
     }
 }
