@@ -14,7 +14,6 @@ export class HomeComponent {
     filmService = inject(FilmService);
     authService = inject(AuthService);
 
-    totalCount = signal(0);
     recentlyAdded = signal<GetFilmsResItem[]>([]);
     popular = signal<GetFilmsResItem[]>([]);
     continueWatching = signal<GetFilmsResItem[]>([]);
@@ -33,7 +32,6 @@ export class HomeComponent {
 
         this.filmService.getFilms(req).subscribe((r: GetFilmsRes) => {
             this.recentlyAdded.set(r.films);
-            this.totalCount.set(r.totalCount);
         });
 
         this.filmService.getPopularFilms().subscribe((r: GetFilmsRes) => {

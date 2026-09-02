@@ -4,9 +4,3 @@
   gap: 1.75rem;
   padding-bottom: 2rem;
 }
-
-.film-count {
-  font-size: 0.875rem;
-  color: var(--text-muted);
-  margin: 0;
-}
