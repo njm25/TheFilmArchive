@@ -7,4 +7,5 @@ public class AddSourceReq
     public required int FilmId { get; set; }
     public required SourceTypeEnum SourceType { get; set; }
     public required string SourceUrl { get; set; }
+    public int? QualityHeight { get; set; }
 }

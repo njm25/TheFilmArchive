@@ -1,7 +1,6 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from './pages/home/home.component';
 import { FilmComponent } from './pages/film/film.component';
-import { SourceComponent } from './pages/source/source.component';
 import { RequestAccountComponent } from './pages/request-account/request-account.component';
 import { RegisterComponent } from './pages/register/register.component';
 import { LoginComponent } from './pages/login/login.component';
@@ -10,6 +9,7 @@ import { CreateSourceComponent } from './pages/create-source/create-source.compo
 import { adminGuard, authGuard, sysAdminGuard } from './guards/auth.guard';
 import { AccountRequestsComponent } from './pages/account-requests/account-requests.component';
 import { UsersComponent } from './pages/users/users.component';
+import { BulkSyncComponent } from './pages/bulk-sync/bulk-sync.component';
 
 export const routes: Routes = [
     {
@@ -19,10 +19,6 @@ export const routes: Routes = [
     {
         path: "film/:id",
         component: FilmComponent
-    },
-    {
-        path: "source/:id",
-        component: SourceComponent
     },
     {
         path: "requestAccount",
@@ -54,6 +50,11 @@ export const routes: Routes = [
     {
         path: "users",
         component: UsersComponent,
+        canActivate: [sysAdminGuard]
+    },
+    {
+        path: "admin/bulkSync",
+        component: BulkSyncComponent,
         canActivate: [sysAdminGuard]
     }
 

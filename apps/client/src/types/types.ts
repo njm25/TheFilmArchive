@@ -32,7 +32,9 @@ export interface GetFilmsReq extends GenericListReq {
 	orderBy: OrderByFilmEnum;
 }
 export enum OrderByFilmEnum {
-	YearReleased = 1
+	YearReleased = 1,
+	Rating = 2,
+	Title = 3
 }
 export interface GetFilmsResItem {
 	filmId: number;
@@ -40,6 +42,8 @@ export interface GetFilmsResItem {
 	yearReleased: number;
 	description: string;
 	posterPath: string;
+	genres: string[];
+	voteAverage: number | null;
 }
 
 export interface GetFilmsRes {
@@ -61,6 +65,7 @@ export interface AddSourceReq {
 	filmId: number;
 	sourceType: SourceTypeEnum;
 	sourceUrl: string;
+	qualityHeight?: number | null;
 }
 
 
@@ -68,6 +73,27 @@ export interface AddSourceReq {
 export interface GetFilmResSource {
 	sourceId: number;
 	type: SourceTypeEnum;
+	qualityHeight: number | null;
+}
+
+export interface GetFilmSourceRes {
+	type: SourceTypeEnum;
+	url: string;
+}
+
+export interface GetFilmResCastMember {
+	name: string;
+	character: string | null;
+	profilePath: string | null;
+}
+
+export enum FilmStatusEnum {
+	Rumored = 1,
+	Planned = 2,
+	InProduction = 3,
+	PostProduction = 4,
+	Released = 5,
+	Canceled = 6
 }
 
 export interface GetFilmRes {
@@ -75,11 +101,20 @@ export interface GetFilmRes {
 	yearReleased: number;
 	description: string;
 	tagline: string;
-	posterPath: string;
+	posterPath: string | null;
 	sources: GetFilmResSource[];
 	primarySourceTypeId: number;
-    backdropPath: string;
+    backdropPath: string | null;
     runtime: number;
+    imdbId: string | null;
+    homepage: string | null;
+    status: FilmStatusEnum | null;
+    voteAverage: number | null;
+    voteCount: number | null;
+    collectionName: string | null;
+    genres: string[];
+    directors: string[];
+    cast: GetFilmResCastMember[];
 }
 
 // requst acct
@@ -122,4 +157,32 @@ export interface GetAccountRequestsResItem
 {
     email: string;
     token: string;
+}
+
+// bulk sync
+export enum BulkSyncState {
+    Idle = 0,
+    Running = 1,
+    Completed = 2,
+    Failed = 3
+}
+
+export interface BulkSyncError {
+    title: string;
+    reason: string;
+}
+
+export interface BulkSyncStatus {
+    state: BulkSyncState;
+    phase: string;
+    totalFilms: number;
+    processedFilms: number;
+    createdCount: number;
+    refreshedCount: number;
+    skippedCount: number;
+    failedCount: number;
+    currentFilmTitle: string | null;
+    startedAt: string | null;
+    completedAt: string | null;
+    errors: BulkSyncError[];
 }

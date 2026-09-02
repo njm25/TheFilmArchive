@@ -1,0 +1,31 @@
+<div class="tfa-dropdown" [class.open]="open()">
+  <button
+    type="button"
+    class="tfa-dropdown-trigger"
+    (click)="toggle()"
+    [attr.aria-expanded]="open()"
+    [attr.aria-label]="ariaLabel() || placeholder()"
+  >
+    <span class="tfa-dropdown-value">{{ selectedOption()?.label ?? placeholder() }}</span>
+    <i class="pi pi-chevron-down tfa-dropdown-caret"></i>
+  </button>
+
+  @if (open()) {
+    <ul class="tfa-dropdown-menu" role="listbox">
+      @for (option of options(); track option.label) {
+        <li
+          class="tfa-dropdown-option"
+          [class.selected]="option.value === value()"
+          role="option"
+          [attr.aria-selected]="option.value === value()"
+          (click)="select(option)"
+        >
+          <span>{{ option.label }}</span>
+          @if (option.value === value()) {
+            <i class="pi pi-check tfa-dropdown-check"></i>
+          }
+        </li>
+      }
+    </ul>
+  }
+</div>

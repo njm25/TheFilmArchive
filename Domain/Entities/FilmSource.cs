@@ -18,6 +18,13 @@ public class FilmSource
 
     public bool IsActive { get; set; }
 
+    /// <summary>
+    /// Vertical resolution in pixels (e.g. 480, 720, 1080), when known.
+    /// Auto-detected for archive.org sources via their metadata API;
+    /// set manually for S3 sources since we don't inspect the file.
+    /// </summary>
+    public int? QualityHeight { get; set; }
+
     public DateTime CreatedAt { get; set; }
 
     public Film Film { get; set; } = null!;

@@ -1,0 +1,82 @@
+:host {
+  display: block;
+}
+
+.tfa-option-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.tfa-option-list-item {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  width: 100%;
+  padding: 0.625rem 0.75rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color var(--transition), color var(--transition), background-color var(--transition);
+}
+
+.tfa-option-list-item:hover {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.tfa-option-list-item.selected {
+  border-color: var(--accent);
+  background: var(--accent-dim);
+  color: var(--text);
+}
+
+.tfa-option-list-radio {
+  position: relative;
+  flex-shrink: 0;
+  width: 0.875rem;
+  height: 0.875rem;
+  border-radius: 50%;
+  border: 1.5px solid var(--text-dim);
+  transition: border-color var(--transition);
+}
+
+.tfa-option-list-item.selected .tfa-option-list-radio {
+  border-color: var(--accent);
+}
+
+.tfa-option-list-item.selected .tfa-option-list-radio::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.tfa-option-list-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.tfa-option-list-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tfa-option-list-sublabel {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+}
+
+.tfa-option-list-empty {
+  font-size: 0.875rem;
+  color: var(--text-dim);
+}

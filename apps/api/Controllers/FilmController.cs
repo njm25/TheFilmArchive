@@ -1,6 +1,8 @@
 using Api.Requests;
 using Api.Responses;
+using Api.Services;
 using Domain.Entities;
+using Domain.Enums;
 using Infrastructure.Clients;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
@@ -16,14 +18,20 @@ public class FilmController : ControllerBase
 {
     private readonly AppDbContext _db;
     private readonly TmdbService _tmdb;
+    private readonly FilmSyncService _filmSync;
+    private readonly ArchiveOrgService _archiveOrg;
 
     public FilmController(
         AppDbContext db,
-        TmdbService tmdb
+        TmdbService tmdb,
+        FilmSyncService filmSync,
+        ArchiveOrgService archiveOrg
     )
     {
         _db = db;
         _tmdb = tmdb;
+        _filmSync = filmSync;
+        _archiveOrg = archiveOrg;
 
     }
 
@@ -44,12 +52,24 @@ public class FilmController : ControllerBase
         {
 
             (OrderFilmByEnum.YearReleased, OrderingTypeEnum.Ascending) =>
-                query.OrderBy(f => f.ReleaseYear),
+                query.OrderBy(f => f.ReleaseYear).ThenBy(f => f.Id),
 
             (OrderFilmByEnum.YearReleased, OrderingTypeEnum.Descending) =>
-                query.OrderByDescending(f => f.ReleaseYear),
+                query.OrderByDescending(f => f.ReleaseYear).ThenBy(f => f.Id),
 
-            _ => query.OrderBy(f => f.Id)
+            (OrderFilmByEnum.Title, OrderingTypeEnum.Ascending) =>
+                query.OrderBy(f => f.Title).ThenBy(f => f.Id),
+
+            (OrderFilmByEnum.Title, OrderingTypeEnum.Descending) =>
+                query.OrderByDescending(f => f.Title).ThenBy(f => f.Id),
+
+            (OrderFilmByEnum.Rating, OrderingTypeEnum.Ascending) =>
+                query.OrderBy(f => f.VoteAverage).ThenBy(f => f.Id),
+
+            (OrderFilmByEnum.Rating, OrderingTypeEnum.Descending) =>
+                query.OrderByDescending(f => f.VoteAverage).ThenBy(f => f.Id),
+
+            _ => query.OrderByDescending(f => f.VoteAverage).ThenBy(f => f.Id)
         };
 
         // Paging
@@ -64,7 +84,9 @@ public class FilmController : ControllerBase
                 Title = f.Title,
                 YearReleased = f.ReleaseYear ?? 0,
                 Description = f.Description ?? "No description found.",
-                PosterPath = f.PosterPath ?? ""
+                PosterPath = f.PosterPath ?? "",
+                Genres = f.Genres.Select(fg => fg.Genre.Name).ToList(),
+                VoteAverage = f.VoteAverage
             })
             .ToListAsync();
 
@@ -82,6 +104,9 @@ public class FilmController : ControllerBase
     {
         Film? film = await _db.Films
             .Include(f => f.Sources)
+            .Include(f => f.Genres).ThenInclude(fg => fg.Genre)
+            .Include(f => f.Credits).ThenInclude(fc => fc.Person)
+            .Include(f => f.Collection)
             .Where(f => f.Id == id)
             .FirstOrDefaultAsync();
 
@@ -94,12 +119,13 @@ public class FilmController : ControllerBase
             Description = film.Description ?? "No description found.",
             Tagline = film.Tagline ?? "No tagline found.",
             YearReleased = film.ReleaseYear ?? 0,
-            PosterPath = film.PosterPath ?? "No path found.",
+            PosterPath = film.PosterPath,
             Sources = film.Sources
                     .Select(o => new GetFilmResSource
                     {
                         SourceId = o.Id,
-                        Type = o.Type
+                        Type = o.Type,
+                        QualityHeight = o.QualityHeight
                     })
                     .ToList(),
             PrimarySourceTypeId = film
@@ -108,8 +134,30 @@ public class FilmController : ControllerBase
                     .Select(o => o.Id)
                     .ToList()
                     .FirstOrDefault(-1),
-            BackdropPath = film.BackdropPath ?? "No path found.",
-            Runtime = film.Runtime ?? 0
+            BackdropPath = film.BackdropPath,
+            Runtime = film.Runtime ?? 0,
+            ImdbId = film.ImdbId,
+            Homepage = film.Homepage,
+            Status = film.Status,
+            VoteAverage = film.VoteAverage,
+            VoteCount = film.VoteCount,
+            CollectionName = film.Collection?.Name,
+            Genres = film.Genres.Select(fg => fg.Genre.Name).ToList(),
+            Directors = film.Credits
+                .Where(c => c.CreditType == CreditTypeEnum.Crew && c.Job == "Director")
+                .Select(c => c.Person.Name)
+                .ToList(),
+            Cast = film.Credits
+                .Where(c => c.CreditType == CreditTypeEnum.Cast)
+                .OrderBy(c => c.CreditOrder ?? int.MaxValue)
+                .Take(10)
+                .Select(c => new GetFilmResCastMember
+                {
+                    Name = c.Person.Name,
+                    Character = c.Character,
+                    ProfilePath = c.Person.ProfilePath
+                })
+                .ToList()
         };
 
         return Ok(res);
@@ -124,10 +172,14 @@ public class FilmController : ControllerBase
             .Where(o => o.Id == sourceId)
             .FirstOrDefaultAsync();
 
-        if (source == null) 
+        if (source == null)
             return NotFound();
 
-        return Ok(source.SourceUrl);
+        return Ok(new GetFilmSourceRes
+        {
+            Type = source.Type,
+            Url = source.SourceUrl
+        });
     }
 
     // to-do
@@ -150,19 +202,13 @@ public class FilmController : ControllerBase
         Film film = new Film()
         {
             TmdbId = req.TmdbId,
-            Title = movie.Title ?? "No title found",
-            Tagline = movie.Tagline,
-            Description = movie.Overview,
-            PosterPath = movie.PosterPath,
-            ReleaseYear = movie.ReleaseDate?.Year,
-            Runtime = movie.Runtime,
-            BackdropPath = movie.BackdropPath,
             CreatedAt = utc,
             UpdatedAt = utc,
-
         };
 
         await _db.Films.AddAsync(film);
+
+        await _filmSync.ApplyMetadataAsync(film, movie);
 
         await _db.SaveChangesAsync();
 
@@ -173,11 +219,24 @@ public class FilmController : ControllerBase
     [HttpPost("addSource")]
     public async Task<IActionResult> AddSource([FromBody] AddSourceReq req)
     {
+        int? quality = req.QualityHeight;
+
+        if (quality == null && req.SourceType == SourceTypeEnum.ArchiveOrg)
+        {
+            string? identifier = ArchiveOrgService.ExtractIdentifier(req.SourceUrl);
+
+            if (identifier != null)
+            {
+                quality = await _archiveOrg.GetBestQualityHeightAsync(identifier);
+            }
+        }
+
         FilmSource source = new FilmSource()
         {
             FilmId = req.FilmId,
             SourceUrl = req.SourceUrl,
             Type = req.SourceType,
+            QualityHeight = quality,
             CreatedAt = DateTime.UtcNow,
         };
 
@@ -193,32 +252,52 @@ public class FilmController : ControllerBase
     public async Task<IActionResult> RefreshMetadata(string filmId)
     {
         Film? film = await _db.Films.FirstOrDefaultAsync(f => f.Id == int.Parse(filmId));
-        
-        if (film == null) 
+
+        if (film == null)
             return NotFound();
 
         Movie? movie = await _tmdb.GetMovieByTmdbId(film.TmdbId);
 
-        if (film.Tagline != movie?.Tagline)
-            film.Tagline = movie?.Tagline;
+        if (movie == null)
+            return NotFound();
 
-        if (film.Description != movie?.Overview)
-            film.Description = movie?.Overview;
-
-        if (film.Runtime != movie?.Runtime)
-            film.Runtime = movie?.Runtime;
-
-        if (film.PosterPath != movie?.PosterPath)
-            film.PosterPath = movie?.PosterPath;
-
-        if (film.BackdropPath != movie?.BackdropPath)
-            film.BackdropPath = movie?.BackdropPath;
-
-        film.UpdatedAt = DateTime.UtcNow;
+        await _filmSync.ApplyMetadataAsync(film, movie);
 
         await _db.SaveChangesAsync();
 
         return Ok();
+    }
+
+    [Authorize(Roles = "SysAdmin")]
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteFilm(int id)
+    {
+        Film? film = await _db.Films.FirstOrDefaultAsync(f => f.Id == id);
+
+        if (film == null)
+            return NotFound();
+
+        _db.Films.Remove(film);
+
+        await _db.SaveChangesAsync();
+
+        return NoContent();
+    }
+
+    [Authorize(Roles = "SysAdmin")]
+    [HttpDelete("sources/{sourceId}")]
+    public async Task<IActionResult> DeleteSource(int sourceId)
+    {
+        FilmSource? source = await _db.FilmSources.FirstOrDefaultAsync(s => s.Id == sourceId);
+
+        if (source == null)
+            return NotFound();
+
+        _db.FilmSources.Remove(source);
+
+        await _db.SaveChangesAsync();
+
+        return NoContent();
     }
 
 }

@@ -13,10 +13,10 @@ export class FilmCardComponent {
 
     router = inject(Router);
 
-    readonly TMDB_BASE_URL = "https://image.tmdb.org/t/p/w200";
+    readonly TMDB_BASE_URL = "https://image.tmdb.org/t/p/w500";
 
     film = input<GetFilmsResItem>();
-    posterSrc = computed(() => `${this.TMDB_BASE_URL}/${this.film()?.posterPath}`);
+    posterSrc = computed(() => `${this.TMDB_BASE_URL}${this.film()?.posterPath}`);
 
     filmSrc = computed(() => `film/${this.film()?.filmId}`);
 

@@ -8,4 +8,6 @@ public class GetFilmsReq : GenericListReq
 public enum OrderFilmByEnum
 {
     YearReleased = 1,
+    Rating = 2,
+    Title = 3
 }

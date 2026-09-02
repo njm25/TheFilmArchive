@@ -16,10 +16,13 @@
       </button>
     </div>
     <div class="toolbar-right">
-      <button class="btn btn-ghost sort-btn" (click)="toggleOrder()">
-        <i class="pi pi-sort-alt"></i>
-        <span class="sort-label">{{ isAscending() ? 'Oldest first' : 'Newest first' }}</span>
-      </button>
+      <tfa-dropdown
+        class="sort-select"
+        [options]="sortDropdownOptions"
+        [value]="sortIndex()"
+        (valueChange)="onSortChange($event)"
+        ariaLabel="Sort films by"
+      ></tfa-dropdown>
     </div>
   </div>
 

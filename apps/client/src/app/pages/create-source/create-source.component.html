@@ -5,18 +5,13 @@
 
     <form (submit)="submitRequest()">
       <div class="form-group">
-        <label class="form-label" for="sourceType">Source type</label>
-        <select
-          class="form-select"
-          id="sourceType"
-          name="sourceType"
-          [(ngModel)]="req().sourceType"
-          required
-        >
-          @for (option of sourceTypeOptions; track option.value) {
-            <option [value]="option.value">{{ option.label }}</option>
-          }
-        </select>
+        <label class="form-label">Source type</label>
+        <tfa-dropdown
+          [options]="sourceTypeOptions"
+          [value]="req().sourceType"
+          (valueChange)="onSourceTypeChange($event)"
+          ariaLabel="Source type"
+        ></tfa-dropdown>
       </div>
 
       <div class="form-group">
@@ -29,6 +24,18 @@
           placeholder="Enter the source URL"
           [(ngModel)]="req().sourceUrl"
           required
+        />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="quality">Quality (optional)</label>
+        <input
+          class="form-input"
+          id="quality"
+          type="number"
+          name="quality"
+          placeholder="Height in px, e.g. 1080 - auto-detected for Archive.org if left blank"
+          [(ngModel)]="req().qualityHeight"
         />
       </div>
 

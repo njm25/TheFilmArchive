@@ -11,16 +11,13 @@
         <span class="data-item-sub">{{ user.email }}</span>
       </div>
       <div class="data-item-actions">
-        <select
-          class="form-select role-select"
-          (change)="onRoleChange(user.id, $event)"
-        >
-          @for (role of roles; track role.value) {
-            <option [value]="role.value" [selected]="user.role === role.value">
-              {{ role.label }}
-            </option>
-          }
-        </select>
+        <tfa-dropdown
+          class="role-select"
+          [options]="roles"
+          [value]="user.role"
+          (valueChange)="onRoleChange(user.id, $event)"
+          ariaLabel="Change role"
+        ></tfa-dropdown>
       </div>
     </div>
   }
