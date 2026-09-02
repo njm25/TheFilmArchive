@@ -156,10 +156,14 @@ public class FilmController : ControllerBase
             .Where(o => o.Id == sourceId)
             .FirstOrDefaultAsync();
 
-        if (source == null) 
+        if (source == null)
             return NotFound();
 
-        return Ok(source.SourceUrl);
+        return Ok(new GetFilmSourceRes
+        {
+            Type = source.Type,
+            Url = source.SourceUrl
+        });
     }
 
     // to-do

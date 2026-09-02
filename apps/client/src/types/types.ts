@@ -72,6 +72,11 @@ export interface GetFilmResSource {
 	type: SourceTypeEnum;
 }
 
+export interface GetFilmSourceRes {
+	type: SourceTypeEnum;
+	url: string;
+}
+
 export interface GetFilmResCastMember {
 	name: string;
 	character: string | null;

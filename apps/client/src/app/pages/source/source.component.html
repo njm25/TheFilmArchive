@@ -1,9 +1,22 @@
-@if (sourcePath() != null) {
+@if (source() != null) {
   <div class="source-page">
-    <video
-      class="film-player"
-      controls
-      [src]="sourceUrl()"
-    ></video>
+    @if (isArchiveOrg()) {
+      @if (embedUrl(); as url) {
+        <iframe
+          class="film-player film-player-embed"
+          [src]="url"
+          allowfullscreen
+          webkitallowfullscreen
+        ></iframe>
+      }
+    } @else {
+      @if (videoUrl(); as url) {
+        <video
+          class="film-player"
+          controls
+          [src]="url"
+        ></video>
+      }
+    }
   </div>
 }

@@ -13,3 +13,8 @@
   background: #000;
   display: block;
 }
+
+.film-player-embed {
+  aspect-ratio: 4 / 3;
+  border: none;
+}

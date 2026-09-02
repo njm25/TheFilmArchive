@@ -6,7 +6,8 @@ import {
 	AddSourceReq,
 	GetFilmRes,
 	GetFilmsReq,
-	GetFilmsRes
+	GetFilmsRes,
+	GetFilmSourceRes
 } from '../types/types';
 import { environment } from '../environments/environment';
 
@@ -33,10 +34,8 @@ export class FilmService {
 		return this.http.get<GetFilmRes>(`${this.baseUrl}/Film/${id}`);
 	}
 
-	getFilmSource(sourceId: number): Observable<string> {
-		return this.http.get(`${this.baseUrl}/Film/sources/${sourceId}`, {
-			responseType: 'text'
-		});
+	getFilmSource(sourceId: number): Observable<GetFilmSourceRes> {
+		return this.http.get<GetFilmSourceRes>(`${this.baseUrl}/Film/sources/${sourceId}`);
 	}
 
 	addFilm(req: AddFilmReq): Observable<number> {
