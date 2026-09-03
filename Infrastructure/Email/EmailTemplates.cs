@@ -67,6 +67,48 @@ public static class EmailTemplates
         );
     }
 
+    public static string PasswordReset(string siteUrl, string resetLink)
+    {
+        string link = WebUtility.HtmlEncode(resetLink);
+        string home = WebUtility.HtmlEncode(siteUrl);
+
+        string content =
+            $"""
+             <h1 style="margin:0 0 16px;font-family:{FontSerif};font-size:24px;line-height:1.25;font-weight:normal;color:{Text};">
+               Reset your password
+             </h1>
+             <p style="margin:0 0 24px;font-family:{FontSans};font-size:15px;line-height:1.6;color:{TextMuted};">
+               Someone asked to reset the password for your Film Archive account. Choose a new one using the link below.
+             </p>
+             <table role="presentation" border="0" cellpadding="0" cellspacing="0" style="margin:0 0 28px;">
+               <tr>
+                 <td bgcolor="{Accent}" style="border-radius:4px;">
+                   <a href="{link}" style="display:inline-block;padding:13px 30px;font-family:{FontSans};font-size:15px;font-weight:600;color:{OnAccent};text-decoration:none;border-radius:4px;">
+                     Choose a new password
+                   </a>
+                 </td>
+               </tr>
+             </table>
+             <p style="margin:0 0 8px;font-family:{FontSans};font-size:13px;line-height:1.5;color:{TextDim};">
+               Or paste this link into your browser:
+             </p>
+             <p style="margin:0 0 24px;font-family:{FontSans};font-size:13px;line-height:1.5;word-break:break-all;">
+               <a href="{link}" style="color:{Accent};text-decoration:underline;">{link}</a>
+             </p>
+             <p style="margin:0;font-family:{FontSans};font-size:13px;line-height:1.5;color:{TextDim};">
+               This link expires in an hour and can only be used once. If you didn't ask for it, ignore this email - your password stays as it is.
+             </p>
+             """;
+
+        return Layout(
+            title: "Reset your Film Archive password",
+            preheader: "Your reset link expires in an hour.",
+            siteUrl: home,
+            contentHtml: content,
+            footerHtml: "If you didn't request a password reset, you can safely ignore this email."
+        );
+    }
+
     // Sent when someone asks for a link on an address that already has an
     // account. The sign-up response is identical either way, so this is what
     // keeps the flow honest for the real owner without telling the requester

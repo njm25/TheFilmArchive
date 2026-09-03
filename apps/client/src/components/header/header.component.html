@@ -10,6 +10,7 @@
     <nav class="desktop-nav">
       <tfa-link href="/" class="nav-item" styleClass="header-nav-link">Home</tfa-link>
       <tfa-link href="/films" class="nav-item" styleClass="header-nav-link">Films</tfa-link>
+      <tfa-link href="/about" class="nav-item" styleClass="header-nav-link">About</tfa-link>
       @if (isAdmin()) {
         <tfa-dropdown
           variant="ghost"
@@ -76,6 +77,7 @@
   <div class="sidenav-body">
     <tfa-link href="/" class="side-item" styleClass="sidenav-link">Home</tfa-link>
     <tfa-link href="/films" class="side-item" styleClass="sidenav-link">Films</tfa-link>
+    <tfa-link href="/about" class="side-item" styleClass="sidenav-link">About</tfa-link>
     @if (isAdmin()) {
       <tfa-link href="/createFilm" class="side-item" styleClass="sidenav-link">Add Film</tfa-link>
     }

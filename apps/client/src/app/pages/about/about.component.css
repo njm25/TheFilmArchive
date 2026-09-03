@@ -1,0 +1,141 @@
+:host {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.about-page {
+  /* Narrower than the film grid: this is prose, and long lines are hard to read. */
+  width: 100%;
+  max-width: 46rem;
+  margin: 0 auto;
+  padding-bottom: 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.about-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.about-title {
+  font-family: var(--font-serif);
+  font-size: 2rem;
+  color: var(--text);
+  margin: 0;
+  line-height: 1.15;
+}
+
+.about-lede {
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.about-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.about-section h2 {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  color: var(--text);
+  margin: 0;
+  padding-bottom: 0.625rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.about-section p {
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.about-section a {
+  color: var(--accent);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+
+.about-section a:hover {
+  color: var(--accent-hover);
+  text-decoration: underline;
+}
+
+.about-list {
+  margin: 0;
+  padding-left: 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  color: var(--text-muted);
+}
+
+.about-list::marker,
+.about-list li::marker {
+  color: var(--text-dim);
+}
+
+/* Colophon */
+.about-colophon {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.about-colophon .made-by {
+  font-family: var(--font-serif);
+  font-size: 1.125rem;
+  color: var(--text);
+}
+
+.about-colophon .made-by a {
+  color: var(--accent);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+
+.about-colophon .made-by a:hover {
+  color: var(--accent-hover);
+  text-decoration: underline;
+}
+
+.about-colophon p {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--text-dim);
+  margin: 0;
+}
+
+.about-fineprint {
+  font-size: 0.8125rem;
+  line-height: 1.65;
+  color: var(--text-dim);
+}
+
+.about-fineprint a {
+  color: var(--text-muted);
+}
+
+@media (max-width: 640px) {
+  .about-title {
+    font-size: 1.625rem;
+  }
+
+  .about-page {
+    gap: 2rem;
+  }
+}

@@ -57,6 +57,7 @@ public class SitemapController : ControllerBase
 
             WriteUrl(writer, $"{siteUrl}/", null, "daily", "1.0");
             WriteUrl(writer, $"{siteUrl}/films", null, "daily", "0.9");
+            WriteUrl(writer, $"{siteUrl}/about", null, "monthly", "0.4");
 
             foreach (var film in films)
                 WriteUrl(writer, $"{siteUrl}/film/{film.Id}", film.UpdatedAt, "weekly", "0.8");

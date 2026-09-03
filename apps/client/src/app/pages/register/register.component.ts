@@ -4,10 +4,11 @@ import { UserService } from '../../../services/user.service';
 import { RegisterReq } from '../../../types/types';
 
 import { FormsModule } from '@angular/forms';
+import { LinkComponent } from '../../../components/link/link.component';
 
 @Component({
     selector: 'tfa-register',
-    imports: [FormsModule],
+    imports: [FormsModule, LinkComponent],
     templateUrl: './register.component.html',
     styleUrl: './register.component.css'
 })

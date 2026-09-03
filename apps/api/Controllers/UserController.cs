@@ -9,10 +9,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using System.Net.Mail;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using System.Text;
 
 namespace Api.Controllers;
 
@@ -54,7 +56,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPost("requestAccount")]
-    [EnableRateLimiting(RateLimitPolicies.RegistrationEmail)]
+    [EnableRateLimiting(RateLimitPolicies.OutboundEmail)]
     public async Task<IActionResult> RequestAccount([FromBody] RequestAccountReq req)
     {
         try
@@ -192,6 +194,121 @@ public class UserController : ControllerBase
     // lock someone out of retrying for the whole window.
     private void StartCooldown(string key, int minutes) =>
         _cache.Set(key, true, TimeSpan.FromMinutes(minutes));
+
+    [HttpPost("forgotPassword")]
+    [EnableRateLimiting(RateLimitPolicies.OutboundEmail)]
+    public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordReq req)
+    {
+        // Identical answer whether or not the address has an account, otherwise
+        // this endpoint becomes a way to test which emails are registered.
+        IActionResult accepted = Ok(new { message = "Password reset email sent." });
+
+        string clientBaseUrl = (_configuration["Site:BaseUrl"] ?? "https://thefilmarchive.org").TrimEnd('/');
+        int cooldownMinutes = _configuration.GetValue<int?>("Email:PerAddressCooldownMinutes") ?? 5;
+
+        string cooldownKey = $"password-reset:{req.Email.ToLowerInvariant()}";
+
+        if (_cache.TryGetValue(cooldownKey, out _))
+            return accepted;
+
+        var user = await _userManager.FindByEmailAsync(req.Email);
+
+        // Looked up before the quota is touched on purpose: charging unknown
+        // addresses would let someone drain the daily allowance with made-up
+        // emails and lock real users out of resetting their passwords.
+        if (user == null)
+            return accepted;
+
+        // Answered as success rather than 503 - a 503 here would only ever be
+        // reachable for a real account, which is exactly the tell this endpoint
+        // is trying not to give. Operators find out through the log.
+        if (!_emailQuota.TryReserve())
+        {
+            _logger.LogWarning("Password reset email refused: daily quota exhausted.");
+
+            return accepted;
+        }
+
+        string resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+        string resetLink = $"{clientBaseUrl}/resetPassword/{PackResetToken(user.Id, resetToken)}";
+
+        if (!await TrySendAsync(
+                req.Email,
+                "Reset your Film Archive password",
+                EmailTemplates.PasswordReset(clientBaseUrl, resetLink)))
+        {
+            return MailFailure();
+        }
+
+        StartCooldown(cooldownKey, cooldownMinutes);
+
+        return accepted;
+    }
+
+    [HttpPost("resetPassword")]
+    [EnableRateLimiting(RateLimitPolicies.Login)]
+    public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordReq req)
+    {
+        IActionResult invalid = BadRequest(new
+        {
+            message = "This reset link is invalid or has expired. Request a new one."
+        });
+
+        if (!TryUnpackResetToken(req.Token, out string userId, out string resetToken))
+            return invalid;
+
+        ApplicationUser? user = await _userManager.FindByIdAsync(userId);
+
+        if (user == null)
+            return invalid;
+
+        // Succeeding here rotates the user's security stamp, which is what makes
+        // the link single-use - a second attempt with the same token fails.
+        IdentityResult result = await _userManager.ResetPasswordAsync(user, resetToken, req.Password);
+
+        if (result.Succeeded)
+            return Ok(new { message = "Password updated." });
+
+        // A spent or expired token and a too-weak password both land here. Only
+        // the password rules are worth showing back; a bad token gets the same
+        // wording as a link that wouldn't even parse.
+        if (result.Errors.Any(e => e.Code == nameof(IdentityErrorDescriber.InvalidToken)))
+            return invalid;
+
+        return BadRequest(new { errors = result.Errors.Select(e => e.Description) });
+    }
+
+    // The reset token is Identity's own - signed, self-expiring, and invalidated
+    // once the password changes - but ResetPasswordAsync needs the user too. The
+    // link carries both, packed into one URL-safe blob, rather than putting the
+    // email address in a query string where it would end up in logs and history.
+    private static string PackResetToken(string userId, string token) =>
+        WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes($"{userId}|{token}"));
+
+    private static bool TryUnpackResetToken(string packed, out string userId, out string token)
+    {
+        userId = string.Empty;
+        token = string.Empty;
+
+        try
+        {
+            string payload = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(packed));
+            int split = payload.IndexOf('|');
+
+            if (split <= 0 || split == payload.Length - 1)
+                return false;
+
+            userId = payload[..split];
+            token = payload[(split + 1)..];
+
+            return true;
+        }
+        catch
+        {
+            // Anything unparseable is just an invalid link.
+            return false;
+        }
+    }
 
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterReq req)

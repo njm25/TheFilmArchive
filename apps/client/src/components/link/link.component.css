@@ -1,7 +1,7 @@
 /* The anchor deliberately sets no `display`: every styleClass passed in already
    declares its own (.header-nav-link is inline-block, .header-auth-btn is
    inline-flex, .sidenav-link is block, .d-flex is flex), and the one call site
-   that passes no styleClass — the header logo — sits in a flex container, so
+   that passes no styleClass (the header logo) sits in a flex container, so
    its anchor is blockified anyway. Setting display here would outrank all of
    them and break the header. */
 a {
