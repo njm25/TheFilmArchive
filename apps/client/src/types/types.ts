@@ -53,6 +53,9 @@ export interface GetFilmsResItem {
 	posterPath: string;
 	genres: string[];
 	voteAverage: number | null;
+	// Only sent by continueWatching; null elsewhere, which suppresses the bar.
+	progressSeconds?: number | null;
+	durationSeconds?: number | null;
 }
 
 export interface GetFilmsRes {
@@ -199,17 +202,6 @@ export enum RoleEnum {
     User = 0,
     Admin = 1,
     SysAdmin = 99
-}
-
-export interface GetAccountRequestsRes
-{
-    accountRequests: GetAccountRequestsResItem[];
-}
-
-export interface GetAccountRequestsResItem
-{
-    email: string;
-    token: string;
 }
 
 // bulk sync

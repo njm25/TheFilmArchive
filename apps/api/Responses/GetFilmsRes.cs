@@ -15,4 +15,9 @@ public class GetFilmResItem
     public required string PosterPath { get; set; }
     public List<string> Genres { get; set; } = new List<string>();
     public double? VoteAverage { get; set; }
+
+    // Only populated by continueWatching - every other list leaves these null,
+    // which is what tells the client not to draw a progress bar.
+    public int? ProgressSeconds { get; set; }
+    public int? DurationSeconds { get; set; }
 }

@@ -1,10 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
-import { GetAccountRequestsRes, GetUsersReq, GetUsersRes, LoginReq, MeRes, RegisterReq, RequestAccountReq, RoleEnum } from '../types/types';
+import { GetUsersReq, GetUsersRes, LoginReq, MeRes, RegisterReq, RequestAccountReq, RoleEnum } from '../types/types';
 import { AuthService } from './auth.service';
 import { Router } from '@angular/router';
 import { environment } from '../environments/environment';
 import { ToastrService } from 'ngx-toastr';
+import { tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -39,12 +40,16 @@ export class UserService {
         this.me.set(null);
     }
 
+    // Returns the request rather than subscribing here so the caller can show
+    // progress and block a second submit. Nothing happens until it's subscribed.
     login(req: LoginReq) {
-        this.http.post(`${this.baseUrl}/User/login`, req).subscribe((r: any) => {
-            this.auth.setToken(r.token);
-            this.refreshMe();
-            this.router.navigate(['/']);
-        });
+        return this.http.post(`${this.baseUrl}/User/login`, req).pipe(
+            tap((r: any) => {
+                this.auth.setToken(r.token);
+                this.refreshMe();
+                this.router.navigate(['/']);
+            })
+        );
     }
 
     getMe()
@@ -74,10 +79,6 @@ export class UserService {
 
     setRole(userId: string, role: RoleEnum) {
         return this.http.post(`${this.baseUrl}/User/setRole/${userId}`, role );
-    }
-
-    getAccountRequests() {
-        return this.http.get<GetAccountRequestsRes>(`${this.baseUrl}/User/accountRequests`);
     }
 
 }

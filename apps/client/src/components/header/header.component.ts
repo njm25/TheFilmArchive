@@ -28,7 +28,6 @@ export class HeaderComponent {
     ];
 
     readonly sysAdminMenuOptions: DropdownOption<string>[] = [
-        { label: 'Requests', value: '/accountRequests' },
         { label: 'Users', value: '/users' },
         { label: 'Bulk Sync', value: '/admin/bulkSync' }
     ];

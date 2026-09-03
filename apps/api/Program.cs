@@ -1,11 +1,13 @@
 using Api.Services;
 using Infrastructure.Clients;
 using Infrastructure.Data;
+using Infrastructure.Email;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -70,8 +72,65 @@ builder.Services.AddHttpClient<ArchiveOrgService>();
 builder.Services.AddMemoryCache();
 builder.Services.AddHttpClient<SpaShellService>();
 
+// Logged-not-sent locally so development never dispatches real mail; real SMTP
+// everywhere else. Both implement IEmailSender, so callers don't know which.
+if (builder.Environment.IsDevelopment()) 
+    builder.Services.AddScoped<IEmailSender, ConsoleEmailSender>();
+else
+    builder.Services.AddScoped<IEmailSender, SmtpEmailSender>();
+
 builder.Services.AddSingleton<BulkSyncJobService>();
 builder.Services.AddSingleton<BulkFilmSyncService>();
+
+builder.Services.AddSingleton<EmailQuotaService>();
+
+// Sending mail costs money and burns SES reputation, so the endpoint that does
+// it is capped per caller. Partitioned on the real client IP (see ClientIp) -
+// partitioning on RemoteIpAddress would lump everyone behind Cloudflare into
+// one bucket and rate limit the whole internet as a single visitor.
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+    options.AddPolicy(RateLimitPolicies.RegistrationEmail, context =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: ClientIp.Resolve(context),
+            factory: _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = builder.Configuration.GetValue<int?>("Email:PerIpLimit") ?? 3,
+                Window = TimeSpan.FromMinutes(
+                    builder.Configuration.GetValue<int?>("Email:PerIpWindowMinutes") ?? 15
+                ),
+                QueueLimit = 0
+            }));
+
+    // Brute-force protection rather than cost control, so the budget is looser -
+    // a real person needs a handful of tries, and an attacker gets a trickle
+    // instead of thousands per minute. Kept generous on purpose: offices and
+    // mobile carriers put many legitimate users behind one address.
+    options.AddPolicy(RateLimitPolicies.Login, context =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: ClientIp.Resolve(context),
+            factory: _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = builder.Configuration.GetValue<int?>("Auth:LoginPerIpLimit") ?? 10,
+                Window = TimeSpan.FromMinutes(
+                    builder.Configuration.GetValue<int?>("Auth:LoginPerIpWindowMinutes") ?? 5
+                ),
+                QueueLimit = 0
+            }));
+
+    options.OnRejected = async (context, token) =>
+    {
+        if (context.Lease.TryGetMetadata(MetadataName.RetryAfter, out TimeSpan retryAfter))
+            context.HttpContext.Response.Headers.RetryAfter = ((int)retryAfter.TotalSeconds).ToString();
+
+        await context.HttpContext.Response.WriteAsJsonAsync(
+            new { message = "Too many attempts. Please wait a few minutes and try again." },
+            token
+        );
+    };
+});
 
 var allowedOrigins = builder.Configuration
     .GetSection("Cors:AllowedOrigins")
@@ -104,6 +163,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("CorsPolicy");
 app.UseHttpsRedirection();
+app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

@@ -423,6 +423,12 @@ a {
   color: var(--text-muted);
 }
 
+/* Secondary line under the main confirmation copy */
+.status-card .status-note {
+  font-size: 0.8125rem;
+  color: var(--text-dim);
+}
+
 .status-icon {
   font-size: 2rem;
   color: var(--accent);
@@ -561,6 +567,12 @@ a {
    ================================================ */
 .spinner-border {
   color: var(--accent);
+}
+
+/* Inside a button the spinner sits on the button's own fill, so it takes the
+   button's text colour rather than the standalone accent. */
+.btn .spinner-border {
+  color: inherit;
 }
 
 /* ================================================

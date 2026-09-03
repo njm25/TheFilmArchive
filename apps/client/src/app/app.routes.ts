@@ -8,7 +8,6 @@ import { LoginComponent } from './pages/login/login.component';
 import { CreateFilmComponent } from './pages/create-film/create-film.component';
 import { CreateSourceComponent } from './pages/create-source/create-source.component';
 import { adminGuard, authGuard, sysAdminGuard } from './guards/auth.guard';
-import { AccountRequestsComponent } from './pages/account-requests/account-requests.component';
 import { UsersComponent } from './pages/users/users.component';
 import { BulkSyncComponent } from './pages/bulk-sync/bulk-sync.component';
 
@@ -46,11 +45,6 @@ export const routes: Routes = [
         path: "createSource/:filmId",
         component: CreateSourceComponent,
         canActivate: [adminGuard]
-    },
-    {
-        path: "accountRequests",
-        component: AccountRequestsComponent,
-        canActivate: [sysAdminGuard]
     },
     {
         path: "users",

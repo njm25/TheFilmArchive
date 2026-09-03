@@ -4,7 +4,8 @@
   <!-- Hero backdrop -->
   @if (backdropSrc(); as backdrop) {
     <div class="film-hero">
-      <img class="film-hero-img" [src]="backdrop" [alt]="film.title" />
+      <!-- Decorative: the poster below carries the title as alt text -->
+      <img class="film-hero-img" [src]="backdrop" alt="" fetchpriority="high" />
       <div class="film-hero-fade"></div>
     </div>
   }

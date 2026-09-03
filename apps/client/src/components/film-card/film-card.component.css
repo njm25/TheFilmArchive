@@ -21,6 +21,30 @@
   transform: translateY(-2px);
 }
 
+/* Positioning context for the watch-progress bar. Sized entirely by the poster
+   inside it, so adding the bar can't change the card's height. */
+.poster-wrap {
+  position: relative;
+  display: block;
+}
+
+/* Overlays the bottom edge of the poster rather than sitting in the flow, so
+   the card stays exactly the same size whether or not there is progress.
+   Deliberately transparent - only the filled portion is visible. */
+.watch-progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 4px;
+}
+
+.watch-progress-fill {
+  height: 100%;
+  background: #4a9eff;
+  transition: width var(--transition);
+}
+
 /* Projected content retains this component's encapsulation attribute */
 .poster {
   width: 100%;

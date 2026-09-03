@@ -3,9 +3,12 @@ using Api.Responses;
 using Api.Services;
 using Domain.Entities;
 using Infrastructure.Data;
+using Infrastructure.Email;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.EntityFrameworkCore;
 using System.Net.Mail;
 using System.Security.Claims;
@@ -21,21 +24,37 @@ public class UserController : ControllerBase
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly AppDbContext _db;
     private readonly JwtService _jwtService;
+    private readonly IEmailSender _emailSender;
+    private readonly IConfiguration _configuration;
+    private readonly ILogger<UserController> _logger;
+    private readonly EmailQuotaService _emailQuota;
+    private readonly IMemoryCache _cache;
 
     public UserController(
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
         AppDbContext db,
-        JwtService jwtService
+        JwtService jwtService,
+        IEmailSender emailSender,
+        IConfiguration configuration,
+        ILogger<UserController> logger,
+        EmailQuotaService emailQuota,
+        IMemoryCache cache
     )
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _db = db;
         _jwtService = jwtService;
+        _emailSender = emailSender;
+        _configuration = configuration;
+        _logger = logger;
+        _emailQuota = emailQuota;
+        _cache = cache;
     }
 
     [HttpPost("requestAccount")]
+    [EnableRateLimiting(RateLimitPolicies.RegistrationEmail)]
     public async Task<IActionResult> RequestAccount([FromBody] RequestAccountReq req)
     {
         try
@@ -49,9 +68,57 @@ public class UserController : ControllerBase
             return BadRequest(new { message = "Invalid email format." });
         }
 
+        // Every path below this point answers with exactly this, so the response
+        // can't be used to test whether an address is registered or has a link
+        // in flight. What differs is only what lands in the mailbox, which the
+        // requester can't see unless they own it.
+        IActionResult accepted = Ok(new { message = "Account request sent." });
+
+        string clientBaseUrl = (_configuration["Site:BaseUrl"] ?? "https://thefilmarchive.org").TrimEnd('/');
+        int cooldownMinutes = _configuration.GetValue<int?>("Email:PerAddressCooldownMinutes") ?? 5;
+
+        // Per-IP limiting doesn't help the person on the receiving end: someone
+        // rotating IPs could still bury one address in mail. This cooldown is
+        // keyed on the address, so a mailbox can only be written to once per
+        // window regardless of where the requests come from. Held in the cache
+        // rather than the database because it has to cover addresses that never
+        // get an AccountRequest row - the already-registered ones.
+        string cooldownKey = $"registration-email:{req.Email.ToLowerInvariant()}";
+
+        if (_cache.TryGetValue(cooldownKey, out _))
+            return accepted;
+
+        // Claimed before anything is written or sent, so a refusal leaves no
+        // half-finished request behind and doesn't rotate a token we aren't
+        // going to deliver.
+        if (!_emailQuota.TryReserve())
+        {
+            _logger.LogWarning("Registration email refused: daily quota exhausted.");
+
+            return StatusCode(
+                StatusCodes.Status503ServiceUnavailable,
+                new { message = "Sign-ups are temporarily unavailable. Please try again later." }
+            );
+        }
+
+        // An address that already has an account gets told so by email rather
+        // than by the response, so the owner still finds out someone tried.
         var existingUserByEmail = await _userManager.FindByEmailAsync(req.Email);
+
         if (existingUserByEmail != null)
-            return BadRequest(new { message = "Email is already in use." });
+        {
+            if (!await TrySendAsync(
+                    req.Email,
+                    "You already have a Film Archive account",
+                    EmailTemplates.AccountAlreadyExists(clientBaseUrl)))
+            {
+                return MailFailure();
+            }
+
+            StartCooldown(cooldownKey, cooldownMinutes);
+
+            return accepted;
+        }
 
         AccountRequest? existingRequest = await _db.AccountRequests
             .FirstOrDefaultAsync(x => x.Email == req.Email);
@@ -84,13 +151,47 @@ public class UserController : ControllerBase
             return BadRequest(new { message = "Could not create account request." });
         }
 
-        // to-do send email with token
+        string registrationLink = $"{clientBaseUrl}/register/{token}";
 
-        return Ok(new
+        if (!await TrySendAsync(
+                req.Email,
+                "Finish creating your Film Archive account",
+                EmailTemplates.RegistrationInvite(clientBaseUrl, registrationLink)))
         {
-            message = "Account request sent."
-        });
+            return MailFailure();
+        }
+
+        StartCooldown(cooldownKey, cooldownMinutes);
+
+        return accepted;
     }
+
+    // Both send paths report a failure identically, so an outage looks the same
+    // for a registered address as for an unknown one.
+    private IActionResult MailFailure() => StatusCode(
+        StatusCodes.Status502BadGateway,
+        new { message = "Could not send the email. Please try again." }
+    );
+
+    private async Task<bool> TrySendAsync(string toAddress, string subject, string htmlBody)
+    {
+        try
+        {
+            await _emailSender.SendAsync(toAddress, subject, htmlBody);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            // Logged rather than surfaced - the caller reports a generic failure.
+            _logger.LogError(ex, "Could not send a registration email.");
+            return false;
+        }
+    }
+
+    // Only started once mail is actually away, so a transient outage doesn't
+    // lock someone out of retrying for the whole window.
+    private void StartCooldown(string key, int minutes) =>
+        _cache.Set(key, true, TimeSpan.FromMinutes(minutes));
 
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterReq req)
@@ -135,6 +236,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPost("login")]
+    [EnableRateLimiting(RateLimitPolicies.Login)]
     public async Task<IActionResult> Login([FromBody] LoginReq req)
     {
         var user = await _userManager.FindByNameAsync(req.UserNameOrEmail);
@@ -253,27 +355,6 @@ public class UserController : ControllerBase
         await _db.SaveChangesAsync();
 
         return Ok();
-    }
-
-    [Authorize(Roles = "SysAdmin")]
-    [HttpGet("accountRequests")]
-    public async Task<IActionResult> GetAccountRequests()
-    {
-        List<GetAccountRequestsResItem> accountRequests = await _db.AccountRequests
-            .OrderByDescending(o => o.CreatedUtc)
-            .Select(o => new GetAccountRequestsResItem
-            {
-                Email = o.Email,
-                Token = o.Token,
-            })       
-            .ToListAsync();
-
-        GetAccountRequestsRes res = new GetAccountRequestsRes
-        {
-            AccountRequests = accountRequests
-        };
-
-        return Ok(res);
     }
 
     private static string GenerateToken()
