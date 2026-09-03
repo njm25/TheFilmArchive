@@ -3,9 +3,11 @@ using Infrastructure.Clients;
 using Infrastructure.Data;
 using Infrastructure.Email;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.Net;
 using System.Text;
 using System.Threading.RateLimiting;
 
@@ -154,7 +156,20 @@ builder.Services.AddCors(options =>
     });
 });
 
+// In production the app runs behind a reverse proxy that terminates TLS, so
+// Kestrel only ever sees plain http on the loopback hop. Without this, anything
+// that reads the request's scheme or client IP (URL generation, rate limiting)
+// gets the proxy's view rather than the browser's.
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.KnownProxies.Add(IPAddress.Loopback);
+    options.KnownProxies.Add(IPAddress.IPv6Loopback);
+});
+
 var app = builder.Build();
+
+app.UseForwardedHeaders();
 
 if (app.Environment.IsProduction())
 {
