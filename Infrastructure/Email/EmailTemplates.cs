@@ -38,12 +38,18 @@ public static class EmailTemplates
              <p style="margin:0 0 24px;font-family:{FontSans};font-size:15px;line-height:1.6;color:{TextMuted};">
                You asked for an account on The Film Archive. Choose a username and password to finish setting it up.
              </p>
-             <table role="presentation" border="0" cellpadding="0" cellspacing="0" style="margin:0 0 28px;">
+             <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="width:100%;margin:0 0 28px;">
                <tr>
-                 <td bgcolor="{Accent}" style="border-radius:4px;">
-                   <a href="{link}" style="display:inline-block;padding:13px 30px;font-family:{FontSans};font-size:15px;font-weight:600;color:{OnAccent};text-decoration:none;border-radius:4px;">
-                     Create your account
-                   </a>
+                 <td align="center">
+                   <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                     <tr>
+                       <td bgcolor="{Accent}" style="border-radius:4px;">
+                         <a href="{link}" style="display:inline-block;padding:13px 30px;font-family:{FontSans};font-size:15px;font-weight:600;color:{OnAccent};text-decoration:none;border-radius:4px;">
+                           Create your account
+                         </a>
+                       </td>
+                     </tr>
+                   </table>
                  </td>
                </tr>
              </table>
@@ -80,12 +86,18 @@ public static class EmailTemplates
              <p style="margin:0 0 24px;font-family:{FontSans};font-size:15px;line-height:1.6;color:{TextMuted};">
                Someone asked to reset the password for your Film Archive account. Choose a new one using the link below.
              </p>
-             <table role="presentation" border="0" cellpadding="0" cellspacing="0" style="margin:0 0 28px;">
+             <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="width:100%;margin:0 0 28px;">
                <tr>
-                 <td bgcolor="{Accent}" style="border-radius:4px;">
-                   <a href="{link}" style="display:inline-block;padding:13px 30px;font-family:{FontSans};font-size:15px;font-weight:600;color:{OnAccent};text-decoration:none;border-radius:4px;">
-                     Choose a new password
-                   </a>
+                 <td align="center">
+                   <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                     <tr>
+                       <td bgcolor="{Accent}" style="border-radius:4px;">
+                         <a href="{link}" style="display:inline-block;padding:13px 30px;font-family:{FontSans};font-size:15px;font-weight:600;color:{OnAccent};text-decoration:none;border-radius:4px;">
+                           Choose a new password
+                         </a>
+                       </td>
+                     </tr>
+                   </table>
                  </td>
                </tr>
              </table>
@@ -126,12 +138,18 @@ public static class EmailTemplates
              <p style="margin:0 0 24px;font-family:{FontSans};font-size:15px;line-height:1.6;color:{TextMuted};">
                Someone asked for a sign-up link for this address, but it's already registered. You can sign in with your existing password.
              </p>
-             <table role="presentation" border="0" cellpadding="0" cellspacing="0" style="margin:0 0 28px;">
+             <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="width:100%;margin:0 0 28px;">
                <tr>
-                 <td bgcolor="{Accent}" style="border-radius:4px;">
-                   <a href="{loginUrl}" style="display:inline-block;padding:13px 30px;font-family:{FontSans};font-size:15px;font-weight:600;color:{OnAccent};text-decoration:none;border-radius:4px;">
-                     Sign in
-                   </a>
+                 <td align="center">
+                   <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                     <tr>
+                       <td bgcolor="{Accent}" style="border-radius:4px;">
+                         <a href="{loginUrl}" style="display:inline-block;padding:13px 30px;font-family:{FontSans};font-size:15px;font-weight:600;color:{OnAccent};text-decoration:none;border-radius:4px;">
+                           Sign in
+                         </a>
+                       </td>
+                     </tr>
+                   </table>
                  </td>
                </tr>
              </table>
@@ -180,7 +198,7 @@ public static class EmailTemplates
                   <!-- Wordmark: the site sets its logo in the serif face. -->
                   <tr>
                     <td align="center" style="padding:0 0 20px;">
-                      <a href="{siteUrl}" style="font-family:{FontSerif};font-size:19px;letter-spacing:0.01em;color:{Accent};text-decoration:none;">
+                      <a href="{siteUrl}" style="font-family:{FontSerif};font-size:19px;letter-spacing:0.01em;color:{Text};text-decoration:none;">
                         The Film Archive
                       </a>
                     </td>
