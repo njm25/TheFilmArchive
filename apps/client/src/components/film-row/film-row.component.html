@@ -1,0 +1,22 @@
+@if (films().length > 0) {
+  <div class="film-row">
+    <div class="film-row-header">
+      <h2 class="film-row-title">{{ title() }}</h2>
+      <div class="film-row-nav">
+        <button type="button" class="film-row-arrow" (click)="scrollBy(-1)" aria-label="Scroll left">
+          <i class="pi pi-chevron-left"></i>
+        </button>
+        <button type="button" class="film-row-arrow" (click)="scrollBy(1)" aria-label="Scroll right">
+          <i class="pi pi-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+    <div class="film-row-scroll" #scrollEl>
+      @for (film of films(); track film.filmId) {
+        <div class="film-row-item">
+          <tfa-film-card [film]="film"></tfa-film-card>
+        </div>
+      }
+    </div>
+  </div>
+}

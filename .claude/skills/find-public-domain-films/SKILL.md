@@ -43,20 +43,42 @@ source quality):
 
 ```bash
 cat >> /tmp/existing_imdb_ids.txt <<'EOF'
-tt0260173
+tt0182989
+tt0058220
+tt11843560
+tt0401153
+tt4560132
+tt0142639
+tt0148647
+tt5226414
+tt0002844
+tt0026652
 tt0159281
 tt0151672
 tt0260369
+tt0260173
+tt0038528
 EOF
 sort -u -o /tmp/existing_imdb_ids.txt /tmp/existing_imdb_ids.txt
 ```
 
 | Title | Year | IMDb ID |
 |---|---|---|
-| Mechanized Death | 1961 | tt0260173 |
+| Divide and Conquer | 1943 | tt0182989 |
+| I Eat Your Skin | 1971 | tt0058220 |
+| Let's Face It | 1954 | tt11843560 |
+| About Fallout | 1963 | tt0401153 |
+| The Time of Apollo | 1975 | tt4560132 |
+| Making Good | 1932 | tt0142639 |
+| Puss in Boots | 1934 | tt0148647 |
+| The Flight of Apollo 11: Eagle Has Landed | 1969 | tt5226414 |
+| Fantômas: In the Shadow of the Guillotine | 1913 | tt0002844 |
+| The Lost City | 1935 | tt0026652 |
 | Billy Mouse's Akwakade | 1940 | tt0159281 |
 | The Museum (Toby the Pup) | 1930 | tt0151672 |
 | Signal 30 | 1959 | tt0260369 |
+| Mechanized Death | 1961 | tt0260173 |
+| The Fleet That Came to Stay | 1945 | tt0038528 |
 
 Hand the three `/tmp/existing_*.txt` files (or the merged list) to every
 research agent in step 1 — each agent's own instructions must tell it to
@@ -160,7 +182,11 @@ existing_title_year = {(e['title'].lower(), e['year']) for e in existing}
 
 # Permanently blocked - pulled from the manifest by the maintainer, won't be
 # caught by the checks above since they're no longer in seed-films.json.
-existing_imdb |= {"tt0260173", "tt0159281", "tt0151672", "tt0260369"}
+existing_imdb |= {
+    "tt0182989", "tt0058220", "tt11843560", "tt0401153", "tt4560132",
+    "tt0142639", "tt0148647", "tt5226414", "tt0002844", "tt0026652",
+    "tt0159281", "tt0151672", "tt0260369", "tt0260173", "tt0038528"
+}
 
 seen_imdb = set()
 rows = []

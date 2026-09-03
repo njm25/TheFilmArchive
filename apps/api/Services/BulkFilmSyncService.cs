@@ -73,6 +73,11 @@ public class BulkFilmSyncService
                 bool exists = await db.Films.AnyAsync(f => f.TmdbId == tmdbId);
                 if (exists)
                 {
+                    if (seed.SeedViews > 0)
+                    {
+                        await EnsureSeedViewsAsync(db, tmdbId, seed.SeedViews);
+                    }
+
                     _jobService.IncrementSkipped();
                     deferToRefreshPhase = true;
                     continue;
@@ -120,6 +125,16 @@ public class BulkFilmSyncService
                     });
 
                     isPrimary = false;
+                }
+
+                for (int i = 0; i < seed.SeedViews; i++)
+                {
+                    db.FilmViews.Add(new FilmView
+                    {
+                        Film = film,
+                        UserId = null,
+                        CreatedAt = utc
+                    });
                 }
 
                 await db.SaveChangesAsync();
@@ -189,6 +204,35 @@ public class BulkFilmSyncService
         }
 
         _jobService.Complete();
+    }
+
+    // Tops up an already-imported film's view count to the seed manifest's
+    // target, without adding views on every rerun once the target is met -
+    // real views (or a prior top-up) count toward the target just the same.
+    private static async Task EnsureSeedViewsAsync(AppDbContext db, string tmdbId, int targetViews)
+    {
+        Film? film = await db.Films.AsNoTracking().FirstOrDefaultAsync(f => f.TmdbId == tmdbId);
+        if (film == null)
+            return;
+
+        int currentViews = await db.FilmViews.CountAsync(v => v.FilmId == film.Id);
+        int shortfall = targetViews - currentViews;
+        if (shortfall <= 0)
+            return;
+
+        DateTime utc = DateTime.UtcNow;
+        for (int i = 0; i < shortfall; i++)
+        {
+            db.FilmViews.Add(new FilmView
+            {
+                FilmId = film.Id,
+                UserId = null,
+                CreatedAt = utc
+            });
+        }
+
+        await db.SaveChangesAsync();
+        db.ChangeTracker.Clear();
     }
 
     private static List<SeedFilmEntry> LoadSeedManifest()

@@ -1,0 +1,11 @@
+<div class="tfa-popover tfa-overlay" [class.open]="open()">
+  <div class="tfa-popover-trigger" (click)="toggle()">
+    <ng-content select="[popoverTrigger]"></ng-content>
+  </div>
+
+  @if (open()) {
+    <div class="tfa-popover-panel" [class.tfa-popover-panel--right]="align() === 'right'">
+      <ng-content select="[popoverContent]"></ng-content>
+    </div>
+  }
+</div>

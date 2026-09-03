@@ -1,6 +1,12 @@
 <tfa-link [href]="filmSrc()" class="film-card" styleClass="d-flex flex-column h-100">
   @if (film()?.posterPath) {
-    <img class="poster" [src]="posterSrc()" alt="{{ film()?.title }}" />
+    <img
+      class="poster"
+      [class.poster--loaded]="posterLoaded()"
+      [src]="posterSrc()"
+      alt="{{ film()?.title }}"
+      (load)="posterLoaded.set(true)"
+    />
   }
   <div class="film-info">
     <span class="film-title">{{ film()?.title }}</span>

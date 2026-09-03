@@ -1,0 +1,59 @@
+:host {
+  display: contents;
+}
+
+.tfa-confirm-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.65);
+  animation: tfa-confirm-fade-in 0.15s ease;
+}
+
+.tfa-confirm-panel {
+  width: 100%;
+  max-width: 24rem;
+  padding: 1.25rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+  animation: tfa-confirm-rise-in 0.18s ease;
+}
+
+.tfa-confirm-title {
+  font-size: 1.0625rem;
+  margin-bottom: 0.5rem;
+}
+
+.tfa-confirm-message {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.tfa-confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+}
+
+.tfa-confirm-actions .btn {
+  width: auto;
+  margin-top: 0;
+}
+
+@keyframes tfa-confirm-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes tfa-confirm-rise-in {
+  from { opacity: 0; transform: translateY(0.5rem); }
+  to { opacity: 1; transform: translateY(0); }
+}

@@ -8,13 +8,25 @@
 
     <!-- Desktop navigation -->
     <nav class="desktop-nav">
+      <tfa-link href="/" class="nav-item" styleClass="header-nav-link">Home</tfa-link>
+      <tfa-link href="/films" class="nav-item" styleClass="header-nav-link">Films</tfa-link>
       @if (isAdmin()) {
-        <tfa-link href="/createFilm" class="nav-item" styleClass="header-nav-link">Add Film</tfa-link>
+        <tfa-dropdown
+          variant="ghost"
+          [options]="adminMenuOptions"
+          placeholder="Admin"
+          ariaLabel="Admin menu"
+          (valueChange)="onMenuSelect($event)"
+        ></tfa-dropdown>
       }
       @if (isSysAdmin()) {
-        <tfa-link href="/accountRequests" class="nav-item" styleClass="header-nav-link">Requests</tfa-link>
-        <tfa-link href="/users" class="nav-item" styleClass="header-nav-link">Users</tfa-link>
-        <tfa-link href="/admin/bulkSync" class="nav-item" styleClass="header-nav-link">Bulk Sync</tfa-link>
+        <tfa-dropdown
+          variant="ghost"
+          [options]="sysAdminMenuOptions"
+          placeholder="Sys Admin"
+          ariaLabel="Sys Admin menu"
+          (valueChange)="onMenuSelect($event)"
+        ></tfa-dropdown>
       }
     </nav>
 
@@ -22,7 +34,7 @@
     <div class="user-area">
       @if (isLoggedIn()) {
         <span class="welcome-text">{{ userService.me()?.userName }}</span>
-        <button class="btn btn-ghost btn-sm" (click)="logout()">Sign out</button>
+        <button class="header-auth-btn" (click)="logout()">Sign out</button>
       } @else {
         <tfa-link href="/requestAccount" class="nav-item" styleClass="header-nav-link">Sign Up</tfa-link>
         <tfa-link href="/login" class="auth-btn" styleClass="header-auth-btn">Sign In</tfa-link>
@@ -63,6 +75,7 @@
 
   <div class="sidenav-body">
     <tfa-link href="/" class="side-item" styleClass="sidenav-link">Home</tfa-link>
+    <tfa-link href="/films" class="side-item" styleClass="sidenav-link">Films</tfa-link>
     @if (isAdmin()) {
       <tfa-link href="/createFilm" class="side-item" styleClass="sidenav-link">Add Film</tfa-link>
     }

@@ -3,6 +3,7 @@ namespace Api.Responses;
 public class GetFilmsRes
 {
     public required List<GetFilmResItem> Films { get; set; }
+    public required int TotalCount { get; set; }
 }
 
 public class GetFilmResItem

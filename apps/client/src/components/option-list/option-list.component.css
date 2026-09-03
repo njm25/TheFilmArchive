@@ -71,6 +71,34 @@
   white-space: nowrap;
 }
 
+.tfa-option-list-sublabel-row {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  min-width: 0;
+}
+
+.tfa-option-list-dot {
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  line-height: 1;
+  color: var(--text-dim);
+}
+
+.tfa-option-list-badge {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+  padding: 0.15rem 0.3rem;
+  border-radius: 2px;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
 .tfa-option-list-sublabel {
   font-size: 0.75rem;
   color: var(--text-dim);

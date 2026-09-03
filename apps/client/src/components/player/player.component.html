@@ -1,0 +1,24 @@
+@if (embedUrl(); as url) {
+  <iframe
+    class="tfa-player-el"
+    [src]="url"
+    allowfullscreen
+    webkitallowfullscreen
+  ></iframe>
+} @else {
+  <video
+    #videoEl
+    class="tfa-player-el"
+    controls
+    [src]="activeSrc()"
+    (loadedmetadata)="onLoadedMetadata()"
+    (error)="onVideoError()"
+    (play)="onPlay()"
+    (timeupdate)="onTimeUpdate()"
+    (pause)="onPause()"
+  >
+    @for (caption of resolvedCaptions(); track caption.src) {
+      <track kind="subtitles" [src]="caption.src" [label]="caption.label" />
+    }
+  </video>
+}

@@ -27,6 +27,8 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<FilmAlternativeTitle> FilmAlternativeTitles => Set<FilmAlternativeTitle>();
     public DbSet<FilmVideo> FilmVideos => Set<FilmVideo>();
     public DbSet<FilmReleaseDate> FilmReleaseDates => Set<FilmReleaseDate>();
+    public DbSet<FilmView> FilmViews => Set<FilmView>();
+    public DbSet<WatchProgress> WatchProgresses => Set<WatchProgress>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -168,6 +170,29 @@ public class AppDbContext : IdentityDbContext<ApplicationUser>
                 .WithMany(f => f.ReleaseDates)
                 .HasForeignKey(fr => fr.FilmId)
                 .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        builder.Entity<FilmView>(entity =>
+        {
+            entity.HasOne(v => v.Film)
+                .WithMany(f => f.Views)
+                .HasForeignKey(v => v.FilmId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasIndex(v => new { v.FilmId, v.CreatedAt });
+
+            entity.HasIndex(v => new { v.UserId, v.CreatedAt });
+        });
+
+        builder.Entity<WatchProgress>(entity =>
+        {
+            entity.HasOne(w => w.Film)
+                .WithMany(f => f.WatchProgresses)
+                .HasForeignKey(w => w.FilmId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasIndex(w => new { w.UserId, w.FilmId })
+                .IsUnique();
         });
     }
 

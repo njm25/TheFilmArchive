@@ -1,0 +1,75 @@
+.film-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.film-row-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.film-row-title {
+  font-size: 1.25rem;
+  /* Set explicitly rather than relying on the inherited h1-h6 rule in
+     styles.css — any later-loaded stylesheet touching heading color
+     (e.g. Bootstrap) can win that inheritance by load order alone. */
+  color: var(--text);
+}
+
+.film-row-nav {
+  display: flex;
+  gap: 0.375rem;
+  flex-shrink: 0;
+}
+
+.film-row-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: border-color var(--transition), color var(--transition);
+}
+
+.film-row-arrow:hover {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.film-row-scroll {
+  display: flex;
+  gap: 0.75rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  /* Headroom for .film-card's hover translateY(-2px) lift, which would
+     otherwise get clipped by overflow-y: hidden at the top of the row.
+     Negative margin cancels the padding out so the row doesn't shift. */
+  padding-top: 4px;
+  margin-top: -4px;
+}
+
+.film-row-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.film-row-item {
+  flex: 0 0 auto;
+  width: 150px;
+}
+
+@media (max-width: 480px) {
+  .film-row-item {
+    width: 120px;
+  }
+}

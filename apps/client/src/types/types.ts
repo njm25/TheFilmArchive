@@ -30,11 +30,20 @@ export interface GetUsersResItem {
 // get films
 export interface GetFilmsReq extends GenericListReq {
 	orderBy: OrderByFilmEnum;
+	genreIds?: number[];
+	minRating?: number | null;
+	maxRating?: number | null;
+	minYear?: number | null;
+	maxYear?: number | null;
+	minRuntime?: number | null;
+	maxRuntime?: number | null;
+	languages?: string[];
 }
 export enum OrderByFilmEnum {
 	YearReleased = 1,
 	Rating = 2,
-	Title = 3
+	Title = 3,
+	CreatedAt = 4
 }
 export interface GetFilmsResItem {
 	filmId: number;
@@ -48,6 +57,25 @@ export interface GetFilmsResItem {
 
 export interface GetFilmsRes {
 	films: GetFilmsResItem[];
+	totalCount: number;
+}
+
+// genres
+export interface GetGenresRes {
+	genres: GetGenreResItem[];
+}
+export interface GetGenreResItem {
+	genreId: number;
+	name: string;
+}
+
+// languages
+export interface GetLanguagesRes {
+	languages: GetLanguageResItem[];
+}
+export interface GetLanguageResItem {
+	code: string;
+	name: string;
 }
 
 // add film
@@ -79,6 +107,31 @@ export interface GetFilmResSource {
 export interface GetFilmSourceRes {
 	type: SourceTypeEnum;
 	url: string;
+	isDirectVideo: boolean;
+	fallbackUrls: string[];
+}
+
+// get captions
+export interface GetCaptionsRes {
+	captions: GetCaptionResItem[];
+}
+export interface GetCaptionResItem {
+	label: string;
+	url: string;
+}
+
+// watch progress
+export interface WatchProgressReq {
+	filmId: number;
+	sourceId: number;
+	progressSeconds: number;
+	durationSeconds: number;
+}
+
+export interface GetWatchProgressRes {
+	progressSeconds: number;
+	durationSeconds: number;
+	sourceId: number | null;
 }
 
 export interface GetFilmResCastMember {

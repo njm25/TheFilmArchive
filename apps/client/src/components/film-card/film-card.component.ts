@@ -1,4 +1,4 @@
-import { Component, computed, inject, input } from '@angular/core';
+import { Component, computed, inject, input, signal } from '@angular/core';
 import { GetFilmsResItem } from '../../types/types';
 import { Router } from '@angular/router';
 import { LinkComponent } from "../link/link.component";
@@ -19,5 +19,7 @@ export class FilmCardComponent {
     posterSrc = computed(() => `${this.TMDB_BASE_URL}${this.film()?.posterPath}`);
 
     filmSrc = computed(() => `film/${this.film()?.filmId}`);
+
+    posterLoaded = signal(false);
 
 }

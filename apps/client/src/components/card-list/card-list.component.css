@@ -1,3 +1,9 @@
 :host {
   display: block;
+  animation: film-grid-fade-in 0.25s ease;
+}
+
+@keyframes film-grid-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
