@@ -31,15 +31,80 @@
           </button>
           <div popoverContent class="filters-panel">
             <div class="filter-group">
-              <span class="form-label">Minimum rating</span>
-              <tfa-dropdown
-                size="sm"
-                [options]="ratingOptions"
-                [value]="minRating()"
-                placeholder="Any rating"
-                ariaLabel="Minimum rating"
-                (valueChange)="onMinRatingChange($event)"
-              ></tfa-dropdown>
+              <span class="form-label">Rating</span>
+              <div class="filter-range">
+                <input
+                  type="number"
+                  class="form-input filter-range-input"
+                  placeholder="Min"
+                  min="0"
+                  max="10"
+                  step="0.1"
+                  [value]="minRating()"
+                  (change)="onMinRatingChange($event)"
+                  aria-label="Minimum rating"
+                />
+                <span class="filter-range-sep">–</span>
+                <input
+                  type="number"
+                  class="form-input filter-range-input"
+                  placeholder="Max"
+                  min="0"
+                  max="10"
+                  step="0.1"
+                  [value]="maxRating()"
+                  (change)="onMaxRatingChange($event)"
+                  aria-label="Maximum rating"
+                />
+              </div>
+            </div>
+            <div class="filter-group">
+              <span class="form-label">Year</span>
+              <div class="filter-range">
+                <input
+                  type="number"
+                  class="form-input filter-range-input"
+                  placeholder="Min"
+                  min="1888"
+                  [value]="minYear()"
+                  (change)="onMinYearChange($event)"
+                  aria-label="Earliest release year"
+                />
+                <span class="filter-range-sep">–</span>
+                <input
+                  type="number"
+                  class="form-input filter-range-input"
+                  placeholder="Max"
+                  min="1888"
+                  [value]="maxYear()"
+                  (change)="onMaxYearChange($event)"
+                  aria-label="Latest release year"
+                />
+              </div>
+            </div>
+            <div class="filter-group">
+              <span class="form-label">Runtime (min)</span>
+              <div class="filter-range">
+                <input
+                  type="number"
+                  class="form-input filter-range-input"
+                  placeholder="Min"
+                  min="0"
+                  [value]="minRuntime()"
+                  (change)="onMinRuntimeChange($event)"
+                  aria-label="Minimum runtime in minutes"
+                />
+                <span class="filter-range-sep">–</span>
+                <input
+                  type="number"
+                  class="form-input filter-range-input"
+                  placeholder="Max"
+                  min="0"
+                  [value]="maxRuntime()"
+                  (change)="onMaxRuntimeChange($event)"
+                  aria-label="Maximum runtime in minutes"
+                />
+              </div>
             </div>
             <div class="filter-group">
               <span class="form-label">Genres</span>
@@ -50,6 +115,17 @@
                 placeholder="Any genre"
                 ariaLabel="Filter by genre"
                 (valuesChange)="onGenresChange($event)"
+              ></tfa-multiselect>
+            </div>
+            <div class="filter-group">
+              <span class="form-label">Language</span>
+              <tfa-multiselect
+                size="sm"
+                [options]="languageOptions()"
+                [values]="selectedLanguages()"
+                placeholder="Any language"
+                ariaLabel="Filter by original language"
+                (valuesChange)="onLanguagesChange($event)"
               ></tfa-multiselect>
             </div>
             @if (activeFilterCount() > 0) {
@@ -70,30 +146,42 @@
 
   </div>
 
-  <!-- Initial loading state -->
-  @if (loading() && films().length === 0) {
-    <div class="films-loading">
-      <div class="spinner-border" role="status"></div>
+  <!-- Skeleton grid: only shown once a search/filter reset load has been
+       pending longer than a short grace period, so a fast response never
+       flashes it (see showSkeleton in films.component.ts) -->
+  @if (showSkeleton()) {
+    <div class="film-grid">
+      <div class="row g-2 m-0">
+        @for (i of skeletonItems; track $index) {
+          <div class="col-6 col-sm-4 col-md-3 col-xl-2">
+            <div class="skeleton-card">
+              <div class="skeleton-poster"></div>
+              <div class="skeleton-line"></div>
+              <div class="skeleton-line skeleton-line--short"></div>
+            </div>
+          </div>
+        }
+      </div>
     </div>
-  }
+  } @else {
+    <!-- Film grid -->
+    @if (films().length > 0) {
+      <tfa-card-list [films]="films()" (loadMore)="loadMore()"></tfa-card-list>
+    }
 
-  <!-- Film grid -->
-  @if (films().length > 0) {
-    <tfa-card-list [films]="films()" (loadMore)="loadMore()"></tfa-card-list>
-  }
+    <!-- Empty state -->
+    @if (!isResetLoading() && films().length === 0) {
+      <div class="empty-state">
+        No films found{{ searchText ? ' for "' + searchText + '"' : '' }}.
+      </div>
+    }
 
-  <!-- Empty state -->
-  @if (!loading() && films().length === 0) {
-    <div class="empty-state">
-      No films found{{ searchText ? ' for "' + searchText + '"' : '' }}.
-    </div>
-  }
-
-  <!-- Loading next page -->
-  @if (loading() && films().length > 0) {
-    <div class="films-loading-more">
-      <div class="spinner-border spinner-border-sm" role="status"></div>
-    </div>
+    <!-- Loading next page -->
+    @if (isLoadingMore()) {
+      <div class="films-loading-more">
+        <div class="spinner-border spinner-border-sm" role="status"></div>
+      </div>
+    }
   }
 
 </div>

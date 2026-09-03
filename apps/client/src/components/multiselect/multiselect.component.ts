@@ -25,9 +25,11 @@ export class MultiSelectComponent<T = unknown> {
     open = signal(false);
 
     summaryLabel = computed(() => {
-        const count = this.values().length;
-        return count === 0 ? this.placeholder() : `${this.placeholder()} (${count})`;
+        const selected = this.options().filter(o => this.values().includes(o.value));
+        return selected.length === 0 ? this.placeholder() : selected.map(o => o.label).join(', ');
     });
+
+    hasValue = computed(() => this.values().length > 0);
 
     toggle() {
         this.open.update(v => !v);

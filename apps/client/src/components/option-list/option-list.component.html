@@ -12,7 +12,13 @@
       <span class="tfa-option-list-text">
         <span class="tfa-option-list-label">{{ option.label }}</span>
         @if (option.sublabel) {
-          <span class="tfa-option-list-sublabel">{{ option.sublabel }}</span>
+          <span class="tfa-option-list-sublabel-row">
+            <span class="tfa-option-list-sublabel">{{ option.sublabel }}</span>
+            @if (option.badge) {
+              <span class="tfa-option-list-dot">&middot;</span>
+              <span class="tfa-option-list-badge">{{ option.badge }}</span>
+            }
+          </span>
         }
       </span>
     </button>

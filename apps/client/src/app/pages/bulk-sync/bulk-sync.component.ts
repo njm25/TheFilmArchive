@@ -1,5 +1,6 @@
 import { Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { AdminService } from '../../../services/admin.service';
+import { ConfirmService } from '../../../services/confirm.service';
 import { BulkSyncState, BulkSyncStatus } from '../../../types/types';
 
 @Component({
@@ -10,6 +11,7 @@ import { BulkSyncState, BulkSyncStatus } from '../../../types/types';
 })
 export class BulkSyncComponent implements OnInit, OnDestroy {
     adminService = inject(AdminService);
+    confirmService = inject(ConfirmService);
 
     readonly BulkSyncState = BulkSyncState;
 
@@ -34,12 +36,15 @@ export class BulkSyncComponent implements OnInit, OnDestroy {
         this.stopPolling();
     }
 
-    startBulkSync() {
-        const confirmed = confirm(
-            'This will import any films from the seed list that are not yet in the database, ' +
-            'then refresh TMDB metadata for every film already in the database. This can take a ' +
-            'few minutes and makes many calls to TMDB. Continue?'
-        );
+    async startBulkSync() {
+        const confirmed = await this.confirmService.confirm({
+            title: 'Start bulk sync?',
+            message:
+                'This will import any films from the seed list that are not yet in the database, ' +
+                'then refresh TMDB metadata for every film already in the database. This can take a ' +
+                'few minutes and makes many calls to TMDB. Continue?',
+            confirmLabel: 'Start sync'
+        });
 
         if (!confirmed) return;
 

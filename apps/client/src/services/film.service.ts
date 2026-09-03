@@ -4,11 +4,13 @@ import { Observable } from 'rxjs';
 import {
 	AddFilmReq,
 	AddSourceReq,
+	GetCaptionsRes,
 	GetFilmRes,
 	GetFilmsReq,
 	GetFilmsRes,
 	GetFilmSourceRes,
 	GetGenresRes,
+	GetLanguagesRes,
 	GetWatchProgressRes,
 	WatchProgressReq
 } from '../types/types';
@@ -22,7 +24,7 @@ export class FilmService {
 	private baseUrl = environment.apiUrl;
 
 	getFilms(req: GetFilmsReq): Observable<GetFilmsRes> {
-		const params: Record<string, string | number | number[]> = {
+		const params: Record<string, string | number | number[] | string[]> = {
 			pageSize: req.pageSize,
 			pageNumber: req.pageNumber,
 			searchText: req.searchText,
@@ -38,11 +40,39 @@ export class FilmService {
 			params['minRating'] = req.minRating;
 		}
 
+		if (req.maxRating != null) {
+			params['maxRating'] = req.maxRating;
+		}
+
+		if (req.minYear != null) {
+			params['minYear'] = req.minYear;
+		}
+
+		if (req.maxYear != null) {
+			params['maxYear'] = req.maxYear;
+		}
+
+		if (req.minRuntime != null) {
+			params['minRuntime'] = req.minRuntime;
+		}
+
+		if (req.maxRuntime != null) {
+			params['maxRuntime'] = req.maxRuntime;
+		}
+
+		if (req.languages && req.languages.length > 0) {
+			params['languages'] = req.languages;
+		}
+
 		return this.http.get<GetFilmsRes>(`${this.baseUrl}/Film`, { params });
 	}
 
 	getGenres(): Observable<GetGenresRes> {
 		return this.http.get<GetGenresRes>(`${this.baseUrl}/Film/genres`);
+	}
+
+	getLanguages(): Observable<GetLanguagesRes> {
+		return this.http.get<GetLanguagesRes>(`${this.baseUrl}/Film/languages`);
 	}
 
 	getFilm(id: number): Observable<GetFilmRes> {
@@ -51,6 +81,10 @@ export class FilmService {
 
 	getFilmSource(sourceId: number): Observable<GetFilmSourceRes> {
 		return this.http.get<GetFilmSourceRes>(`${this.baseUrl}/Film/sources/${sourceId}`);
+	}
+
+	getCaptions(sourceId: number): Observable<GetCaptionsRes> {
+		return this.http.get<GetCaptionsRes>(`${this.baseUrl}/Film/sources/${sourceId}/captions`);
 	}
 
 	addFilm(req: AddFilmReq): Observable<number> {

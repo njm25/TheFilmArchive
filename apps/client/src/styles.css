@@ -100,7 +100,19 @@ a {
   border-color: var(--accent);
 }
 
-.tfa-overlay.open .tfa-overlay-trigger {
+.tfa-overlay-trigger:focus,
+.tfa-overlay-trigger:focus-visible {
+  outline: none;
+}
+
+/* Scoped to each overlay's OWN trigger (direct child, or one wrapper deep for
+   the popover) - a plain ".tfa-overlay.open .tfa-overlay-trigger" descendant
+   selector would also match triggers of OTHER overlays nested inside an open
+   one (e.g. the genre/language dropdowns inside the open filters popover),
+   lighting them all up regardless of their own state. */
+.tfa-dropdown.open > .tfa-overlay-trigger,
+.tfa-multiselect.open > .tfa-overlay-trigger,
+.tfa-popover.open > .tfa-popover-trigger > .tfa-overlay-trigger {
   border-color: var(--accent);
   background-color: var(--surface-2);
 }
@@ -133,7 +145,9 @@ a {
   color: var(--text);
 }
 
-.tfa-overlay.open .tfa-overlay-trigger--ghost {
+.tfa-dropdown.open > .tfa-overlay-trigger--ghost,
+.tfa-multiselect.open > .tfa-overlay-trigger--ghost,
+.tfa-popover.open > .tfa-popover-trigger > .tfa-overlay-trigger--ghost {
   border-color: transparent;
   background-color: rgba(255, 255, 255, 0.05);
   color: var(--text);
@@ -145,6 +159,10 @@ a {
   white-space: nowrap;
 }
 
+.tfa-overlay-value--placeholder {
+  color: var(--text-dim);
+}
+
 .tfa-overlay-caret {
   font-size: 0.75rem;
   color: var(--text-muted);
@@ -152,7 +170,9 @@ a {
   transition: transform var(--transition);
 }
 
-.tfa-overlay.open .tfa-overlay-caret {
+.tfa-dropdown.open > .tfa-overlay-trigger .tfa-overlay-caret,
+.tfa-multiselect.open > .tfa-overlay-trigger .tfa-overlay-caret,
+.tfa-popover.open > .tfa-popover-trigger .tfa-overlay-caret {
   transform: rotate(180deg);
 }
 
@@ -335,8 +355,8 @@ a {
 }
 
 .btn-primary {
-  background: var(--accent);
-  color: #111;
+  background: #0d6efd;
+  color: #fff;
   width: 100%;
   padding: 0.75rem;
   letter-spacing: 0.02em;
@@ -344,7 +364,16 @@ a {
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: var(--accent-hover);
+  background: #0b5ed7;
+}
+
+.btn-danger {
+  background: #e5484d;
+  color: #fff;
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: #c93e42;
 }
 
 .btn-ghost {
@@ -494,19 +523,24 @@ a {
 }
 
 .header-auth-btn {
+  font-family: inherit;
   font-size: 0.8125rem;
   font-weight: 500;
   padding: 0.4rem 0.875rem;
   border-radius: var(--radius-sm);
   border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  transition: border-color var(--transition);
+  line-height: normal;
+  transition: border-color var(--transition), color var(--transition);
 }
 
 .header-auth-btn:hover {
   border-color: var(--text-dim);
+  color: var(--text);
 }
 
 .sidenav-link {

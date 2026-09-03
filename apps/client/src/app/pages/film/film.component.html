@@ -74,7 +74,9 @@
               <tfa-player
                 [src]="src"
                 [isDirectVideo]="activeSource()!.isDirectVideo"
+                [fallbackSources]="playerFallbackSrcs()"
                 [startAtSeconds]="resumeAtSeconds()"
+                [captions]="captions()"
                 (play)="onPlayerPlay()"
                 (timeUpdate)="onPlayerTimeUpdate($event)"
                 (paused)="onPlayerPaused($event)"

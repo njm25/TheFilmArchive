@@ -1,12 +1,13 @@
 import { Component, OnDestroy, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FilmService } from '../../../services/film.service';
-import { GetFilmRes, GetFilmResSource, GetFilmSourceRes, SourceTypeEnum } from '../../../types/types';
+import { GetCaptionResItem, GetFilmRes, GetFilmResSource, GetFilmSourceRes, SourceTypeEnum } from '../../../types/types';
 import { LinkComponent } from '../../../components/link/link.component';
 import { OptionListComponent, OptionListItem } from '../../../components/option-list/option-list.component';
 import { PlayerComponent, PlayerProgress } from '../../../components/player/player.component';
 import { AuthService } from '../../../services/auth.service';
 import { UserService } from '../../../services/user.service';
+import { ConfirmService } from '../../../services/confirm.service';
 
 @Component({
     selector: 'tfa-film',
@@ -20,6 +21,7 @@ export class FilmComponent implements OnDestroy {
     filmService = inject(FilmService);
     authService = inject(AuthService);
     userService = inject(UserService);
+    confirmService = inject(ConfirmService);
 
     film = signal<GetFilmRes | null>(null);
     filmId = signal<number>(0);
@@ -45,13 +47,22 @@ export class FilmComponent implements OnDestroy {
             return {
                 label: `Source ${i + 1}`,
                 value: s.sourceId,
-                sublabel: `${typeLabel}${qualityLabel}`
+                sublabel: `${typeLabel}${qualityLabel}`,
+                badge: this.sourceCaptions()[s.sourceId]?.length ? 'CC' : undefined
             };
         })
     );
 
     selectedSourceId = signal<number | null>(null);
     activeSource = signal<GetFilmSourceRes | null>(null);
+    // Keyed by sourceId - fetched once per source when the film loads, both
+    // to drive the CC badge in the source picker and to feed the player once
+    // that source is selected, without fetching the same source twice.
+    sourceCaptions = signal<Record<number, GetCaptionResItem[]>>({});
+    captions = computed(() => {
+        const sourceId = this.selectedSourceId();
+        return sourceId != null ? this.sourceCaptions()[sourceId] ?? [] : [];
+    });
     resumeAtSeconds = signal(0);
 
     // S3 sources store a relative object key, so the CDN base has to be prepended.
@@ -62,6 +73,10 @@ export class FilmComponent implements OnDestroy {
         if (!s) return null;
         return s.type === SourceTypeEnum.S3 ? `${this.SOURCE_BASE_URL}/${s.url}` : s.url;
     });
+
+    // Already-resolved, full URLs from the API - only archive.org sources
+    // ever have more than one derivative to fall back through.
+    playerFallbackSrcs = computed(() => this.activeSource()?.fallbackUrls ?? []);
 
     private viewLogged = false;
     private lastProgressSentAt = 0;
@@ -75,21 +90,42 @@ export class FilmComponent implements OnDestroy {
     loadFilm() {
         this.filmService.getFilm(this.filmId()).subscribe((r) => {
             this.film.set(r);
+            this.sourceCaptions.set({});
 
-            const defaultSourceId = this.pickDefaultSourceId(r.sources, r.primarySourceTypeId);
+            for (const s of r.sources) {
+                this.filmService.getCaptions(s.sourceId).subscribe((cr) => {
+                    this.sourceCaptions.update(m => ({ ...m, [s.sourceId]: cr.captions }));
+                });
+            }
 
-            if (defaultSourceId !== undefined) {
-                this.selectSource(defaultSourceId);
+            if (this.authService.isLoggedIn()) {
+                this.filmService.getWatchProgress(this.filmId()).subscribe((wp) => {
+                    this.resumeAtSeconds.set(wp.progressSeconds);
+
+                    // Resume on whichever source the progress was saved against,
+                    // as long as it's still one of the film's sources - falls back
+                    // to the usual pick when there's no saved progress, or the
+                    // source it was saved against has since been removed.
+                    const resumeSourceId = wp.sourceId != null && r.sources.some(s => s.sourceId === wp.sourceId)
+                        ? wp.sourceId
+                        : undefined;
+
+                    this.selectDefaultSource(r, resumeSourceId);
+                });
             } else {
-                this.selectedSourceId.set(null);
-                this.activeSource.set(null);
+                this.selectDefaultSource(r);
             }
         });
+    }
 
-        if (this.authService.isLoggedIn()) {
-            this.filmService.getWatchProgress(this.filmId()).subscribe((r) => {
-                this.resumeAtSeconds.set(r.progressSeconds);
-            });
+    private selectDefaultSource(film: GetFilmRes, preferredSourceId?: number) {
+        const sourceId = preferredSourceId ?? this.pickDefaultSourceId(film.sources, film.primarySourceTypeId);
+
+        if (sourceId !== undefined) {
+            this.selectSource(sourceId);
+        } else {
+            this.selectedSourceId.set(null);
+            this.activeSource.set(null);
         }
     }
 
@@ -116,7 +152,6 @@ export class FilmComponent implements OnDestroy {
 
         this.filmService.getFilmSource(sourceId).subscribe((r) => {
             this.activeSource.set(r);
-            this.logView();
         });
     }
 
@@ -180,21 +215,35 @@ export class FilmComponent implements OnDestroy {
         });
     }
 
-    deleteFilm() {
+    async deleteFilm() {
         const title = this.film()?.title ?? 'this film';
 
-        if (!confirm(`Delete "${title}"? This will permanently remove it and all of its sources.`)) return;
+        const confirmed = await this.confirmService.confirm({
+            title: 'Delete film?',
+            message: `Delete "${title}"? This will permanently remove it and all of its sources.`,
+            confirmLabel: 'Delete',
+            danger: true
+        });
+
+        if (!confirmed) return;
 
         this.filmService.deleteFilm(this.filmId()).subscribe(() => {
             this.router.navigate(['/']);
         });
     }
 
-    deleteSelectedSource() {
+    async deleteSelectedSource() {
         const sourceId = this.selectedSourceId();
         if (sourceId == null) return;
 
-        if (!confirm('Delete this source? This cannot be undone.')) return;
+        const confirmed = await this.confirmService.confirm({
+            title: 'Delete source?',
+            message: 'Delete this source? This cannot be undone.',
+            confirmLabel: 'Delete',
+            danger: true
+        });
+
+        if (!confirmed) return;
 
         this.filmService.deleteSource(sourceId).subscribe(() => {
             const remaining = (this.film()?.sources ?? []).filter(s => s.sourceId !== sourceId);

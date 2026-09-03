@@ -4,6 +4,7 @@ export interface OptionListItem<T = unknown> {
     label: string;
     value: T;
     sublabel?: string;
+    badge?: string;
 }
 
 @Component({

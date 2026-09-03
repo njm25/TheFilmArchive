@@ -1,0 +1,28 @@
+@if (confirmService.open()) {
+  <div class="tfa-confirm-overlay" (click)="cancel()">
+    <div
+      class="tfa-confirm-panel"
+      role="alertdialog"
+      aria-modal="true"
+      [attr.aria-label]="confirmService.state().title"
+      (click)="$event.stopPropagation()"
+    >
+      <h3 class="tfa-confirm-title">{{ confirmService.state().title }}</h3>
+      <p class="tfa-confirm-message">{{ confirmService.state().message }}</p>
+      <div class="tfa-confirm-actions">
+        <button type="button" class="btn btn-ghost btn-sm" (click)="cancel()">
+          {{ confirmService.state().cancelLabel }}
+        </button>
+        <button
+          type="button"
+          class="btn btn-sm"
+          [class.btn-danger]="confirmService.state().danger"
+          [class.btn-primary]="!confirmService.state().danger"
+          (click)="confirm()"
+        >
+          {{ confirmService.state().confirmLabel }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

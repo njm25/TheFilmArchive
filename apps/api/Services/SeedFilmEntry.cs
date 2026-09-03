@@ -7,4 +7,5 @@ public class SeedFilmEntry
     public string ImdbId { get; set; } = string.Empty;
     public string? TmdbId { get; set; }
     public List<string> ArchiveUrls { get; set; } = new();
+    public int SeedViews { get; set; }
 }

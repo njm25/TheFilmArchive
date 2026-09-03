@@ -57,6 +57,36 @@ public class FilmController : ControllerBase
             query = query.Where(f => f.VoteAverage >= req.MinRating.Value);
         }
 
+        if (req.MaxRating.HasValue)
+        {
+            query = query.Where(f => f.VoteAverage <= req.MaxRating.Value);
+        }
+
+        if (req.MinYear.HasValue)
+        {
+            query = query.Where(f => f.ReleaseYear >= req.MinYear.Value);
+        }
+
+        if (req.MaxYear.HasValue)
+        {
+            query = query.Where(f => f.ReleaseYear <= req.MaxYear.Value);
+        }
+
+        if (req.MinRuntime.HasValue)
+        {
+            query = query.Where(f => f.Runtime >= req.MinRuntime.Value);
+        }
+
+        if (req.MaxRuntime.HasValue)
+        {
+            query = query.Where(f => f.Runtime <= req.MaxRuntime.Value);
+        }
+
+        if (req.Languages != null && req.Languages.Count > 0)
+        {
+            query = query.Where(f => f.OriginalLanguage != null && req.Languages.Contains(f.OriginalLanguage));
+        }
+
         // Ordering
         query = (req.OrderBy, req.OrderingType) switch
         {
@@ -131,6 +161,36 @@ public class FilmController : ControllerBase
             .ToListAsync();
 
         return Ok(new GetGenresRes { Genres = genres });
+    }
+
+    // GET: api/films/languages
+    [HttpGet("languages")]
+    public async Task<IActionResult> GetLanguages()
+    {
+        List<string> codes = await _db.Films
+            .Where(f => f.OriginalLanguage != null)
+            .Select(f => f.OriginalLanguage!)
+            .Distinct()
+            .ToListAsync();
+
+        List<GetLanguageResItem> languages = codes
+            .Select(code => new GetLanguageResItem { Code = code, Name = LanguageDisplayName(code) })
+            .OrderBy(l => l.Name)
+            .ToList();
+
+        return Ok(new GetLanguagesRes { Languages = languages });
+    }
+
+    private static string LanguageDisplayName(string code)
+    {
+        try
+        {
+            return System.Globalization.CultureInfo.GetCultureInfo(code).EnglishName;
+        }
+        catch (System.Globalization.CultureNotFoundException)
+        {
+            return code;
+        }
     }
 
     // GET: api/films/1
@@ -221,17 +281,18 @@ public class FilmController : ControllerBase
         }
 
         string? identifier = ArchiveOrgService.ExtractIdentifier(source.SourceUrl);
-        string? playableUrl = identifier != null
-            ? await _archiveOrg.GetBestPlayableFileUrlAsync(identifier)
-            : null;
+        List<string> playableUrls = identifier != null
+            ? await _archiveOrg.GetPlayableFileUrlsAsync(identifier)
+            : new List<string>();
 
-        if (playableUrl != null)
+        if (playableUrls.Count > 0)
         {
             return Ok(new GetFilmSourceRes
             {
                 Type = source.Type,
-                Url = playableUrl,
-                IsDirectVideo = true
+                Url = playableUrls[0],
+                IsDirectVideo = true,
+                FallbackUrls = playableUrls.Skip(1).ToList()
             });
         }
 
@@ -243,6 +304,56 @@ public class FilmController : ControllerBase
             Url = identifier != null ? $"https://archive.org/embed/{identifier}" : source.SourceUrl,
             IsDirectVideo = false
         });
+    }
+
+    // GET: api/films/sources/id/captions
+    [HttpGet("sources/{sourceId}/captions")]
+    public async Task<IActionResult> GetCaptions(int sourceId)
+    {
+        string? identifier = await ResolveArchiveOrgIdentifierAsync(sourceId);
+
+        if (identifier == null)
+            return Ok(new GetCaptionsRes { Captions = new List<GetCaptionResItem>() });
+
+        List<string> fileNames = await _archiveOrg.GetCaptionFileNamesAsync(identifier);
+
+        List<GetCaptionResItem> captions = fileNames.Select(name => new GetCaptionResItem
+        {
+            Label = ArchiveOrgService.GuessCaptionLabel(name),
+            Url = Url.Action(nameof(GetCaptionTrack), "Film", new { sourceId, file = name }, Request.Scheme)!
+        }).ToList();
+
+        return Ok(new GetCaptionsRes { Captions = captions });
+    }
+
+    // GET: api/films/sources/id/captions/track?file=...
+    // Proxies (and, for .srt, converts to WebVTT) a caption file from
+    // archive.org - browsers can't load a <track> cross-origin from
+    // archive.org's own domain reliably, and can't use .srt at all.
+    [HttpGet("sources/{sourceId}/captions/track")]
+    public async Task<IActionResult> GetCaptionTrack(int sourceId, [FromQuery] string file)
+    {
+        string? identifier = await ResolveArchiveOrgIdentifierAsync(sourceId);
+
+        if (identifier == null)
+            return NotFound();
+
+        string? vtt = await _archiveOrg.GetCaptionVttAsync(identifier, file);
+
+        if (vtt == null)
+            return NotFound();
+
+        return Content(vtt, "text/vtt");
+    }
+
+    private async Task<string?> ResolveArchiveOrgIdentifierAsync(int sourceId)
+    {
+        FilmSource? source = await _db.FilmSources
+            .AsNoTracking()
+            .Where(o => o.Id == sourceId && o.Type == SourceTypeEnum.ArchiveOrg)
+            .FirstOrDefaultAsync();
+
+        return source == null ? null : ArchiveOrgService.ExtractIdentifier(source.SourceUrl);
     }
 
     // to-do
@@ -549,7 +660,8 @@ public class FilmController : ControllerBase
         return Ok(new GetWatchProgressRes
         {
             ProgressSeconds = progress?.ProgressSeconds ?? 0,
-            DurationSeconds = progress?.DurationSeconds ?? 0
+            DurationSeconds = progress?.DurationSeconds ?? 0,
+            SourceId = progress?.SourceId
         });
     }
 

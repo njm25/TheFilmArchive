@@ -32,6 +32,8 @@ export class DropdownComponent<T = unknown> {
         this.options().find(o => o.value === this.value()) ?? null
     );
 
+    hasValue = computed(() => this.selectedOption() != null);
+
     toggle() {
         this.open.update(v => !v);
     }

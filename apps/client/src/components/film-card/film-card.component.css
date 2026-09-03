@@ -28,6 +28,12 @@
   object-fit: cover;
   display: block;
   background: var(--surface-2);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.poster--loaded {
+  opacity: 1;
 }
 
 .film-info {

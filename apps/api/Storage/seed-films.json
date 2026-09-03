@@ -4,6 +4,7 @@
     "year": 1922,
     "imdbId": "tt0013442",
     "tmdbId": null,
+    "seedViews": 100,
     "archiveUrls": [
       "https://archive.org/details/nosferatu_1922",
       "https://archive.org/details/Nosferatu1922HD",
@@ -15,6 +16,7 @@
     "year": 1927,
     "imdbId": "tt0017136",
     "tmdbId": "19",
+    "seedViews": 100,
     "archiveUrls": [
       "https://archive.org/details/Metropolis1927EnglishVersion",
       "https://archive.org/details/metropolis-1927-bdrip-1080p-x-265-dts-hd-ma-5.1-d-0ct-0r-lew-sev"
@@ -25,6 +27,7 @@
     "year": 1920,
     "imdbId": "tt0010323",
     "tmdbId": "234",
+    "seedViews": 100,
     "archiveUrls": [
       "https://archive.org/details/the-cabinet-of-dr.-caligari-1920-by-robert-wiene",
       "https://archive.org/details/DasKabinettdesDoktorCaligariTheCabinetofDrCaligari"
@@ -35,6 +38,7 @@
     "year": 1925,
     "imdbId": "tt0015648",
     "tmdbId": "643",
+    "seedViews": 100,
     "archiveUrls": [
       "https://archive.org/details/BattleshipPotemkin1925",
       "https://archive.org/details/battleship-potemkin-1925_202510"
@@ -45,6 +49,7 @@
     "year": 1902,
     "imdbId": "tt0000417",
     "tmdbId": null,
+    "seedViews": 100,
     "archiveUrls": [
       "https://archive.org/details/le-voyage-dans-la-lune-1902-georges-melies",
       "https://archive.org/details/ATripToTheMoon1902"
@@ -75,6 +80,7 @@
     "year": 1922,
     "imdbId": "tt0013257",
     "tmdbId": null,
+    "seedViews": 100,
     "archiveUrls": [
       "https://archive.org/details/haxanwitchcraftthroughtheages1922"
     ]
@@ -84,6 +90,7 @@
     "year": 1903,
     "imdbId": "tt0000439",
     "tmdbId": null,
+    "seedViews": 100,
     "archiveUrls": [
       "https://archive.org/details/TheGreatTrainRobbery1903",
       "https://archive.org/details/the-great-train-robbery-1903",
@@ -117,6 +124,7 @@
     "year": 1924,
     "imdbId": "tt0015324",
     "tmdbId": null,
+    "seedViews": 100,
     "archiveUrls": [
       "https://archive.org/details/sherlockjr1924_201909",
       "https://archive.org/details/sherlock-jr.-1924-by-buster-keaton"
@@ -137,6 +145,7 @@
     "year": 1926,
     "imdbId": "tt0017925",
     "tmdbId": null,
+    "seedViews": 100,
     "archiveUrls": [
       "https://archive.org/details/The_General_Buster_Keaton",
       "https://archive.org/details/the-general-1926"
@@ -147,6 +156,7 @@
     "year": 1929,
     "imdbId": "tt0019760",
     "tmdbId": null,
+    "seedViews": 100,
     "archiveUrls": [
       "https://archive.org/details/man-with-a-movie-camera-1929-by-dziga-vertov",
       "https://archive.org/details/man-with-a-movie-camera_1929"
@@ -177,6 +187,7 @@
     "year": 1926,
     "imdbId": "tt0016847",
     "tmdbId": null,
+    "seedViews": 100,
     "archiveUrls": [
       "https://archive.org/details/faust-1926-by-f.-w.-murnau",
       "https://archive.org/details/faust-1926_202606"
@@ -187,6 +198,7 @@
     "year": 1928,
     "imdbId": "tt0019254",
     "tmdbId": null,
+    "seedViews": 100,
     "archiveUrls": [
       "https://archive.org/details/the-passion-of-joan-of-arc-1928-by-carl-theodor-dreyer",
       "https://archive.org/details/passion-joan-of-arc"
@@ -1869,15 +1881,6 @@
     "tmdbId": null,
     "archiveUrls": [
       "https://archive.org/details/TheNazisStrike"
-    ]
-  },
-  {
-    "title": "Divide and Conquer",
-    "year": 1943,
-    "imdbId": "tt0182989",
-    "tmdbId": null,
-    "archiveUrls": [
-      "https://archive.org/details/DivideAndConquer"
     ]
   },
   {
@@ -4623,16 +4626,6 @@
     ]
   },
   {
-    "title": "I Eat Your Skin",
-    "year": 1971,
-    "imdbId": "tt0058220",
-    "tmdbId": null,
-    "archiveUrls": [
-      "https://archive.org/details/IEatYourSkin1970",
-      "https://archive.org/details/i-eat-your-skin_202311"
-    ]
-  },
-  {
     "title": "Guru, the Mad Monk",
     "year": 1970,
     "imdbId": "tt0067169",
@@ -4774,16 +4767,6 @@
     ]
   },
   {
-    "title": "Let's Face It",
-    "year": 1954,
-    "imdbId": "tt11843560",
-    "tmdbId": null,
-    "archiveUrls": [
-      "https://archive.org/details/FederalCivilDefenseAdministrationletsFaceIt",
-      "https://archive.org/details/12814civildefenseletsfaceitvwr"
-    ]
-  },
-  {
     "title": "Our Cities Must Fight",
     "year": 1951,
     "imdbId": "tt0441675",
@@ -4792,15 +4775,6 @@
       "https://archive.org/details/OurCitie1951",
       "https://archive.org/details/Our_Cities_Must_Fight",
       "https://archive.org/details/71732OurCitiesMustFight"
-    ]
-  },
-  {
-    "title": "About Fallout",
-    "year": 1963,
-    "imdbId": "tt0401153",
-    "tmdbId": null,
-    "archiveUrls": [
-      "https://archive.org/details/AboutFal1963"
     ]
   },
   {
@@ -5075,17 +5049,6 @@
     ]
   },
   {
-    "title": "The Time of Apollo",
-    "year": 1975,
-    "imdbId": "tt4560132",
-    "tmdbId": null,
-    "archiveUrls": [
-      "https://archive.org/details/time_of_apollo",
-      "https://archive.org/details/72942-the-time-of-apollo-vwr",
-      "https://archive.org/details/nasa_tv-Time_of_Apollo"
-    ]
-  },
-  {
     "title": "The Bandmaster",
     "year": 1931,
     "imdbId": "tt0142101",
@@ -5101,15 +5064,6 @@
     "tmdbId": null,
     "archiveUrls": [
       "https://archive.org/details/1932OswaldTheLuckyRabbitMechanicalManWaltDisney"
-    ]
-  },
-  {
-    "title": "Making Good",
-    "year": 1932,
-    "imdbId": "tt0142639",
-    "tmdbId": null,
-    "archiveUrls": [
-      "https://archive.org/details/making-good-1932"
     ]
   },
   {
@@ -5177,16 +5131,6 @@
     "archiveUrls": [
       "https://archive.org/details/TheBraveTinSoldier1934",
       "https://archive.org/details/comi-color-cartoons-1934x-02-the-brave-tin-soldier"
-    ]
-  },
-  {
-    "title": "Puss in Boots",
-    "year": 1934,
-    "imdbId": "tt0148647",
-    "tmdbId": null,
-    "archiveUrls": [
-      "https://archive.org/details/PussInBoots1934",
-      "https://archive.org/details/comicolor-cartoons-puss-in-boots-1934-stage-door-prod.-ver."
     ]
   },
   {
@@ -5433,16 +5377,6 @@
     ]
   },
   {
-    "title": "The Flight of Apollo 11: Eagle Has Landed",
-    "year": 1969,
-    "imdbId": "tt5226414",
-    "tmdbId": null,
-    "archiveUrls": [
-      "https://archive.org/details/gov.archives.arc.45017",
-      "https://archive.org/details/72912Apollo11EagleHasLandedRevised"
-    ]
-  },
-  {
     "title": "Here Is Germany",
     "year": 1945,
     "imdbId": "tt0037773",
@@ -5483,16 +5417,6 @@
     ]
   },
   {
-    "title": "The Fleet That Came to Stay",
-    "year": 1945,
-    "imdbId": "tt0038528",
-    "tmdbId": null,
-    "archiveUrls": [
-      "https://archive.org/details/the-fleet-that-came-to-stay",
-      "https://archive.org/details/gov.archives.arc.13113"
-    ]
-  },
-  {
     "title": "Wings for This Man",
     "year": 1945,
     "imdbId": "tt0816708",
@@ -5510,16 +5434,6 @@
     "archiveUrls": [
       "https://archive.org/details/TheInferno1911",
       "https://archive.org/details/linfernodantesinferno1911"
-    ]
-  },
-  {
-    "title": "Fant\u00f4mas: In the Shadow of the Guillotine",
-    "year": 1913,
-    "imdbId": "tt0002844",
-    "tmdbId": null,
-    "archiveUrls": [
-      "https://archive.org/details/silent-fantmas-in-the-shadow-of-the-guillotine",
-      "https://archive.org/details/silent-fantmas--lombre-de-la-guillotine"
     ]
   },
   {
@@ -5774,16 +5688,6 @@
     "archiveUrls": [
       "https://archive.org/details/the-shadow-of-the-eagle",
       "https://archive.org/details/1932-the-shadow-of-the-eagle"
-    ]
-  },
-  {
-    "title": "The Lost City",
-    "year": 1935,
-    "imdbId": "tt0026652",
-    "tmdbId": null,
-    "archiveUrls": [
-      "https://archive.org/details/TheLostCityall12ChaptersVideoQualityUpgrade",
-      "https://archive.org/details/PhotosbyHaroldTheLostCity12ChaptersCombined"
     ]
   },
   {

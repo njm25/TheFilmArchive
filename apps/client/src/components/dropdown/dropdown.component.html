@@ -8,7 +8,7 @@
     [attr.aria-expanded]="open()"
     [attr.aria-label]="ariaLabel() || placeholder()"
   >
-    <span class="tfa-overlay-value">{{ selectedOption()?.label ?? placeholder() }}</span>
+    <span class="tfa-overlay-value" [class.tfa-overlay-value--placeholder]="variant() === 'field' && !hasValue()">{{ selectedOption()?.label ?? placeholder() }}</span>
     <i class="pi pi-chevron-down tfa-overlay-caret"></i>
   </button>
 

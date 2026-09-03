@@ -1,11 +1,12 @@
 import { Component, computed, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from '../components/header/header.component';
+import { ConfirmComponent } from '../components/confirm/confirm.component';
 import { UserService } from '../services/user.service';
 
 @Component({
     selector: 'app-root',
-    imports: [RouterOutlet, HeaderComponent],
+    imports: [RouterOutlet, HeaderComponent, ConfirmComponent],
     templateUrl: './app.component.html',
     styleUrl: './app.component.css'
 })

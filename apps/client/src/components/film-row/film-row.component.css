@@ -52,6 +52,11 @@
   overflow-y: hidden;
   scroll-behavior: smooth;
   scrollbar-width: none;
+  /* Headroom for .film-card's hover translateY(-2px) lift, which would
+     otherwise get clipped by overflow-y: hidden at the top of the row.
+     Negative margin cancels the padding out so the row doesn't shift. */
+  padding-top: 4px;
+  margin-top: -4px;
 }
 
 .film-row-scroll::-webkit-scrollbar {
