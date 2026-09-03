@@ -53,6 +53,9 @@ export interface GetFilmsResItem {
 	posterPath: string;
 	genres: string[];
 	voteAverage: number | null;
+	// Only sent by continueWatching; null elsewhere, which suppresses the bar.
+	progressSeconds?: number | null;
+	durationSeconds?: number | null;
 }
 
 export interface GetFilmsRes {

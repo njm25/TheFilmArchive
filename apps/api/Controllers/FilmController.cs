@@ -533,6 +533,24 @@ public class FilmController : ControllerBase
 
         List<GetFilmResItem> films = await ResolveFilmsInOrderAsync(filmIds);
 
+        // The row is ordered by view recency, but how far through each film the
+        // user actually is lives in WatchProgress, so it is attached separately.
+        Dictionary<int, WatchProgress> progressByFilmId = await _db.WatchProgresses
+            .Where(w => w.UserId == userId && filmIds.Contains(w.FilmId))
+            .ToDictionaryAsync(w => w.FilmId);
+
+        foreach (GetFilmResItem film in films)
+        {
+            if (!progressByFilmId.TryGetValue(film.FilmId, out WatchProgress? progress))
+                continue;
+
+            if (progress.DurationSeconds <= 0)
+                continue;
+
+            film.ProgressSeconds = progress.ProgressSeconds;
+            film.DurationSeconds = progress.DurationSeconds;
+        }
+
         return Ok(new GetFilmsRes { Films = films, TotalCount = films.Count });
     }
 

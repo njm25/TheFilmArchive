@@ -1,12 +1,28 @@
 <tfa-link [href]="filmSrc()" class="film-card" styleClass="d-flex flex-column h-100">
   @if (film()?.posterPath) {
-    <img
-      class="poster"
-      [class.poster--loaded]="posterLoaded()"
-      [src]="posterSrc()"
-      alt="{{ film()?.title }}"
-      (load)="posterLoaded.set(true)"
-    />
+    <div class="poster-wrap">
+      <img
+        class="poster"
+        [class.poster--loaded]="posterLoaded()"
+        [src]="posterSrc()"
+        alt="{{ film()?.title }}"
+        loading="lazy"
+        decoding="async"
+        (load)="posterLoaded.set(true)"
+      />
+      @if (watchedPercent(); as percent) {
+        <div
+          class="watch-progress"
+          role="progressbar"
+          [attr.aria-valuenow]="watchedPercentLabel()"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          [attr.aria-label]="'Watched ' + watchedPercentLabel() + '% of ' + film()?.title"
+        >
+          <div class="watch-progress-fill" [style.width.%]="percent"></div>
+        </div>
+      }
+    </div>
   }
   <div class="film-info">
     <span class="film-title">{{ film()?.title }}</span>

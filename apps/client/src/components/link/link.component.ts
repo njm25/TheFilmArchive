@@ -1,27 +1,24 @@
-import { Component, inject, input } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, computed, input } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 @Component({
     selector: 'tfa-link',
-    imports: [],
+    imports: [RouterLink],
     templateUrl: './link.component.html',
     styleUrl: './link.component.css'
 })
 
 export class LinkComponent {
-    router = inject(Router);
-    
     href = input<string>("/");
     styleClass = input<string>("");
 
-    onClick(event: MouseEvent) {
-        const url = this.href();
+    // routerLink resolves a path with no leading slash against the *current*
+    // route, where the router.navigate() this replaced resolved it against the
+    // root. Normalising here keeps call sites that pass a bare "film/12"
+    // pointing where they always did.
+    link = computed(() => {
+        const href = this.href();
 
-        if (event.ctrlKey || event.button === 1) {
-            event.preventDefault();
-            window.open(url, '_blank');
-        } else {
-            this.router.navigate([url]);
-        }
-    }
+        return href.startsWith("/") ? href : `/${href}`;
+    });
 }

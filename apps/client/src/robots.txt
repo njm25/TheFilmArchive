@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /
+
+# Auth and admin routes - no value in the index, and register/<token>
+# is an unbounded URL space that would waste crawl budget.
+Disallow: /login
+Disallow: /register/
+Disallow: /requestAccount
+Disallow: /createFilm
+Disallow: /createSource/
+Disallow: /accountRequests
+Disallow: /users
+Disallow: /admin/
+
+Sitemap: https://thefilmarchive.org/sitemap.xml
