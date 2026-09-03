@@ -27,6 +27,9 @@ Add the following to your backend `appsettings.Development.json` (or equivalent)
 	"Tmdb": {
 	  "ApiKey": ""
 	},
+	"Site": {
+	  "BaseUrl": "http://localhost:4200"
+	},
 	"Discord": {
 	  "Token": "",
 	  "UserId": 0
@@ -53,6 +56,12 @@ Add the following to your backend `appsettings.Development.json` (or equivalent)
 * **Discord.UserId**
 
   * Your Discord user ID (Developer Mode required)
+* **Site.BaseUrl**
+
+  * Public origin the frontend is served from, used to build canonical URLs for link previews
+  * `http://localhost:4200` locally, `https://thefilmarchive.org` in production
+  * Optional `Site.ShellUrl` overrides where the API fetches `index.html` from (defaults to `{BaseUrl}/index.html`)
+
 * **Jwt.Issuer**
 
   * No change needed
@@ -177,3 +186,38 @@ Typical startup sequence:
 1. Start SQL Server (Docker)
 2. Run backend (Visual Studio)
 3. Run frontend (`npm start`)
+
+## Link Previews (Open Graph)
+
+Sharing a film link in Discord, iMessage, Slack, etc. renders a rich card. Social
+crawlers don't run JavaScript, so the tags can't be set by the Angular app at
+runtime - they have to be in the HTML response.
+
+`GET /embed/film/{id}` on the API returns the deployed `index.html` with the Open
+Graph tags for that film injected into its `<head>`. Crawlers read the tags;
+browsers boot the app as normal. If the shell can't be fetched, the endpoint
+falls back to a self-contained card that still carries the tags.
+
+Amplify Hosting rewrite rules can only branch on country, not user agent, so
+`/film/*` is rewritten for every visitor rather than for crawlers only.
+
+### Amplify rewrite rule
+
+In the Amplify console under **Hosting → Rewrites and redirects**, add this
+**above** the default SPA rule (rules are applied top-down, and the SPA catch-all
+would otherwise swallow it):
+
+| Source          | Target                                              | Type           |
+| --------------- | --------------------------------------------------- | -------------- |
+| `/film/<*>`     | `https://api.thefilmarchive.org/embed/film/<*>`      | 200 (Rewrite)  |
+
+Consequences worth knowing:
+
+* Film pages are served through the API rather than the CDN, so they depend on
+  the backend being up.
+* The API caches `index.html` for 5 minutes, so a frontend deploy can take that
+  long to show up on `/film/*`.
+
+To verify a change, paste a film URL into an Open Graph debugger such as
+[opengraph.xyz](https://www.opengraph.xyz). Discord caches unfurls per URL for
+hours - append a throwaway query string (`?1`) to force a fresh fetch.
