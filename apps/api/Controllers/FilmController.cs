@@ -317,10 +317,14 @@ public class FilmController : ControllerBase
 
         List<string> fileNames = await _archiveOrg.GetCaptionFileNamesAsync(identifier);
 
+        // Path only, no scheme or host: behind the TLS-terminating proxy Kestrel
+        // sees plain http, so an absolute URL built from Request.Scheme comes back
+        // as http:// and the browser blocks it as mixed content on the https site.
+        // The client prefixes its own API base URL.
         List<GetCaptionResItem> captions = fileNames.Select(name => new GetCaptionResItem
         {
             Label = ArchiveOrgService.GuessCaptionLabel(name),
-            Url = Url.Action(nameof(GetCaptionTrack), "Film", new { sourceId, file = name }, Request.Scheme)!
+            Url = Url.Action(nameof(GetCaptionTrack), "Film", new { sourceId, file = name })!
         }).ToList();
 
         return Ok(new GetCaptionsRes { Captions = captions });

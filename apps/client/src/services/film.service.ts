@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import {
 	AddFilmReq,
 	AddSourceReq,
@@ -84,7 +84,13 @@ export class FilmService {
 	}
 
 	getCaptions(sourceId: number): Observable<GetCaptionsRes> {
-		return this.http.get<GetCaptionsRes>(`${this.baseUrl}/Film/sources/${sourceId}/captions`);
+		// The API returns caption track paths without a scheme or host, so the
+		// base URL has to come from here - see GetCaptions in FilmController.
+		return this.http.get<GetCaptionsRes>(`${this.baseUrl}/Film/sources/${sourceId}/captions`).pipe(
+			map(res => ({
+				captions: res.captions.map(caption => ({ ...caption, url: `${this.baseUrl}${caption.url}` }))
+			}))
+		);
 	}
 
 	addFilm(req: AddFilmReq): Observable<number> {
