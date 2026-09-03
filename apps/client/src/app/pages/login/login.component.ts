@@ -4,10 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { UserService } from '../../../services/user.service';
 import { LoginReq } from '../../../types/types';
 import { finalize } from 'rxjs';
+import { LinkComponent } from '../../../components/link/link.component';
 
 @Component({
     selector: 'tfa-login',
-    imports: [FormsModule],
+    imports: [FormsModule, LinkComponent],
     templateUrl: './login.component.html',
     styleUrl: './login.component.css'
 })

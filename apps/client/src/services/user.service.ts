@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
-import { GetUsersReq, GetUsersRes, LoginReq, MeRes, RegisterReq, RequestAccountReq, RoleEnum } from '../types/types';
+import { ForgotPasswordReq, GetUsersReq, GetUsersRes, LoginReq, MeRes, RegisterReq, RequestAccountReq, ResetPasswordReq, RoleEnum } from '../types/types';
 import { AuthService } from './auth.service';
 import { Router } from '@angular/router';
 import { environment } from '../environments/environment';
@@ -33,6 +33,14 @@ export class UserService {
 
     register(req: RegisterReq) {
         return this.http.post(`${this.baseUrl}/User/register`, req);
+    }
+
+    forgotPassword(req: ForgotPasswordReq) {
+        return this.http.post(`${this.baseUrl}/User/forgotPassword`, req);
+    }
+
+    resetPassword(req: ResetPasswordReq) {
+        return this.http.post(`${this.baseUrl}/User/resetPassword`, req);
     }
 
     logout() {

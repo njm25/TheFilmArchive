@@ -2,9 +2,12 @@ import { Routes } from '@angular/router';
 import { HomeComponent } from './pages/home/home.component';
 import { FilmsComponent } from './pages/films/films.component';
 import { FilmComponent } from './pages/film/film.component';
+import { AboutComponent } from './pages/about/about.component';
 import { RequestAccountComponent } from './pages/request-account/request-account.component';
 import { RegisterComponent } from './pages/register/register.component';
 import { LoginComponent } from './pages/login/login.component';
+import { ForgotPasswordComponent } from './pages/forgot-password/forgot-password.component';
+import { ResetPasswordComponent } from './pages/reset-password/reset-password.component';
 import { CreateFilmComponent } from './pages/create-film/create-film.component';
 import { CreateSourceComponent } from './pages/create-source/create-source.component';
 import { adminGuard, authGuard, sysAdminGuard } from './guards/auth.guard';
@@ -25,6 +28,10 @@ export const routes: Routes = [
         component: FilmComponent
     },
     {
+        path: "about",
+        component: AboutComponent
+    },
+    {
         path: "requestAccount",
         component: RequestAccountComponent
     },
@@ -35,6 +42,14 @@ export const routes: Routes = [
     {
         path: "login",
         component: LoginComponent
+    },
+    {
+        path: "forgotPassword",
+        component: ForgotPasswordComponent
+    },
+    {
+        path: "resetPassword/:token",
+        component: ResetPasswordComponent
     },
     {
         path: "createFilm",

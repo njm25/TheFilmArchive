@@ -185,6 +185,16 @@ export interface RegisterReq {
     token: string
 }
 
+// password reset
+export interface ForgotPasswordReq {
+    email: string;
+}
+
+export interface ResetPasswordReq {
+    token: string;
+    password: string;
+}
+
 // login
 export interface LoginReq {
     userNameOrEmail: string;

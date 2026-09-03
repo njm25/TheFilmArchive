@@ -291,6 +291,25 @@ a {
   margin-bottom: 2rem;
 }
 
+/* Secondary action under a form - "Forgot password?", "Back to sign in" */
+.form-footer {
+  margin-top: 1.25rem;
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.form-footer-link {
+  display: inline-block;
+  color: var(--accent);
+  transition: color var(--transition);
+}
+
+.form-footer-link:hover {
+  color: var(--accent-hover);
+  text-decoration: underline;
+}
+
 .form-group {
   display: flex;
   flex-direction: column;

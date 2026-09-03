@@ -33,6 +33,14 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 .AddEntityFrameworkStores<AppDbContext>()
 .AddDefaultTokenProviders();
 
+// Password reset links travel by email and sit in inboxes, so they shouldn't
+// stay usable for Identity's default full day. Applies to every default-provider
+// token; password reset is the only one in use.
+builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
+    options.TokenLifespan = TimeSpan.FromHours(
+        builder.Configuration.GetValue<int?>("Auth:PasswordResetLifetimeHours") ?? 1
+    ));
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -92,7 +100,7 @@ builder.Services.AddRateLimiter(options =>
 {
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
 
-    options.AddPolicy(RateLimitPolicies.RegistrationEmail, context =>
+    options.AddPolicy(RateLimitPolicies.OutboundEmail, context =>
         RateLimitPartition.GetFixedWindowLimiter(
             partitionKey: ClientIp.Resolve(context),
             factory: _ => new FixedWindowRateLimiterOptions

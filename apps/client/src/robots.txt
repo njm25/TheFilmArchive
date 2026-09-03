@@ -5,6 +5,8 @@ Allow: /
 # is an unbounded URL space that would waste crawl budget.
 Disallow: /login
 Disallow: /register/
+Disallow: /forgotPassword
+Disallow: /resetPassword/
 Disallow: /requestAccount
 Disallow: /createFilm
 Disallow: /createSource/
