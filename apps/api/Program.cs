@@ -67,6 +67,9 @@ builder.Services.AddScoped<FilmSyncService>();
 
 builder.Services.AddHttpClient<ArchiveOrgService>();
 
+builder.Services.AddMemoryCache();
+builder.Services.AddHttpClient<SpaShellService>();
+
 builder.Services.AddSingleton<BulkSyncJobService>();
 builder.Services.AddSingleton<BulkFilmSyncService>();
 
