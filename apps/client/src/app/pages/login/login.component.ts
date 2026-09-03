@@ -3,6 +3,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../../../services/user.service';
 import { LoginReq } from '../../../types/types';
+import { finalize } from 'rxjs';
 
 @Component({
     selector: 'tfa-login',
@@ -17,8 +18,19 @@ export class LoginComponent {
         password: "",
     });
 
+    loading = signal(false);
+
     submitRequest()
     {
-        this.userService.login(this.req());
+        // The button is disabled while in flight; this also covers a repeated
+        // Enter keypress, which submits the form without going through it.
+        if (this.loading())
+            return;
+
+        this.loading.set(true);
+
+        this.userService.login(this.req())
+            .pipe(finalize(() => this.loading.set(false)))
+            .subscribe();
     }
 }

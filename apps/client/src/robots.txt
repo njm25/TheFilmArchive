@@ -8,7 +8,6 @@ Disallow: /register/
 Disallow: /requestAccount
 Disallow: /createFilm
 Disallow: /createSource/
-Disallow: /accountRequests
 Disallow: /users
 Disallow: /admin/
 

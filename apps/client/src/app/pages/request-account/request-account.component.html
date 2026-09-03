@@ -1,8 +1,8 @@
 @if (!requestSent()) {
   <div class="form-page">
     <div class="form-card">
-      <h2 class="form-title">Request access</h2>
-      <p class="form-subtitle">Enter your email and an administrator will send you a registration link.</p>
+      <h2 class="form-title">Create your account</h2>
+      <p class="form-subtitle">Enter your email and we'll send you a link to verify it and finish signing up.</p>
 
       <form (submit)="submitRequest()">
         <div class="form-group">
@@ -18,7 +18,14 @@
           />
         </div>
 
-        <button class="btn btn-primary" type="submit">Request access</button>
+        <button class="btn btn-primary" type="submit" [disabled]="loading()">
+          @if (loading()) {
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            Sending…
+          } @else {
+            Send verification email
+          }
+        </button>
       </form>
     </div>
   </div>
@@ -26,8 +33,9 @@
   <div class="form-page">
     <div class="status-card">
       <i class="pi pi-envelope status-icon"></i>
-      <h3>Request sent!</h3>
-      <p>An administrator will review your request and send you a registration link.</p>
+      <h3>Check your email</h3>
+      <p>We sent a verification link to <strong>{{ submittedEmail() }}</strong>. Open it to finish creating your account.</p>
+      <p class="status-note">The link expires in 24 hours. If it hasn't arrived in a few minutes, check your spam folder.</p>
     </div>
   </div>
 }

@@ -204,17 +204,6 @@ export enum RoleEnum {
     SysAdmin = 99
 }
 
-export interface GetAccountRequestsRes
-{
-    accountRequests: GetAccountRequestsResItem[];
-}
-
-export interface GetAccountRequestsResItem
-{
-    email: string;
-    token: string;
-}
-
 // bulk sync
 export enum BulkSyncState {
     Idle = 0,
