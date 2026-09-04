@@ -40,7 +40,17 @@ jobs:
 
       - name: Upload artifact
         run: |
-          scp -i ~/.ssh/id_ed25519 ./publish.zip ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}:~/publish.zip
+          # Check remote disk space and permissions
+          ssh -i ~/.ssh/id_ed25519 ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} << 'CHECK_EOF'
+            set -e
+            df -h ~
+            test -w ~ || (echo "Home directory not writable"; exit 1)
+            rm -f ~/publish.zip.tmp
+          CHECK_EOF
+          
+          # Upload with verbose output
+          scp -v -i ~/.ssh/id_ed25519 ./publish.zip ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}:~/publish.zip.tmp && \
+          ssh -i ~/.ssh/id_ed25519 ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} mv ~/publish.zip.tmp ~/publish.zip
           
       - name: Deploy on server
         run: |
