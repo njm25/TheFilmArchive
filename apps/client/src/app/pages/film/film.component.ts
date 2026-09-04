@@ -100,7 +100,10 @@ export class FilmComponent implements OnDestroy {
 
             if (this.authService.isLoggedIn()) {
                 this.filmService.getWatchProgress(this.filmId()).subscribe((wp) => {
-                    this.resumeAtSeconds.set(wp.progressSeconds);
+                    // A film that's been finished starts over - resuming would
+                    // otherwise drop the viewer straight into the credits, and
+                    // playing from the top is what un-completes it server-side.
+                    this.resumeAtSeconds.set(wp.completed ? 0 : wp.progressSeconds);
 
                     // Resume on whichever source the progress was saved against,
                     // as long as it's still one of the film's sources - falls back
@@ -173,6 +176,14 @@ export class FilmComponent implements OnDestroy {
 
     onPlayerPaused(progress: PlayerProgress) {
         this.lastKnownProgress = progress;
+        this.saveProgress(progress);
+    }
+
+    // Saved straight away rather than through the throttle - this is the write
+    // that tips the film over into "watched" and out of Continue Watching.
+    onPlayerEnded(progress: PlayerProgress) {
+        this.lastKnownProgress = progress;
+        this.lastProgressSentAt = Date.now();
         this.saveProgress(progress);
     }
 

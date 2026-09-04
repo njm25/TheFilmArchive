@@ -81,6 +81,7 @@
                 (play)="onPlayerPlay()"
                 (timeUpdate)="onPlayerTimeUpdate($event)"
                 (paused)="onPlayerPaused($event)"
+                (ended)="onPlayerEnded($event)"
               ></tfa-player>
             } @else {
               <div class="film-player film-player-placeholder">Loading source&hellip;</div>

@@ -1,29 +1,37 @@
 <tfa-link [href]="filmSrc()" class="film-card" styleClass="d-flex flex-column h-100">
-  @if (film()?.posterPath) {
-    <div class="poster-wrap">
+  <div class="poster-wrap">
+    @if (posterSrc(); as poster) {
       <img
         class="poster"
         [class.poster--loaded]="posterLoaded()"
-        [src]="posterSrc()"
+        [src]="poster"
         alt="{{ film()?.title }}"
         loading="lazy"
         decoding="async"
         (load)="posterLoaded.set(true)"
+        (error)="posterFailed.set(true)"
       />
-      @if (watchedPercent(); as percent) {
-        <div
-          class="watch-progress"
-          role="progressbar"
-          [attr.aria-valuenow]="watchedPercentLabel()"
-          aria-valuemin="0"
-          aria-valuemax="100"
-          [attr.aria-label]="'Watched ' + watchedPercentLabel() + '% of ' + film()?.title"
-        >
-          <div class="watch-progress-fill" [style.width.%]="percent"></div>
-        </div>
-      }
-    </div>
-  }
+    } @else {
+      <!-- Films with no poster (or a poster that failed to load) still need to
+           fill the same 2/3 slot, otherwise the card collapses to a title on an
+           empty box the height of the grid row. -->
+      <div class="poster poster--placeholder poster--loaded" aria-hidden="true">
+        <i class="pi pi-video"></i>
+      </div>
+    }
+    @if (watchedPercent(); as percent) {
+      <div
+        class="watch-progress"
+        role="progressbar"
+        [attr.aria-valuenow]="watchedPercentLabel()"
+        aria-valuemin="0"
+        aria-valuemax="100"
+        [attr.aria-label]="'Watched ' + watchedPercentLabel() + '% of ' + film()?.title"
+      >
+        <div class="watch-progress-fill" [style.width.%]="percent"></div>
+      </div>
+    }
+  </div>
   <div class="film-info">
     <span class="film-title">{{ film()?.title }}</span>
     <span class="film-year">{{ film()?.yearReleased }}</span>

@@ -35,6 +35,9 @@ export class PlayerComponent {
     play = output<void>();
     timeUpdate = output<PlayerProgress>();
     paused = output<PlayerProgress>();
+    /** Fires when playback runs off the end - the throttled timeUpdate can miss
+     *  the last stretch, and reaching the end is exactly what marks a film watched. */
+    ended = output<PlayerProgress>();
 
     videoEl = viewChild<ElementRef<HTMLVideoElement>>('videoEl');
 
@@ -128,6 +131,13 @@ export class PlayerComponent {
         if (!el || !el.duration) return;
 
         this.timeUpdate.emit({ currentTime: el.currentTime, duration: el.duration });
+    }
+
+    onEnded() {
+        const el = this.videoEl()?.nativeElement;
+        if (!el || !el.duration) return;
+
+        this.ended.emit({ currentTime: el.duration, duration: el.duration });
     }
 
     onPause() {

@@ -135,6 +135,7 @@ export interface GetWatchProgressRes {
 	progressSeconds: number;
 	durationSeconds: number;
 	sourceId: number | null;
+	completed: boolean;
 }
 
 export interface GetFilmResCastMember {
