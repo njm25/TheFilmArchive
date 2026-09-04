@@ -32,9 +32,14 @@ public partial class EmbedController : ControllerBase
 
     private const string BackdropBaseUrl = "https://image.tmdb.org/t/p/w1280";
     private const string PosterBaseUrl = "https://image.tmdb.org/t/p/w780";
+    // TMDB only serves profiles at w45, w185, h632 and original - the poster
+    // widths above are not valid sizes for a profile path.
+    private const string ProfileBaseUrl = "https://image.tmdb.org/t/p/h632";
     private const string DefaultSiteUrl = "https://thefilmarchive.org";
     private const string ThemeColor = "#c9a84c";
+    private const string DirectorJob = "Director";
     private const int MaxDescriptionLength = 300;
+    private const int MaxNotableFilms = 4;
 
     public EmbedController(AppDbContext db, IConfiguration config, SpaShellService shell)
     {
@@ -75,6 +80,55 @@ public partial class EmbedController : ControllerBase
         string canonical = $"{siteUrl}/film/{film.Id}";
 
         return await RenderAsync(BuildTags(film, canonical), siteUrl, canonical, StatusCodes.Status200OK, ct);
+    }
+
+    // GET: /embed/person/5
+    [HttpGet("person/{id}")]
+    public async Task<IActionResult> GetPersonEmbed(int id, CancellationToken ct)
+    {
+        string siteUrl = SiteUrl();
+
+        Person? person = await _db.People
+            .AsNoTracking()
+            .FirstOrDefaultAsync(p => p.Id == id, ct);
+
+        if (person == null)
+        {
+            HeadTags missing = new HeadTags(
+                "Person not found - The Film Archive",
+                [
+                    MetaName("theme-color", ThemeColor),
+                    MetaProperty("og:site_name", "The Film Archive"),
+                    MetaProperty("og:type", "website"),
+                    MetaProperty("og:url", siteUrl),
+                    MetaProperty("og:title", "Person not found"),
+                    MetaProperty("og:description", "This person is not in The Film Archive.")
+                ]
+            );
+
+            return await RenderAsync(missing, siteUrl, $"{siteUrl}/films", StatusCodes.Status404NotFound, ct);
+        }
+
+        // Only the credits the person page itself shows - a card promising work
+        // the page doesn't list would be worse than a thin one. Mirrors the
+        // filter in PersonController.
+        List<PersonCredit> credits = await _db.FilmCredits
+            .AsNoTracking()
+            .Where(c => c.PersonId == id
+                && (c.CreditType == CreditTypeEnum.Cast
+                    || (c.CreditType == CreditTypeEnum.Crew && c.Job == DirectorJob)))
+            .Select(c => new PersonCredit(
+                c.CreditType,
+                c.FilmId,
+                c.Film.Title,
+                c.Film.ReleaseYear,
+                c.Film.VoteAverage
+            ))
+            .ToListAsync(ct);
+
+        string canonical = $"{siteUrl}/person/{person.Id}";
+
+        return await RenderAsync(BuildTags(person, credits, canonical), siteUrl, canonical, StatusCodes.Status200OK, ct);
     }
 
     // Prefers the deployed app shell so browsers get a working page, and falls
@@ -260,8 +314,89 @@ public partial class EmbedController : ControllerBase
         return factLine.Length > 0 ? factLine : synopsis;
     }
 
+    private static HeadTags BuildTags(Person person, List<PersonCredit> credits, string canonical)
+    {
+        string heading = person.Name;
+        string description = BuildDescription(person, credits);
+
+        string? image = !string.IsNullOrWhiteSpace(person.ProfilePath)
+            ? ProfileBaseUrl + person.ProfilePath
+            : null;
+
+        List<string> tags =
+        [
+            $"<link rel=\"canonical\" href=\"{Encode(canonical)}\">",
+            MetaName("description", description),
+            MetaName("theme-color", ThemeColor),
+            MetaProperty("og:site_name", "The Film Archive"),
+            MetaProperty("og:type", "profile"),
+            MetaProperty("og:url", canonical),
+            MetaProperty("og:title", heading),
+            MetaProperty("og:description", description)
+        ];
+
+        if (image != null)
+        {
+            tags.Add(MetaProperty("og:image", image));
+            tags.Add(MetaProperty("og:image:secure_url", image));
+            tags.Add(MetaProperty("og:image:type", "image/jpeg"));
+            // No width/height: TMDB's h632 profiles are a fixed height with a
+            // width that varies per photo, so any pair here would be a guess.
+            tags.Add(MetaProperty("og:image:alt", $"{person.Name} portrait"));
+        }
+
+        // A portrait letterboxes badly in a wide card, so people always get the
+        // small card - the same call the film side makes for a poster-only film.
+        tags.Add(MetaName("twitter:card", "summary"));
+        tags.Add(MetaName("twitter:title", heading));
+        tags.Add(MetaName("twitter:description", description));
+
+        if (image != null)
+            tags.Add(MetaName("twitter:image", image));
+
+        return new HeadTags($"{heading} - The Film Archive", tags, heading, description);
+    }
+
+    // Same two-part shape as a film's: the facts a card can show at a glance,
+    // then the titles that say who this person actually is.
+    private static string BuildDescription(Person person, List<PersonCredit> credits)
+    {
+        // Someone who directed and starred in a film holds two credits on it,
+        // and the count is of films either way.
+        int filmCount = credits.Select(c => c.FilmId).Distinct().Count();
+
+        if (filmCount == 0)
+            return $"{person.Name} has no films in The Film Archive yet.";
+
+        List<string> facts = new List<string>();
+
+        if (credits.Any(c => c.CreditType == CreditTypeEnum.Crew))
+            facts.Add("Director");
+
+        if (credits.Any(c => c.CreditType == CreditTypeEnum.Cast))
+            facts.Add("Actor");
+
+        facts.Add(filmCount == 1 ? "1 film" : $"{filmCount} films");
+
+        // Best-rated first: with only a handful of titles to spend, the ones a
+        // reader is likeliest to recognise earn the space.
+        List<string> notable = credits
+            .GroupBy(c => c.FilmId)
+            .Select(g => g.First())
+            .OrderByDescending(c => c.VoteAverage ?? 0)
+            .ThenByDescending(c => c.ReleaseYear ?? 0)
+            .Take(MaxNotableFilms)
+            .Select(c => c.ReleaseYear.HasValue ? $"{c.Title} ({c.ReleaseYear})" : c.Title)
+            .ToList();
+
+        string factLine = string.Join(" · ", facts);
+        string titleLine = Truncate(string.Join(", ", notable), MaxDescriptionLength);
+
+        return $"{factLine}\n\n{titleLine}";
+    }
+
     private static List<string> Directors(Film film) => film.Credits
-        .Where(c => c.CreditType == CreditTypeEnum.Crew && c.Job == "Director")
+        .Where(c => c.CreditType == CreditTypeEnum.Crew && c.Job == DirectorJob)
         .Select(c => c.Person.Name)
         .ToList();
 
@@ -315,6 +450,16 @@ public partial class EmbedController : ControllerBase
 
     [GeneratedRegex(@"<title>.*?</title>", RegexOptions.IgnoreCase | RegexOptions.Singleline)]
     private static partial Regex TitleTag();
+
+    // Flattened at the query so a person's card can be built without pulling
+    // whole Film rows back for credits that only contribute a title.
+    private sealed record PersonCredit(
+        CreditTypeEnum CreditType,
+        int FilmId,
+        string Title,
+        int? ReleaseYear,
+        double? VoteAverage
+    );
 
     private sealed record HeadTags(
         string Title,

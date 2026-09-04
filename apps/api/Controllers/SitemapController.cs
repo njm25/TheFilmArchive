@@ -1,3 +1,4 @@
+using Domain.Enums;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +20,7 @@ public class SitemapController : ControllerBase
 
     private const string DefaultSiteUrl = "https://thefilmarchive.org";
     private const string Namespace = "http://www.sitemaps.org/schemas/sitemap/0.9";
+    private const string DirectorJob = "Director";
 
     public SitemapController(AppDbContext db, IConfiguration config)
     {
@@ -36,6 +38,18 @@ public class SitemapController : ControllerBase
             .AsNoTracking()
             .OrderBy(f => f.Id)
             .Select(f => new { f.Id, f.UpdatedAt })
+            .ToListAsync(ct);
+
+        // Only people the person page has something to show for. The import
+        // stores every crew credit TMDB returns, so listing all of them would
+        // fill the sitemap with pages that render an empty filmography - and
+        // would approach the 50,000-URL cap far sooner than the catalog does.
+        var people = await _db.People
+            .AsNoTracking()
+            .Where(p => p.Credits.Any(c => c.CreditType == CreditTypeEnum.Cast
+                || (c.CreditType == CreditTypeEnum.Crew && c.Job == DirectorJob)))
+            .OrderBy(p => p.Id)
+            .Select(p => new { p.Id, p.UpdatedAt })
             .ToListAsync(ct);
 
         // Written to a UTF-8 stream rather than a StringBuilder: a StringBuilder
@@ -61,6 +75,9 @@ public class SitemapController : ControllerBase
 
             foreach (var film in films)
                 WriteUrl(writer, $"{siteUrl}/film/{film.Id}", film.UpdatedAt, "weekly", "0.8");
+
+            foreach (var person in people)
+                WriteUrl(writer, $"{siteUrl}/person/{person.Id}", person.UpdatedAt, "monthly", "0.5");
 
             writer.WriteEndElement();
             writer.WriteEndDocument();
