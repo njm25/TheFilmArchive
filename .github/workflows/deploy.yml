@@ -35,11 +35,13 @@ jobs:
           echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+          # Verify SSH connection
+          ssh -i ~/.ssh/id_ed25519 -o ConnectTimeout=5 ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} echo "SSH connection successful" || exit 1
 
       - name: Upload artifact
         run: |
-          scp -i ~/.ssh/id_ed25519 ./publish.zip ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}:/home/ubuntu/publish.zip
-
+          scp -i ~/.ssh/id_ed25519 ./publish.zip ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }}:~/publish.zip
+          
       - name: Deploy on server
         run: |
           ssh -i ~/.ssh/id_ed25519 ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} << 'EOF'
