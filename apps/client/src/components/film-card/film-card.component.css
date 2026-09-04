@@ -83,6 +83,17 @@
   color: var(--text-muted);
 }
 
+/* Role label on a filmography card ("as Rick Blaine"). Clamped to one line so a
+   long character name can't make one card taller than its neighbours. */
+.film-caption {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  white-space: nowrap;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, #000 85%, transparent 100%);
+  mask-image: linear-gradient(to right, #000 85%, transparent 100%);
+}
+
 /* Stand-in for a missing poster. Keeps the same 2/3 box the <img> would occupy
    so posterless cards line up with the rest of the grid. */
 .poster--placeholder {

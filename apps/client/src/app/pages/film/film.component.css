@@ -210,6 +210,22 @@
   color: var(--text-muted);
 }
 
+/* Each name is its own link to that person's page, so the separators can't come
+   from a join() any more - they're drawn between the links instead. */
+.credits-people tfa-link:not(:last-child)::after {
+  content: ", ";
+  color: var(--text-muted);
+}
+
+.person-link {
+  color: var(--text-muted);
+  transition: color var(--transition);
+}
+
+.person-link:hover {
+  color: var(--accent);
+}
+
 .credits-label {
   font-size: 0.75rem;
   font-weight: 500;

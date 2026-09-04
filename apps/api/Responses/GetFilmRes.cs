@@ -20,12 +20,21 @@ public class GetFilmRes
     public int? VoteCount { get; set; }
     public string? CollectionName { get; set; }
     public List<string> Genres { get; set; } = new List<string>();
-    public List<string> Directors { get; set; } = new List<string>();
+    public List<GetFilmResPerson> Directors { get; set; } = new List<GetFilmResPerson>();
     public List<GetFilmResCastMember> Cast { get; set; } = new List<GetFilmResCastMember>();
+}
+
+// Carries the person id alongside the name so the film page can link a credit
+// through to that person's filmography.
+public class GetFilmResPerson
+{
+    public required int PersonId { get; set; }
+    public required string Name { get; set; }
 }
 
 public class GetFilmResCastMember
 {
+    public required int PersonId { get; set; }
     public required string Name { get; set; }
     public string? Character { get; set; }
     public string? ProfilePath { get; set; }

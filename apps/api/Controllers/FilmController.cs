@@ -240,7 +240,11 @@ public class FilmController : ControllerBase
             Genres = film.Genres.Select(fg => fg.Genre.Name).ToList(),
             Directors = film.Credits
                 .Where(c => c.CreditType == CreditTypeEnum.Crew && c.Job == "Director")
-                .Select(c => c.Person.Name)
+                .Select(c => new GetFilmResPerson
+                {
+                    PersonId = c.PersonId,
+                    Name = c.Person.Name
+                })
                 .ToList(),
             Cast = film.Credits
                 .Where(c => c.CreditType == CreditTypeEnum.Cast)
@@ -248,6 +252,7 @@ public class FilmController : ControllerBase
                 .Take(10)
                 .Select(c => new GetFilmResCastMember
                 {
+                    PersonId = c.PersonId,
                     Name = c.Person.Name,
                     Character = c.Character,
                     ProfilePath = c.Person.ProfilePath

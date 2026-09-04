@@ -56,6 +56,10 @@ export interface GetFilmsResItem {
 	// Only sent by continueWatching; null elsewhere, which suppresses the bar.
 	progressSeconds?: number | null;
 	durationSeconds?: number | null;
+	// Set client-side by filmography lists to label the card with the role the
+	// person had on that film; left unset everywhere else, and the card then
+	// shows nothing extra.
+	caption?: string | null;
 }
 
 export interface GetFilmsRes {
@@ -138,7 +142,13 @@ export interface GetWatchProgressRes {
 	completed: boolean;
 }
 
+export interface GetFilmResPerson {
+	personId: number;
+	name: string;
+}
+
 export interface GetFilmResCastMember {
+	personId: number;
 	name: string;
 	character: string | null;
 	profilePath: string | null;
@@ -170,8 +180,21 @@ export interface GetFilmRes {
     voteCount: number | null;
     collectionName: string | null;
     genres: string[];
-    directors: string[];
+    directors: GetFilmResPerson[];
     cast: GetFilmResCastMember[];
+}
+
+// get person
+export interface GetPersonResFilm extends GetFilmsResItem {
+	character: string | null;
+}
+
+export interface GetPersonRes {
+	personId: number;
+	name: string;
+	profilePath: string | null;
+	directed: GetPersonResFilm[];
+	acted: GetPersonResFilm[];
 }
 
 // requst acct

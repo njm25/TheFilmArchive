@@ -1,0 +1,80 @@
+.person-page {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  padding-bottom: 3rem;
+}
+
+/* ---- Header: photo + name/roles ---- */
+.person-header {
+  display: flex;
+  gap: 1.75rem;
+  align-items: flex-end;
+}
+
+.person-profile {
+  flex-shrink: 0;
+  width: 140px;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+  background: var(--surface);
+  display: block;
+}
+
+.person-profile--placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+}
+
+.person-profile--placeholder .pi {
+  font-size: 2.5rem;
+}
+
+.person-header-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 0;
+  padding-bottom: 0.25rem;
+}
+
+.person-name {
+  font-size: clamp(1.375rem, 3vw, 2.25rem);
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+
+.person-meta {
+  color: var(--text-muted);
+  font-size: 0.9375rem;
+}
+
+/* ---- Filmography sections ---- */
+.person-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.person-section-title {
+  font-size: 1.125rem;
+  letter-spacing: 0.01em;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 576px) {
+  .person-header {
+    gap: 1rem;
+  }
+
+  .person-profile {
+    width: 100px;
+  }
+}
