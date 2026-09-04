@@ -279,6 +279,12 @@ public partial class EmbedController : ControllerBase
         // the reader just read.
         List<string> facts = new List<string>();
 
+        // Leads the line: of everything here it's the one fact that says most
+        // about the film, and it reads as a byline ahead of the numbers.
+        List<string> directors = Directors(film).Take(2).ToList();
+        if (directors.Count > 0)
+            facts.Add($"Dir. {string.Join(", ", directors)}");
+
         string runtime = FormatRuntime(film.Runtime ?? 0);
         if (runtime.Length > 0)
             facts.Add(runtime);
@@ -293,10 +299,6 @@ public partial class EmbedController : ControllerBase
 
         if (film.VoteAverage.HasValue && film.VoteAverage > 0)
             facts.Add($"★ {film.VoteAverage.Value.ToString("0.0", CultureInfo.InvariantCulture)}");
-
-        List<string> directors = Directors(film).Take(2).ToList();
-        if (directors.Count > 0)
-            facts.Add($"Dir. {string.Join(", ", directors)}");
 
         // The synopsis tells a reader deciding whether to watch more than a
         // tagline does, so it leads; the tagline is the fallback.
