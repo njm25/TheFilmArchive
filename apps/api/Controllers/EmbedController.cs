@@ -274,10 +274,10 @@ public partial class EmbedController : ControllerBase
     // line carries the facts and the second the synopsis.
     private static string BuildDescription(Film film)
     {
+        // No release year here - the heading above already carries it as
+        // "Title (1942)", and repeating it opens the fact line with a number
+        // the reader just read.
         List<string> facts = new List<string>();
-
-        if (film.ReleaseYear.HasValue)
-            facts.Add(film.ReleaseYear.Value.ToString(CultureInfo.InvariantCulture));
 
         string runtime = FormatRuntime(film.Runtime ?? 0);
         if (runtime.Length > 0)
