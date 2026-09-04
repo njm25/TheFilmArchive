@@ -82,3 +82,22 @@
   font-size: 0.75rem;
   color: var(--text-muted);
 }
+
+/* Stand-in for a missing poster. Keeps the same 2/3 box the <img> would occupy
+   so posterless cards line up with the rest of the grid. */
+.poster--placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--border);
+  color: var(--text-dim);
+}
+
+.poster--placeholder .pi {
+  font-size: 1.75rem;
+}
+
+.film-card:hover .poster--placeholder {
+  color: var(--text-muted);
+}

@@ -16,11 +16,22 @@ export class FilmCardComponent {
     readonly TMDB_BASE_URL = "https://image.tmdb.org/t/p/w500";
 
     film = input<GetFilmsResItem>();
-    posterSrc = computed(() => `${this.TMDB_BASE_URL}${this.film()?.posterPath}`);
 
     filmSrc = computed(() => `film/${this.film()?.filmId}`);
 
     posterLoaded = signal(false);
+    posterFailed = signal(false);
+
+    // null means "draw the placeholder instead" - either TMDB has no poster for
+    // this film, or the one it gave us failed to load.
+    posterSrc = computed(() => {
+        const posterPath = this.film()?.posterPath;
+
+        if (!posterPath || this.posterFailed())
+            return null;
+
+        return `${this.TMDB_BASE_URL}${posterPath}`;
+    });
 
     // null when this card isn't in a Continue Watching row, or the film has been
     // opened but never actually played - either way there is no bar to draw.

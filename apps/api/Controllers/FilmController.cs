@@ -527,8 +527,15 @@ public class FilmController : ControllerBase
     {
         string userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
 
+        // Finished films drop out of the row entirely - excluded before the
+        // Take() so they don't eat slots that still-unfinished films could use.
+        List<int> completedFilmIds = await _db.WatchProgresses
+            .Where(w => w.UserId == userId && w.CompletedAt != null)
+            .Select(w => w.FilmId)
+            .ToListAsync();
+
         List<int> filmIds = await _db.FilmViews
-            .Where(v => v.UserId == userId)
+            .Where(v => v.UserId == userId && !completedFilmIds.Contains(v.FilmId))
             .GroupBy(v => v.FilmId)
             .OrderByDescending(g => g.Max(v => v.CreatedAt))
             .Select(g => g.Key)
@@ -663,6 +670,14 @@ public class FilmController : ControllerBase
         progress.DurationSeconds = req.DurationSeconds;
         progress.UpdatedAt = DateTime.UtcNow;
 
+        // Recomputed on every save rather than latched, so starting a finished
+        // film over - or scrubbing back into the middle of it - puts it back in
+        // Continue Watching without needing an explicit "unwatch".
+        if (WatchProgress.IsComplete(progress.ProgressSeconds, progress.DurationSeconds))
+            progress.CompletedAt ??= DateTime.UtcNow;
+        else
+            progress.CompletedAt = null;
+
         await _db.SaveChangesAsync();
 
         return Ok();
@@ -683,7 +698,8 @@ public class FilmController : ControllerBase
         {
             ProgressSeconds = progress?.ProgressSeconds ?? 0,
             DurationSeconds = progress?.DurationSeconds ?? 0,
-            SourceId = progress?.SourceId
+            SourceId = progress?.SourceId,
+            Completed = progress?.CompletedAt != null
         });
     }
 
