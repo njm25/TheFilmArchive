@@ -1,0 +1,42 @@
+@if (person(); as person) {
+<div class="person-page">
+
+  <div class="person-header">
+    @if (profileSrc(); as profile) {
+      <img class="person-profile" [src]="profile" [alt]="person.name" />
+    } @else {
+      <!-- TMDB has no photo for plenty of the people the import pulls in, and
+           the header collapses without something filling the same box. -->
+      <div class="person-profile person-profile--placeholder" aria-hidden="true">
+        <i class="pi pi-user"></i>
+      </div>
+    }
+
+    <div class="person-header-info">
+      <h1 class="person-name">{{ person.name }}</h1>
+      <span class="person-meta">{{ roleSummary() }}</span>
+    </div>
+  </div>
+
+  @if (filmCount() === 0) {
+    <div class="empty-state">No films in the archive credit {{ person.name }} yet.</div>
+  }
+
+  @if (directed().length) {
+    <section class="person-section">
+      <h2 class="person-section-title">Directed</h2>
+      <tfa-card-list [films]="directed()"></tfa-card-list>
+    </section>
+  }
+
+  @if (acted().length) {
+    <section class="person-section">
+      <h2 class="person-section-title">Acting</h2>
+      <tfa-card-list [films]="acted()"></tfa-card-list>
+    </section>
+  }
+
+</div>
+} @else if (notFound()) {
+  <div class="empty-state">This person isn't in the archive.</div>
+}

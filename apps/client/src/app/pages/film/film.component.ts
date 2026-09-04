@@ -37,7 +37,7 @@ export class FilmComponent implements OnDestroy {
 
     backdropSrc = computed(() => this.film()?.backdropPath ? `${this.BACKDROP_BASE_URL}${this.film()?.backdropPath}` : null);
     posterSrc = computed(() => this.film()?.posterPath ? `${this.POSTER_BASE_URL}${this.film()?.posterPath}` : null);
-    topCastNames = computed(() => this.film()?.cast?.slice(0, 6).map(c => c.name).join(', ') ?? '');
+    topCast = computed(() => this.film()?.cast?.slice(0, 6) ?? []);
 
     sourceOptions = computed<OptionListItem<number>[]>(() =>
         (this.film()?.sources ?? []).map((s, i) => {

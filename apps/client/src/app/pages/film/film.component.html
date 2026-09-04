@@ -93,18 +93,26 @@
           <p class="film-description">{{ film.description }}</p>
         }
 
-        @if (film.directors.length || film.cast.length) {
+        @if (film.directors.length || topCast().length) {
           <div class="film-credits">
             @if (film.directors.length) {
               <div class="credits-row">
                 <span class="credits-label">Director</span>
-                <span>{{ film.directors.join(', ') }}</span>
+                <span class="credits-people">
+                  @for (director of film.directors; track director.personId) {
+                    <tfa-link [href]="'/person/' + director.personId" class="person-link">{{ director.name }}</tfa-link>
+                  }
+                </span>
               </div>
             }
-            @if (film.cast.length) {
+            @if (topCast().length) {
               <div class="credits-row">
                 <span class="credits-label">Starring</span>
-                <span>{{ topCastNames() }}</span>
+                <span class="credits-people">
+                  @for (member of topCast(); track member.personId) {
+                    <tfa-link [href]="'/person/' + member.personId" class="person-link" [title]="member.character ?? ''">{{ member.name }}</tfa-link>
+                  }
+                </span>
               </div>
             }
           </div>

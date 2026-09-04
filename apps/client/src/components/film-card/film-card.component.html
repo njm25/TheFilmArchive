@@ -35,5 +35,8 @@
   <div class="film-info">
     <span class="film-title">{{ film()?.title }}</span>
     <span class="film-year">{{ film()?.yearReleased }}</span>
+    @if (film()?.caption; as caption) {
+      <span class="film-caption">{{ caption }}</span>
+    }
   </div>
 </tfa-link>
