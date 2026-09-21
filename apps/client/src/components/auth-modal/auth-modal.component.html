@@ -1,0 +1,234 @@
+@if (visible()) {
+  <div class="auth-modal-overlay" [class.closing]="closing()" (click)="close()">
+    <div
+      class="auth-modal-panel form-card"
+      role="dialog"
+      aria-modal="true"
+      [class.closing]="closing()"
+      (click)="$event.stopPropagation()"
+    >
+      <button class="auth-modal-close" type="button" (click)="close()" aria-label="Close">
+        <i class="pi pi-times"></i>
+      </button>
+
+      @if (activeMode() === 'login') {
+        <div class="auth-modal-content">
+          <h2 class="form-title">Sign in</h2>
+          <p class="form-subtitle">Welcome back to The Film Archive.</p>
+
+          <form (submit)="submitLogin()">
+            <div class="form-group">
+              <label class="form-label" for="auth-username">Username or Email</label>
+              <input
+                class="form-input"
+                id="auth-username"
+                type="text"
+                name="username"
+                placeholder="Enter your username or email"
+                [(ngModel)]="this.loginReq().userNameOrEmail"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="auth-password">Password</label>
+              <input
+                class="form-input"
+                id="auth-password"
+                type="password"
+                name="password"
+                placeholder="Enter your password"
+                [(ngModel)]="this.loginReq().password"
+                required
+              />
+            </div>
+
+            <button class="btn btn-primary" type="submit" [disabled]="loading()">
+              @if (loading()) {
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Signing in…
+              } @else {
+                Sign in
+              }
+            </button>
+          </form>
+
+          <p class="form-footer">
+            <button type="button" class="link-btn" (click)="switchTo('forgotPassword')">Forgot your password?</button>
+          </p>
+
+          <p class="form-footer">
+            Don't have an account?
+            <button type="button" class="link-btn" (click)="switchTo('register')">Sign up</button>
+          </p>
+        </div>
+      } @else if (activeMode() === 'forgotPassword') {
+        <div class="auth-modal-content">
+          <h2 class="form-title">Reset your password</h2>
+          <p class="form-subtitle">Enter your email and we'll send you a link to choose a new password.</p>
+
+          <form (submit)="submitForgotPassword()">
+            <div class="form-group">
+              <label class="form-label" for="auth-forgot-email">Email address</label>
+              <input
+                class="form-input"
+                id="auth-forgot-email"
+                type="email"
+                name="forgot-email"
+                placeholder="your@email.com"
+                [(ngModel)]="forgotPasswordReq().email"
+                required
+              />
+            </div>
+
+            <button class="btn btn-primary" type="submit" [disabled]="loading()">
+              @if (loading()) {
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Sending…
+              } @else {
+                Send reset link
+              }
+            </button>
+          </form>
+
+          <p class="form-footer">
+            Remembered it?
+            <button type="button" class="link-btn" (click)="switchTo('login')">Back to sign in</button>
+          </p>
+        </div>
+      } @else if (activeMode() === 'resetPassword') {
+        <div class="auth-modal-content">
+          <h2 class="form-title">Choose a new password</h2>
+          <p class="form-subtitle">Pick a password you don't use anywhere else.</p>
+
+          <form (submit)="submitResetPassword()">
+            <div class="form-group">
+              <label class="form-label" for="auth-reset-password">New password</label>
+              <input
+                class="form-input"
+                id="auth-reset-password"
+                type="password"
+                name="reset-password"
+                placeholder="Choose a password"
+                [ngModel]="resetPassword()"
+                (ngModelChange)="resetPassword.set($event)"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="auth-reset-confirm">Confirm password</label>
+              <input
+                class="form-input"
+                id="auth-reset-confirm"
+                type="password"
+                name="reset-confirm-password"
+                placeholder="Enter it again"
+                [ngModel]="resetConfirmPassword()"
+                (ngModelChange)="resetConfirmPassword.set($event)"
+                required
+              />
+              @if (resetMismatch()) {
+                <span class="field-error">Those passwords don't match.</span>
+              }
+            </div>
+
+            <button class="btn btn-primary" type="submit" [disabled]="!canSubmitReset()">
+              @if (loading()) {
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Saving…
+              } @else {
+                Set new password
+              }
+            </button>
+          </form>
+
+          <p class="form-footer">
+            <button type="button" class="link-btn" (click)="switchTo('login')">Back to sign in</button>
+          </p>
+        </div>
+      } @else if (authModal.registerToken()) {
+        <div class="auth-modal-content">
+          <h2 class="form-title">Create account</h2>
+          <p class="form-subtitle">Choose a username and password for your account.</p>
+
+          <form (submit)="submitCreateAccount()">
+            <div class="form-group">
+              <label class="form-label" for="auth-new-username">Username</label>
+              <input
+                class="form-input"
+                id="auth-new-username"
+                type="text"
+                name="new-username"
+                placeholder="Choose a username"
+                [(ngModel)]="this.createAccountReq().userName"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="auth-new-password">Password</label>
+              <input
+                class="form-input"
+                id="auth-new-password"
+                type="password"
+                name="new-password"
+                placeholder="Choose a password"
+                [(ngModel)]="this.createAccountReq().password"
+                required
+              />
+            </div>
+
+            <button class="btn btn-primary" type="submit" [disabled]="loading()">
+              @if (loading()) {
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Creating…
+              } @else {
+                Create account
+              }
+            </button>
+          </form>
+
+          <p class="form-footer">
+            Already registered?
+            <button type="button" class="link-btn" (click)="switchTo('login')">Sign in</button>
+          </p>
+        </div>
+      } @else {
+        <div class="auth-modal-content">
+          <h2 class="form-title">Create your account</h2>
+          <p class="form-subtitle">Enter your email and we'll send you a link to verify it and finish signing up.</p>
+
+          <form (submit)="submitRequestAccount()">
+            <div class="form-group">
+              <label class="form-label" for="auth-email">Email address</label>
+              <input
+                class="form-input"
+                id="auth-email"
+                type="email"
+                name="email"
+                placeholder="your@email.com"
+                [(ngModel)]="requestAccountReq().email"
+                required
+              />
+            </div>
+
+            <button class="btn btn-primary" type="submit" [disabled]="loading()">
+              @if (loading()) {
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Sending…
+              } @else {
+                Send verification email
+              }
+            </button>
+          </form>
+
+          <p class="form-footer">
+            Already have an account?
+            <button type="button" class="link-btn" (click)="switchTo('login')">Sign in</button>
+          </p>
+        </div>
+      }
+    </div>
+  </div>
+}

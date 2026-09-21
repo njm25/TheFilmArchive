@@ -310,6 +310,24 @@ a {
   text-decoration: underline;
 }
 
+/* Same look as .form-footer-link, for the ones that switch the auth modal
+   between its forms rather than navigating anywhere. */
+.link-btn {
+  display: inline-block;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font: inherit;
+  color: var(--accent);
+  cursor: pointer;
+  transition: color var(--transition);
+}
+
+.link-btn:hover {
+  color: var(--accent-hover);
+  text-decoration: underline;
+}
+
 .form-group {
   display: flex;
   flex-direction: column;
@@ -533,9 +551,16 @@ a {
    HEADER NAV CLASSES (used via styleClass on tfa-link inner div)
    Color is intentionally omitted — set on the HOST via header.component.css
    ================================================ */
+/* Worn by both the tfa-link anchors and the buttons that open tfa-auth-modal,
+   so the native button chrome is reset here rather than in a component sheet -
+   a scoped rule would outrank this one and take the font size with it. */
 .header-nav-link {
+  font-family: inherit;
   font-size: 0.875rem;
+  line-height: inherit;
   padding: 0.4rem 0.75rem;
+  border: none;
+  background: transparent;
   border-radius: var(--radius-sm);
   cursor: pointer;
   transition: background var(--transition);
@@ -568,11 +593,16 @@ a {
   color: var(--text);
 }
 
+/* Same as .header-nav-link: used on anchors and on buttons. */
 .sidenav-link {
   display: block;
   padding: 0.75rem 0.875rem;
+  border: none;
+  background: transparent;
   border-radius: var(--radius-sm);
+  font-family: inherit;
   font-size: 0.9375rem;
+  line-height: inherit;
   cursor: pointer;
   transition: background var(--transition);
 }

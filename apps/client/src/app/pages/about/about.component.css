@@ -9,10 +9,13 @@
   width: 100%;
   max-width: 46rem;
   margin: 0 auto;
-  padding-bottom: 3rem;
   display: flex;
   flex-direction: column;
   gap: 2.5rem;
+  /* Fills the host (which fills .app-content) so the fineprint below has room
+     to be pushed down to. Without it this box is only as tall as its text and
+     the footer stops wherever the prose ends. */
+  flex: 1;
 }
 
 .about-header {
@@ -69,58 +72,10 @@
   text-decoration: underline;
 }
 
-.about-list {
-  margin: 0;
-  padding-left: 1.15rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  font-size: 0.9375rem;
-  line-height: 1.7;
-  color: var(--text-muted);
-}
-
-.about-list::marker,
-.about-list li::marker {
-  color: var(--text-dim);
-}
-
-/* Colophon */
-.about-colophon {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 1.5rem 1.75rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.about-colophon .made-by {
-  font-family: var(--font-serif);
-  font-size: 1.125rem;
-  color: var(--text);
-}
-
-.about-colophon .made-by a {
-  color: var(--accent);
-  text-decoration: none;
-  transition: color var(--transition);
-}
-
-.about-colophon .made-by a:hover {
-  color: var(--accent-hover);
-  text-decoration: underline;
-}
-
-.about-colophon p {
-  font-size: 0.875rem;
-  line-height: 1.6;
-  color: var(--text-dim);
-  margin: 0;
-}
-
 .about-fineprint {
+  /* Eats the leftover height, so it sits on the bottom of a short page and
+     directly after the prose on a long one. */
+  margin-top: auto;
   font-size: 0.8125rem;
   line-height: 1.65;
   color: var(--text-dim);

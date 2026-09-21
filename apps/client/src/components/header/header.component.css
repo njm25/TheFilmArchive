@@ -106,6 +106,15 @@
   color: var(--text);
 }
 
+/* Sign in / Sign up open tfa-auth-modal instead of navigating, so in the sidenav
+   they are buttons where the others are links. Only the box differs - a button
+   shrinks to its text, where the anchors fill the panel; everything else comes
+   from .sidenav-link, which resets the native chrome itself. */
+.side-btn {
+  width: 100%;
+  text-align: left;
+}
+
 /* ================================================
    HAMBURGER BUTTON
    ================================================ */

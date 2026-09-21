@@ -37,8 +37,8 @@
         <span class="welcome-text">{{ userService.me()?.userName }}</span>
         <button class="header-auth-btn" (click)="logout()">Sign out</button>
       } @else {
-        <tfa-link href="/requestAccount" class="nav-item" styleClass="header-nav-link">Sign Up</tfa-link>
-        <tfa-link href="/login" class="auth-btn" styleClass="header-auth-btn">Sign In</tfa-link>
+        <button class="nav-item header-nav-link" (click)="openRegister()">Sign Up</button>
+        <button class="header-auth-btn" (click)="openLogin()">Sign In</button>
       }
     </div>
 
@@ -92,8 +92,8 @@
       <span class="sidenav-user">{{ userService.me()?.userName }}</span>
       <button class="btn btn-ghost btn-sm" style="width: 100%;" (click)="logout()">Sign out</button>
     } @else {
-      <tfa-link href="/requestAccount" class="side-item" styleClass="sidenav-link">Sign Up</tfa-link>
-      <tfa-link href="/login" class="side-item" styleClass="sidenav-link">Sign In</tfa-link>
+      <button class="side-item side-btn sidenav-link" (click)="openRegister()">Sign Up</button>
+      <button class="side-item side-btn sidenav-link" (click)="openLogin()">Sign In</button>
     }
   </div>
 

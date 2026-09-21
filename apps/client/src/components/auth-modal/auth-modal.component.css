@@ -1,0 +1,96 @@
+:host {
+  display: contents;
+}
+
+.auth-modal-overlay {
+  position: fixed;
+  inset: 0;
+  /* Under tfa-confirm (300) - a confirmation raised from behind the auth modal
+     still has to sit on top of it. */
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  background: rgba(0, 0, 0, 0.65);
+  animation: auth-modal-fade-in 0.18s ease-out;
+}
+
+.auth-modal-overlay.closing {
+  animation: auth-modal-fade-out 0.18s ease-in forwards;
+}
+
+/* Sits on .form-card, so the panel is the same card the auth forms always
+   rendered in - only the positioning and the close button are new. */
+.auth-modal-panel {
+  position: relative;
+  max-height: calc(100vh - 2.5rem);
+  overflow-y: auto;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+  animation: auth-modal-rise-in 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.auth-modal-panel.closing {
+  animation: auth-modal-sink-out 0.18s ease-in forwards;
+}
+
+/* Separate from the panel animation so switching between forms re-runs only
+   this one, and the card itself doesn't pop again. */
+.auth-modal-content {
+  animation: auth-modal-content-in 0.16s ease-out;
+}
+
+.auth-modal-close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border: none;
+  background: transparent;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+}
+
+.auth-modal-close:hover {
+  background: #252525;
+  color: var(--text);
+}
+
+.field-error {
+  font-size: 0.8125rem;
+  color: #e5484d;
+}
+
+@keyframes auth-modal-fade-in {
+  from { opacity: 0; }
+}
+
+@keyframes auth-modal-fade-out {
+  to { opacity: 0; }
+}
+
+@keyframes auth-modal-rise-in {
+  from { opacity: 0; transform: translateY(0.5rem) scale(0.97); }
+}
+
+@keyframes auth-modal-sink-out {
+  to { opacity: 0; transform: translateY(0.375rem) scale(0.97); }
+}
+
+@keyframes auth-modal-content-in {
+  from { opacity: 0; transform: translateY(0.25rem); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-modal-overlay,
+  .auth-modal-panel,
+  .auth-modal-content {
+    animation: none;
+  }
+}

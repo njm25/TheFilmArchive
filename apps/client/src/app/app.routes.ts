@@ -4,11 +4,7 @@ import { FilmsComponent } from './pages/films/films.component';
 import { FilmComponent } from './pages/film/film.component';
 import { PersonComponent } from './pages/person/person.component';
 import { AboutComponent } from './pages/about/about.component';
-import { RequestAccountComponent } from './pages/request-account/request-account.component';
-import { RegisterComponent } from './pages/register/register.component';
-import { LoginComponent } from './pages/login/login.component';
-import { ForgotPasswordComponent } from './pages/forgot-password/forgot-password.component';
-import { ResetPasswordComponent } from './pages/reset-password/reset-password.component';
+import { AuthRouteComponent } from './pages/auth-route/auth-route.component';
 import { CreateFilmComponent } from './pages/create-film/create-film.component';
 import { CreateSourceComponent } from './pages/create-source/create-source.component';
 import { adminGuard, authGuard, sysAdminGuard } from './guards/auth.guard';
@@ -36,25 +32,33 @@ export const routes: Routes = [
         path: "about",
         component: AboutComponent
     },
+    // Auth has no pages of its own any more - each of these opens the matching
+    // form in tfa-auth-modal over the home page. They stay as routes because
+    // the registration, reset and welcome emails all link to them.
     {
         path: "requestAccount",
-        component: RequestAccountComponent
+        component: AuthRouteComponent,
+        data: { authMode: 'register' }
     },
     {
         path: "register/:token",
-        component: RegisterComponent
+        component: AuthRouteComponent,
+        data: { authMode: 'register' }
     },
     {
         path: "login",
-        component: LoginComponent
+        component: AuthRouteComponent,
+        data: { authMode: 'login' }
     },
     {
         path: "forgotPassword",
-        component: ForgotPasswordComponent
+        component: AuthRouteComponent,
+        data: { authMode: 'forgotPassword' }
     },
     {
         path: "resetPassword/:token",
-        component: ResetPasswordComponent
+        component: AuthRouteComponent,
+        data: { authMode: 'resetPassword' }
     },
     {
         path: "createFilm",
