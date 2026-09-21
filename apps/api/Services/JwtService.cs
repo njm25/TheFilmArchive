@@ -39,11 +39,13 @@ public class JwtService
 
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
+        var lifetimeDays = _configuration.GetValue<double?>("Auth:JwtLifetimeDays") ?? 7;
+
         var token = new JwtSecurityToken(
             issuer: _configuration["Jwt:Issuer"],
             audience: _configuration["Jwt:Audience"],
             claims: claims,
-            expires: DateTime.UtcNow.AddHours(1),
+            expires: DateTime.UtcNow.AddDays(lifetimeDays),
             signingCredentials: creds
         );
 

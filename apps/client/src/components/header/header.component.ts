@@ -6,6 +6,7 @@ import { LinkComponent } from '../link/link.component';
 import { DropdownComponent, DropdownOption } from '../dropdown/dropdown.component';
 import { AuthService } from '../../services/auth.service';
 import { UserService } from '../../services/user.service';
+import { AuthModalService } from '../../services/auth-modal.service';
 
 @Component({
     selector: 'tfa-header',
@@ -16,6 +17,7 @@ import { UserService } from '../../services/user.service';
 export class HeaderComponent {
     auth = inject(AuthService);
     userService = inject(UserService);
+    authModal = inject(AuthModalService);
     router = inject(Router);
 
     isLoggedIn = computed(() => this.auth.isLoggedIn());
@@ -50,6 +52,18 @@ export class HeaderComponent {
     logout() {
         this.userService.logout();
         this.sidenavOpen.set(false);
+    }
+
+    // Both close the sidenav first: on mobile it's what the button was tapped
+    // in, and it sits at the same stacking level as the modal.
+    openLogin() {
+        this.sidenavOpen.set(false);
+        this.authModal.openLogin();
+    }
+
+    openRegister() {
+        this.sidenavOpen.set(false);
+        this.authModal.openRegister();
     }
 
     onMenuSelect(path: string) {

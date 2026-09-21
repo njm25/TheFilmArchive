@@ -2,10 +2,10 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { ForgotPasswordReq, GetUsersReq, GetUsersRes, LoginReq, MeRes, RegisterReq, RequestAccountReq, ResetPasswordReq, RoleEnum } from '../types/types';
 import { AuthService } from './auth.service';
-import { Router } from '@angular/router';
 import { environment } from '../environments/environment';
 import { ToastrService } from 'ngx-toastr';
 import { tap } from 'rxjs';
+import { AuthModalService } from './auth-modal.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,8 +14,8 @@ export class UserService {
 
     private http = inject(HttpClient);
     private auth = inject(AuthService);
-    private router = inject(Router);
     private toastr = inject(ToastrService);
+    private authModal = inject(AuthModalService);
     private baseUrl = environment.apiUrl;
     me = signal<MeRes | null>(null);
 
@@ -55,7 +55,9 @@ export class UserService {
             tap((r: any) => {
                 this.auth.setToken(r.token);
                 this.refreshMe();
-                this.router.navigate(['/']);
+                // Signing in happens in a modal over whatever page they were on,
+                // so closing it leaves them there instead of bouncing them home.
+                this.authModal.close();
             })
         );
     }
