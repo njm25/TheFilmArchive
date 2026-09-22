@@ -8683,16 +8683,6 @@
     ]
   },
   {
-    "title": "Swing Parade of 1946",
-    "year": 1946,
-    "imdbId": "tt0039003",
-    "tmdbId": "45828",
-    "archiveUrls": [
-      "https://archive.org/details/SWINGPARADEOF1946",
-      "https://archive.org/details/SwingParade1946"
-    ]
-  },
-  {
     "title": "The Fabulous Dorseys",
     "year": 1947,
     "imdbId": "tt0039365",
@@ -9582,6 +9572,796 @@
     "archiveUrls": [
       "https://archive.org/details/night-tide-1961",
       "https://archive.org/details/NightTide1961"
+    ]
+  },
+  {
+    "title": "Woman to Woman",
+    "year": 1929,
+    "imdbId": "tt0020602",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/woman-to-woman-1929_202602",
+      "https://archive.org/details/woman-to-woman_1929",
+      "https://archive.org/details/womantowoman_204",
+      "https://archive.org/details/Woman2Woman"
+    ]
+  },
+  {
+    "title": "Escape!",
+    "year": 1930,
+    "imdbId": "tt0020859",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/escape_1930",
+      "https://archive.org/details/escape_202106"
+    ]
+  },
+  {
+    "title": "The Flame of Love",
+    "year": 1930,
+    "imdbId": "tt0020944",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/road-to-dishonour_1930",
+      "https://archive.org/details/the-flame-of-love-1930-anna-may-wong"
+    ]
+  },
+  {
+    "title": "The Cheaters",
+    "year": 1930,
+    "imdbId": "tt0020757",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/the-cheaters_1930",
+      "https://archive.org/details/the-cheaters-1929-australia-paulette-mc-donagh"
+    ]
+  },
+  {
+    "title": "The Three Passions",
+    "year": 1928,
+    "imdbId": "tt0019469",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/the-three-passions_1929",
+      "https://archive.org/details/TheThreePassions1929"
+    ]
+  },
+  {
+    "title": "The Vortex",
+    "year": 1928,
+    "imdbId": "tt0019538",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/vortex28",
+      "https://archive.org/details/the-vortex-1928"
+    ]
+  },
+  {
+    "title": "Borderline",
+    "year": 1930,
+    "imdbId": "tt0020701",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/borderline_1930",
+      "https://archive.org/details/borderline_202107"
+    ]
+  },
+  {
+    "title": "Hindle Wakes",
+    "year": 1927,
+    "imdbId": "tt0017998",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/fanny-hawthorne_1929"
+    ]
+  },
+  {
+    "title": "The Rat",
+    "year": 1925,
+    "imdbId": "tt0017311",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/the-rat-1925"
+    ]
+  },
+  {
+    "title": "The Triumph of the Rat",
+    "year": 1926,
+    "imdbId": "tt0018507",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/triumph_rat_1926"
+    ]
+  },
+  {
+    "title": "The Return of the Rat",
+    "year": 1929,
+    "imdbId": "tt0020325",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/the-return-of-the-rat_1929"
+    ]
+  },
+  {
+    "title": "The First Born",
+    "year": 1928,
+    "imdbId": "tt0018891",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/BillSpragueCollectionTheFirstBorn1928PUBLICDOMAIN"
+    ]
+  },
+  {
+    "title": "Carry on, Sergeant!",
+    "year": 1928,
+    "imdbId": "tt0018750",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/carry-on-sergeant_1928"
+    ]
+  },
+  {
+    "title": "The Wrecker",
+    "year": 1929,
+    "imdbId": "tt0017578",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/wrecker-1929-tiffany-tone-part-talkie-restored-sound"
+    ]
+  },
+  {
+    "title": "The Way of Lost Souls",
+    "year": 1929,
+    "imdbId": "tt0153666",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/the-way-of-lost-souls_1929"
+    ]
+  },
+  {
+    "title": "The Man Without Desire",
+    "year": 1923,
+    "imdbId": "tt0014249",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/the-man-without-desire-1923"
+    ]
+  },
+  {
+    "title": "The Far Paradise",
+    "year": 1928,
+    "imdbId": "tt0258567",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/the-far-paradise-1928-australia-paulette-mc-donagh"
+    ]
+  },
+  {
+    "title": "The Devious Path (Abwege)",
+    "year": 1928,
+    "imdbId": "tt0018615",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/abwege-1928",
+      "https://archive.org/details/the-devious-path_1929",
+      "https://archive.org/details/Abwege"
+    ]
+  },
+  {
+    "title": "Waterloo",
+    "year": 1929,
+    "imdbId": "tt0019552",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/waterloo_1929",
+      "https://archive.org/details/waterloo-1929-filme-mudo-alemao-sobre-napoleao-legendado"
+    ]
+  },
+  {
+    "title": "Torgus (Verlogene Moral)",
+    "year": 1921,
+    "imdbId": "tt0012771",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/silent-verlogene-moral-aka-torgus",
+      "https://archive.org/details/Torgus.Brandherd"
+    ]
+  },
+  {
+    "title": "The Island of the Lost (Die Insel der Verschollenen)",
+    "year": 1921,
+    "imdbId": "tt0340177",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/silent-the-island-of-the-lost",
+      "https://archive.org/details/1921.-lile-des-disparus-die-insel-der-verschollenen"
+    ]
+  },
+  {
+    "title": "Mysteries of India, Part I: The Mission of the Yoghi (Das indische Grabmal I)",
+    "year": 1921,
+    "imdbId": "tt0012314",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/silent-mysteries-of-india-part-i-truth",
+      "https://archive.org/details/mysteries-of-india-part-i-truth-1921-by-joe-may"
+    ]
+  },
+  {
+    "title": "People on Sunday (Menschen am Sonntag)",
+    "year": 1930,
+    "imdbId": "tt0020163",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/people-on-sunday_1930.ia",
+      "https://archive.org/details/peopleOnSundaymenschenAmSonntag1930"
+    ]
+  },
+  {
+    "title": "Harakiri",
+    "year": 1919,
+    "imdbId": "tt0010208",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/silent-harakiri",
+      "https://archive.org/details/Harakiri1919fritzLang"
+    ]
+  },
+  {
+    "title": "Tragedy of the Street (Dirnentragoedie)",
+    "year": 1927,
+    "imdbId": "tt0017812",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/dirnentragodie_1930"
+    ]
+  },
+  {
+    "title": "Mother Krause's Journey to Happiness (Mutter Krausens Fahrt ins Glueck)",
+    "year": 1929,
+    "imdbId": "tt0020193",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/mother-krauses-journey-to-happiness_1929"
+    ]
+  },
+  {
+    "title": "The Ancient Law (Das alte Gesetz)",
+    "year": 1923,
+    "imdbId": "tt0013830",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/silent-this-ancient-law"
+    ]
+  },
+  {
+    "title": "Sex in Chains (Geschlecht in Fesseln)",
+    "year": 1928,
+    "imdbId": "tt0018935",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/sex-in-chains_1928"
+    ]
+  },
+  {
+    "title": "Under the Lantern (Unter der Laterne)",
+    "year": 1928,
+    "imdbId": "tt0019514",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/under-the-lantern_1930"
+    ]
+  },
+  {
+    "title": "The Blackguard (Die Prinzessin und der Geiger)",
+    "year": 1925,
+    "imdbId": "tt0016246",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/the-blackguard-1925"
+    ]
+  },
+  {
+    "title": "Secrets of a Soul (Geheimnisse einer Seele)",
+    "year": 1926,
+    "imdbId": "tt0016914",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/2026-05-13-arte-next-geheimnisse-einer-seele-037667-000-a-deutsch-de-1280x-720-2200"
+    ]
+  },
+  {
+    "title": "Alraune",
+    "year": 1928,
+    "imdbId": "tt0017621",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/alraune-1928-colorized-movie-720p-hd"
+    ]
+  },
+  {
+    "title": "Alraune",
+    "year": 1930,
+    "imdbId": "tt0020635",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/1930-alraune"
+    ]
+  },
+  {
+    "title": "The Fiddler of Florence (Der Geiger von Florenz)",
+    "year": 1926,
+    "imdbId": "tt0016915",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/der-geiger-von-florenz-1926"
+    ]
+  },
+  {
+    "title": "The Old Fritz (Der alte Fritz)",
+    "year": 1928,
+    "imdbId": "tt0018642",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/der-alte-fritz-teil-1-1928-ein-stummfilm-epos-mit-otto-gebuhr-regie-gerhard-lamprecht-2"
+    ]
+  },
+  {
+    "title": "The Plague of Florence (Die Pest in Florenz)",
+    "year": 1919,
+    "imdbId": "tt0010559",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/silent-die-pest-in-florenz"
+    ]
+  },
+  {
+    "title": "Four Around a Woman (Vier um die Frau)",
+    "year": 1921,
+    "imdbId": "tt0012806",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/vier-um-die-frau-four-around-the-woman-1921-fritz-lang"
+    ]
+  },
+  {
+    "title": "The Adjutant of the Czar (Der Adjutant des Zaren)",
+    "year": 1929,
+    "imdbId": "tt0019624",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/the-adjutant-of-the-czar_1929"
+    ]
+  },
+  {
+    "title": "Manolescu (Manolescu - Der Koenig der Hochstapler)",
+    "year": 1929,
+    "imdbId": "tt0020140",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/manolescu--der-konig-der-hochstapler_1930"
+    ]
+  },
+  {
+    "title": "Melody of the Heart (Melodie des Herzens)",
+    "year": 1929,
+    "imdbId": "tt0020159",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/melody-of-the-heart_1930"
+    ]
+  },
+  {
+    "title": "Johann Baptiste Lingg",
+    "year": 1920,
+    "imdbId": "tt0432307",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/silent-johann-baptiste-lingg"
+    ]
+  },
+  {
+    "title": "Vanina (Vanina oder Die Galgenhochzeit)",
+    "year": 1922,
+    "imdbId": "tt0013728",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/silent-vanina-oder-die-galgenhochzeit"
+    ]
+  },
+  {
+    "title": "Alexandra",
+    "year": 1922,
+    "imdbId": "tt0012885",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/silent-alexandra"
+    ]
+  },
+  {
+    "title": "Guilty (Schuldig)",
+    "year": 1928,
+    "imdbId": "tt0338413",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/schuldig_1928"
+    ]
+  },
+  {
+    "title": "Luther (Luther - Ein Film der deutschen Reformation)",
+    "year": 1928,
+    "imdbId": "tt0137922",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/luther_1929"
+    ]
+  },
+  {
+    "title": "The Last Horse Carriage in Berlin (Die letzte Droschke von Berlin)",
+    "year": 1926,
+    "imdbId": "tt0201729",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/die-letzte-droschke-von-berlin_1929"
+    ]
+  },
+  {
+    "title": "The Eccentric (Der Sonderling)",
+    "year": 1929,
+    "imdbId": "tt0020431",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/der-sonderling_1929"
+    ]
+  },
+  {
+    "title": "Yacht of the Seven Sins (Die Yacht der sieben Suenden)",
+    "year": 1928,
+    "imdbId": "tt0019599",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/yacht-of-the-seven-sins_1928"
+    ]
+  },
+  {
+    "title": "When the Evening Bells Ring (Wenn die Abendglocken laeuten)",
+    "year": 1930,
+    "imdbId": "tt0467136",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/wenn-die-abendglocken-lauten_1930"
+    ]
+  },
+  {
+    "title": "Das Schweigen am Starnbergersee",
+    "year": 1920,
+    "imdbId": "tt1429024",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/silent-das-schweigen-am-starnbergersee"
+    ]
+  },
+  {
+    "title": "The Secret of the American Docks (Das Geheimnis des Amerika-Docks)",
+    "year": 1919,
+    "imdbId": "tt0444635",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/silent-das-geheimnis-des-amerika-docks"
+    ]
+  },
+  {
+    "title": "The Convict from Istanbul (Der Straefling aus Stambul)",
+    "year": 1929,
+    "imdbId": "tt0020460",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/der-strafling-aus-stambul_1930"
+    ]
+  },
+  {
+    "title": "Crucified Girl (Maedchen am Kreuz)",
+    "year": 1929,
+    "imdbId": "tt0432328",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/madchen-am-kreuz_1929"
+    ]
+  },
+  {
+    "title": "King of the Centre Forwards (Der Koenig der Mittelstuermer)",
+    "year": 1927,
+    "imdbId": "tt0454860",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/der-konig-der-mittelsturmer_1928"
+    ]
+  },
+  {
+    "title": "Andreas Hofer",
+    "year": 1929,
+    "imdbId": "tt0019639",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/andreas-hofer_1929"
+    ]
+  },
+  {
+    "title": "Eve's Daughters (Evas Toechter)",
+    "year": 1928,
+    "imdbId": "tt0018869",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/evas-tochter_1928"
+    ]
+  },
+  {
+    "title": "The Last Company (Die letzte Kompagnie)",
+    "year": 1930,
+    "imdbId": "tt0021064",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/letztekompagnie"
+    ]
+  },
+  {
+    "title": "The Flute Concert of Sans-Souci (Das Floetenkonzert von Sanssouci)",
+    "year": 1930,
+    "imdbId": "tt0020893",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/o-concerto-de-flauta-de-sans-souci-1930-filme-completo-legendado"
+    ]
+  },
+  {
+    "title": "King of the Circus (Max, der Zirkuskoenig)",
+    "year": 1924,
+    "imdbId": "tt0015526",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/KingOfTheCircus_201712"
+    ]
+  },
+  {
+    "title": "Mazeppa, der Volksheld der Ukraine",
+    "year": 1919,
+    "imdbId": "tt0468340",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/silent-mazeppa-der-volksheld-der-ukraine"
+    ]
+  },
+  {
+    "title": "Theodor Herzl, der Bannertraeger des juedischen Volkes",
+    "year": 1921,
+    "imdbId": "tt0956250",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/silent-theodor-herzl-der-bannertrger-des-jdischen-volkes"
+    ]
+  },
+  {
+    "title": "Hungarian Rhapsody (Ungarische Rhapsodie)",
+    "year": 1928,
+    "imdbId": "tt0019511",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/ungarische-rhapsodie_1929"
+    ]
+  },
+  {
+    "title": "The Bohemian Dancer (Die Foersterchristel)",
+    "year": 1926,
+    "imdbId": "tt0189540",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/the_bohemian_dancer"
+    ]
+  },
+  {
+    "title": "Die Teufelskirche",
+    "year": 1919,
+    "imdbId": "tt0010767",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/silent-die-teufelskirche"
+    ]
+  },
+  {
+    "title": "Prem Sanyas (Die Leuchte Asiens / The Light of Asia)",
+    "year": 1925,
+    "imdbId": "tt0016240",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/prem-sanyas_1928"
+    ]
+  },
+  {
+    "title": "Le Bercail (The Fold)",
+    "year": 1919,
+    "imdbId": "tt0207334",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/silent-le-bercail"
+    ]
+  },
+  {
+    "title": "Narayana",
+    "year": 1920,
+    "imdbId": "tt0011507",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/silent-narayana",
+      "https://archive.org/details/narayana-dapres-honore-de-balzac-leon-poirier-1920-charles-norville-film-muet"
+    ]
+  },
+  {
+    "title": "Jocelyn",
+    "year": 1922,
+    "imdbId": "tt0166230",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/silent-jocelyn"
+    ]
+  },
+  {
+    "title": "Pierrot, Pierrette",
+    "year": 1924,
+    "imdbId": "tt0015232",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/silent-pierrot-pierrette",
+      "https://archive.org/details/pierrot-pierrette-louis-feuillade-1924-rene-poyen-film-muet"
+    ]
+  },
+  {
+    "title": "Gribiche (Mother of Mine)",
+    "year": 1926,
+    "imdbId": "tt0015883",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/mother-of-mine_1928"
+    ]
+  },
+  {
+    "title": "En rade (Sea Fever)",
+    "year": 1927,
+    "imdbId": "tt0019849",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/en-rade_1929"
+    ]
+  },
+  {
+    "title": "Finis Terrae",
+    "year": 1929,
+    "imdbId": "tt0295259",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/finis-terrae_1929",
+      "https://archive.org/details/finis-terrae-1929-by-jean-epstein"
+    ]
+  },
+  {
+    "title": "Le Capitaine Fracasse (Captain Fracasse)",
+    "year": 1929,
+    "imdbId": "tt0019746",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/captain-fracasse_1929"
+    ]
+  },
+  {
+    "title": "Peau de peche (Peach Skin)",
+    "year": 1929,
+    "imdbId": "tt0020263",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/peach-skin_1929"
+    ]
+  },
+  {
+    "title": "Maman Colibri",
+    "year": 1929,
+    "imdbId": "tt0020134",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/maman-colibri_1930"
+    ]
+  },
+  {
+    "title": "Dans la nuit (In the Night)",
+    "year": 1929,
+    "imdbId": "tt0189459",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/dans-la-nuit_1930"
+    ]
+  },
+  {
+    "title": "Le Mystere de la chambre jaune (The Mystery of the Yellow Room)",
+    "year": 1930,
+    "imdbId": "tt0021168",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/the-mystery-of-the-yellow-room_1930"
+    ]
+  },
+  {
+    "title": "Tarakanova",
+    "year": 1930,
+    "imdbId": "tt0021454",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/tarakanova_1930"
+    ]
+  },
+  {
+    "title": "Hats Off",
+    "year": 1936,
+    "imdbId": "tt0027720",
+    "tmdbId": "214061",
+    "archiveUrls": [
+      "https://archive.org/details/hats_off",
+      "https://archive.org/details/hats-off-1936-john-payne"
+    ]
+  },
+  {
+    "title": "Make a Wish",
+    "year": 1937,
+    "imdbId": "tt0029193",
+    "tmdbId": "218341",
+    "archiveUrls": [
+      "https://archive.org/details/Make_A_Wish_1937"
+    ]
+  },
+  {
+    "title": "Minstrel Man",
+    "year": 1944,
+    "imdbId": "tt0037076",
+    "tmdbId": "218096",
+    "archiveUrls": [
+      "https://archive.org/details/MinstrelMan",
+      "https://archive.org/details/minstrel-man-1944"
+    ]
+  },
+  {
+    "title": "Spirit of Youth",
+    "year": 1938,
+    "imdbId": "tt0030781",
+    "tmdbId": "257907",
+    "archiveUrls": [
+      "https://archive.org/details/SpiritofYouth"
+    ]
+  },
+  {
+    "title": "Oliver Twist",
+    "year": 1933,
+    "imdbId": "tt0024405",
+    "tmdbId": "43125",
+    "archiveUrls": [
+      "https://archive.org/details/oliver-twist-1933",
+      "https://archive.org/details/oliver-twist-1933-classic-dickens-adaptation-1",
+      "https://archive.org/details/oliver-twist-1933_202507",
+      "https://archive.org/details/oliver_twist"
+    ]
+  },
+  {
+    "title": "Broken Dreams",
+    "year": 1933,
+    "imdbId": "tt0023849",
+    "tmdbId": "223406",
+    "archiveUrls": [
+      "https://archive.org/details/broken-dreams-1933-drama-full-movie-randolph-scott"
+    ]
+  },
+  {
+    "title": "The Road to Ruin",
+    "year": 1934,
+    "imdbId": "tt0025725",
+    "tmdbId": null,
+    "archiveUrls": [
+      "https://archive.org/details/TheRoadToRuin_457"
     ]
   }
 ]
